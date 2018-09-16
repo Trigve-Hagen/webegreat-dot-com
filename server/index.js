@@ -19,7 +19,7 @@ connection.connect(err => {
 });
 
 const mysqlhelpers = require('./config/mysqldbhelpers')(config.connection.name, config, connection);
-console.log(mysqlhelpers.listDbTables());
+console.log(mysqlhelpers.buildTables());
 
 // API routes
 require('./server-routes')(app);

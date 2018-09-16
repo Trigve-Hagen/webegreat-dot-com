@@ -12,7 +12,7 @@ module.exports = {
                 {
                     Field: 'ID',
                     Type: 'int(11)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -20,7 +20,7 @@ module.exports = {
                 {
                     Field: 'email',
                     Type: 'varchar(255)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -28,7 +28,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -36,7 +36,7 @@ module.exports = {
                 {
                     Field: 'password',
                     Type: 'varchar(255)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -49,7 +49,7 @@ module.exports = {
                 {
                     Field: 'ID',
                     Type: 'int(11)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -57,7 +57,7 @@ module.exports = {
                 {
                     Field: 'created_at',
                     Type: 'date',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -65,7 +65,7 @@ module.exports = {
                 {
                     Field: 'updated_at',
                     Type: 'date',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -73,7 +73,7 @@ module.exports = {
                 {
                     Field: 'if_deleted',
                     Type: 'int(1)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -86,7 +86,7 @@ module.exports = {
                 {
                     Field: 'ID',
                     Type: 'int',
-                    Null: 'no',
+                    Null: false,
                     Key: 'PRI',
                     Default: null,
                     Extra: ''
@@ -94,7 +94,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -102,7 +102,7 @@ module.exports = {
                 {
                     Field: 'role',
                     Type: 'int(1)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -115,7 +115,7 @@ module.exports = {
                 {
                     Field: 'ID',
                     Type: 'int(11)',
-                    Null: 'no',
+                    Null: false,
                     Key: 'PRI',
                     Default: null,
                     Extra: ''
@@ -123,7 +123,7 @@ module.exports = {
                 {
                     Field: 'created_at',
                     Type: 'date',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -139,7 +139,7 @@ module.exports = {
                 {
                     Field: 'user_id',
                     Type: 'int(11)',
-                    Null: 'no',
+                    Null: false,
                     Key: 'FOR',
                     Default: null,
                     Extra: ''
@@ -147,7 +147,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -155,7 +155,7 @@ module.exports = {
                 {
                     Field: 'description',
                     Type: 'varchar(255)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -163,7 +163,7 @@ module.exports = {
                 {
                     Field: 'image',
                     Type: 'varchar(255)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -171,12 +171,41 @@ module.exports = {
                 {
                     Field: 'price',
                     Type: 'varchar(25)',
-                    Null: 'no',
+                    Null: false,
                     Key: '',
                     Default: null,
                     Extra: ''
                 }
             ]
-        }
+        },
+        {
+            table_name: 'notsup',
+            table_fields: [
+                {
+                    Field: 'ID',
+                    Type: 'int',
+                    Null: false,
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'name',
+                    Type: 'varchar(255)',
+                    Null: false,
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'role',
+                    Type: 'int(1)',
+                    Null: false,
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                }
+            ]
+        },
     ]
 };
