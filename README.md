@@ -14,7 +14,7 @@ You can find the most recent version of create-react-app guide [here](https://gi
   - [npm test](#npm-test)
   - [npm build](#npm-run-build)
   - for now cd inside server and run node index.js to start the server.
-- [Architecture Plans](#Architecture Plans)
+- [Architecture Plans](#architecture-plans)
 
 
 ## Folder Structure
@@ -97,4 +97,4 @@ See the section about [deployment](#deployment) for more information.
 
 ### `Architecture Plans`
 
-All Components will house all code including all components, reducers, css, server code file, routing file and areas that use these files will load them on page response. This will allow developers to create modules that we can just call Components for this framework. Will also upgrade to bootstrap@4 when react-bootstrap is finished updating.
+All Components will house all code including all components, reducers, css, server code file, routing file and areas that use these files will load them on page load. This will allow developers to create Modules that we can just call Components for this framework.
