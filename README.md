@@ -14,6 +14,7 @@ You can find the most recent version of create-react-app guide [here](https://gi
   - [npm test](#npm-test)
   - [npm build](#npm-run-build)
   - for now cd inside server and run node index.js to start the server.
+- [Arm Class](#arm-class)
 - [Architecture Plans](#architecture-plans)
 
 
@@ -31,6 +32,10 @@ my-app/
     favicon.ico
   server/
     config/
+    server-routes/
+      api/
+        starter-server-modules.js
+      index.js
     index.js
   src/
     assets/
@@ -94,6 +99,19 @@ The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
 See the section about [deployment](#deployment) for more information.
+
+### `Arm Class`
+
+The Arm stands for Array to Relational Database Mapping. Like ORM Object Relational Database Mapping it compares a data structure to the schema and update the database when A change is made to the data structure. Thus allowing you to work on your code without having to go back and forth to the database.
+
+In a minute I will update npm Modules and the scripts in package.json to start the server whenever we start the front end and put a --watch so when you update the array your database will update automatically. I just haven't got there yet. Ill also document the adjustments and ins and outs carefully here so you know what to and what not to do.
+
+* const mysqlhelpers = require('./config/mysqldbhelpers')(config.connection.name, config, connection);
+* mysqlhelpers.buildTables();
+
+This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js.
+
+* CAUTION - When you erase from the array of objects you delete the corisponding tables and rows in the database and loose any data you might have in it. Be carefull!
 
 ### `Architecture Plans`
 

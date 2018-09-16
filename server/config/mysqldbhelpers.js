@@ -17,11 +17,11 @@ module.exports = function(database, config, connection) {
     }
 
     function addAndRemoveRows(tablesAndRowsDb, tablesAndRowsConfig) {
-        
+
     }
 
     function addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig) {
-        let actionObject = []; let tableCount = 0; let ifAllSame = true;
+        let actionObject = []; // let tableCount = 0; let ifAllSame = true;
         if(tablesAndRowsConfig.length != tablesAndRowsDb.length) {
 
             console.log(tablesAndRowsConfig.length + ", " + tablesAndRowsDb.length);
@@ -45,9 +45,8 @@ module.exports = function(database, config, connection) {
                     });
                     if(inArray == false) resolveDifferences({ action: 'removeTables', table_name: database_element.table_name });
                 });
-                //resolveDifferences({ action: 'removeTables' });
             }
-        } else { // could check for same fields just a name change, unless you just changes names && add or remove fields it will drop and rebuilt table
+        } /*else { // could check for same fields just a name change, unless you just changes names && add or remove fields it will drop and rebuilt table
             tablesAndRowsConfig.forEach(element => {
                 if(element.table_name != tablesAndRowsConfig[tableCount].table_name) ifAllSame = false;
                 tableCount++;
@@ -56,7 +55,7 @@ module.exports = function(database, config, connection) {
 
         if(!ifAllSame) {
             console.log("Not the same names.")
-        }
+        }*/
         if(actionObject.length == 0) actionObject.push({ action: 'noAction' });
         return actionObject;
     }
