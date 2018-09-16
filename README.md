@@ -111,8 +111,8 @@ In a minute I will update npm Modules and the scripts in package.json to start t
 
 This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js.
 
-* CAUTION - When you erase from the array of objects you delete the corisponding tables and rows in the database and loose any data you might have in it. Be carefull!
+* CAUTION - When you erase from the array of objects you delete the corresponding tables and rows in the database and loose any data you might have in it. Be carefull!
 
 ### `Architecture Plans`
 
-All Components will house all code including all components, reducers, css, server code file, routing file and areas that use these files will load them on page load. This will allow developers to create Modules that we can just call Components for this framework.
+All Components will house all code including all components, reducers, css, server code file, routing file, and Arm config file that will be consolidated into single blocks of code and object arrays on page load. This will allow developers to create Modules that we can just call Components for this framework.
