@@ -2,4 +2,140 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background-color: #c5b894;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: Stencil !important;
+}
+
+a, a:active, a:focus {
+  outline: none;
+}
+
+.navbar {
+  margin-bottom: 0px;
+}
+
+/* ----- About Animations ----- */
+
+.pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.trucks {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.troop {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  max-height: 500px;
+}
+
+.text {
+  position: absolute;
+  top: 100;
+  left: 100;
+}
+
+@media (min-width: 768px) {
+  .text {
+    position: absolute;
+    top: 10;
+    left: 10;
+  }
+}
+
+/* ----- Form Styles ----- */
+
+.btn-army {
+  color: #fff;
+  background-color: #333333;
+  border-color: #000000;
+}
+.btn-army:focus,
+.btn-army.focus {
+  color: #fff;
+  background-color: #000000;
+  border-color: #333333;
+}
+.btn-army:hover {
+  color: #333333;
+  background-color: #000000;
+  border-color: #333333;
+}
+
+.form-element {
+  display: block;
+  width: 100%;
+  height: 50px;
+  padding: 6px 12px;
+  font-size: 16px;
+  line-height: 1.42857143;
+  color: #000000;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.form-element:focus {
+  border-color: #101010;
+  color: #101010;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(135, 135, 136, 0.6);
+          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(135, 135, 136, 0.6);
+}
+.form-element::-moz-placeholder {
+  color: #777777;
+  opacity: 1;
+}
+.form-element:-ms-input-placeholder {
+  color: #777777;
+}
+.form-element::-webkit-input-placeholder {
+  color: #777777;
+}
+.form-element::-ms-expand {
+  background-color: transparent;
+  border: 0;
+}
+.form-element[disabled],
+.form-element[readonly],
+fieldset[disabled] .form-element {
+  background-color: #777777;
+  opacity: 1;
+}
+.form-element[disabled],
+fieldset[disabled] .form-element {
+  cursor: not-allowed;
+}
+textarea.form-element {
+  height: auto;
+}
+
+/* ----- About Animations ----- */
+
+@media (min-width: 768px) {
+  .text {
+    position: absolute;
+    top: 10;
+    left: 10;
+  }
+}
+@media (min-width: 992px) {
+
+}
+@media (min-width: 1200px) {
+
 }
