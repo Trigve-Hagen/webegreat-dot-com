@@ -10,7 +10,13 @@ import {
 } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
+import 'bootstrap/dist/css/bootstrap.css';
+
+import 'jquery';
+import 'bootstrap/dist/js/bootstrap';
+
 import './index.css';
+
 import store from './config/store';
 import NotFound from './NotFound';
 

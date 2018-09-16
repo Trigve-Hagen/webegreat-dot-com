@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 const helpers = require('./src/config/helpers');
 
@@ -62,6 +63,11 @@ module.exports = {
 
     new CopyWebpackPlugin([{
       from: helpers.root('assets')
-    }])
+    }]),
+
+    new webpack.ProvidePlugin({
+      jQuery: 'jquery',
+      $: 'jquery'
+    })
   ]
 }
