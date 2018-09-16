@@ -16,7 +16,11 @@ module.exports = function(database, config, connection) {
         return comparison;
     }
 
-    function compareNumberOfObjects(tablesAndRowsDb, tablesAndRowsConfig) {
+    function addAndRemoveRows(tablesAndRowsDb, tablesAndRowsConfig) {
+        
+    }
+
+    function addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig) {
         let actionObject = []; let tableCount = 0; let ifAllSame = true;
         if(tablesAndRowsConfig.length != tablesAndRowsDb.length) {
 
@@ -132,7 +136,8 @@ module.exports = function(database, config, connection) {
                             });
                             //console.log(tablesAndRowsDb.length + ', ' + results.length);
                             if(tablesAndRowsDb.length == results.length) {
-                                compareNumberOfObjects(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
+                                addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
+                                addAndRemoveRows(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
                             }
                         }
                     });
