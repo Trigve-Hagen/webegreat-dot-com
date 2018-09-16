@@ -10,9 +10,9 @@ module.exports = {
             table_name: 'users',
             table_fields: [
                 {
-                    Field: 'ID',
+                    Field: 'userid',
                     Type: 'int(11)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -20,7 +20,7 @@ module.exports = {
                 {
                     Field: 'email',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -28,7 +28,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -36,7 +36,7 @@ module.exports = {
                 {
                     Field: 'password',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -47,9 +47,9 @@ module.exports = {
             table_name: 'usersessions',
             table_fields: [
                 {
-                    Field: 'ID',
+                    Field: 'usersessionid',
                     Type: 'int(11)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -57,7 +57,7 @@ module.exports = {
                 {
                     Field: 'created_at',
                     Type: 'date',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -65,7 +65,7 @@ module.exports = {
                 {
                     Field: 'updated_at',
                     Type: 'date',
-                    Null: false,
+                    Null: 'NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -73,7 +73,7 @@ module.exports = {
                 {
                     Field: 'if_deleted',
                     Type: 'int(1)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -84,9 +84,9 @@ module.exports = {
             table_name: 'userroles',
             table_fields: [
                 {
-                    Field: 'ID',
+                    Field: 'userrolesid',
                     Type: 'int',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: 'PRI',
                     Default: null,
                     Extra: ''
@@ -94,7 +94,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -102,7 +102,7 @@ module.exports = {
                 {
                     Field: 'role',
                     Type: 'int(1)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -113,9 +113,9 @@ module.exports = {
             table_name: 'products',
             table_fields: [
                 {
-                    Field: 'ID',
+                    Field: 'productid',
                     Type: 'int(11)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: 'PRI',
                     Default: null,
                     Extra: ''
@@ -123,7 +123,7 @@ module.exports = {
                 {
                     Field: 'created_at',
                     Type: 'date',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -139,7 +139,7 @@ module.exports = {
                 {
                     Field: 'user_id',
                     Type: 'int(11)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: 'FOR',
                     Default: null,
                     Extra: ''
@@ -147,7 +147,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -155,7 +155,7 @@ module.exports = {
                 {
                     Field: 'description',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -163,7 +163,7 @@ module.exports = {
                 {
                     Field: 'image',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -171,20 +171,20 @@ module.exports = {
                 {
                     Field: 'price',
                     Type: 'varchar(25)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
                 }
             ]
-        },
+        }/*,
         {
             table_name: 'notsup',
             table_fields: [
                 {
-                    Field: 'ID',
+                    Field: 'notsupid',
                     Type: 'int',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: 'PRI',
                     Default: null,
                     Extra: ''
@@ -192,7 +192,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -200,12 +200,12 @@ module.exports = {
                 {
                     Field: 'role',
                     Type: 'int(1)',
-                    Null: false,
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
                 }
             ]
-        },
+        },*/
     ]
 };
