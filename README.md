@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 What I intend to create is a CMS style e-commerce store that can use components much like bundles, plugins or modules with no hooks so the developer can have fun creating additional functionality. For syling you will just go through the code and create your modifications. I'm planing on using the least npm modules I can to get the most functionality while sticking to what facebook created as far as a starting point with create-react-app. React-router for links, Helmit for Seo, Redux for state, Express for Server, Mysql for database and webpack 4 plus Babel 7. Im also going to add in my own Arm class to speed up the creating and adjusting the database so you can just develop. You still just run build when finished and move your build or dist to your root directory when you are done developing. The idea is this be good for the end user because it will be faster than the average cms system producing better conversion rates.
 
-Below you will find some information on how to perform common tasks and folder stucture of webegreat-dot-com. I haven't got much done yet so I haven't uploaded it to webegreat.com yet. It will use bootstrap as a global dependency.<br>
+Below you will find some information on how to perform common tasks and folder stucture of webegreat-dot-com. I haven't got much done yet so I haven't uploaded it to webegreat.com yet. It will use Twitter Bootstrap but you can change it to Material Ui, or Semantic UI or some other framework you like working with. I will work hard to keep each component in the tradition of a fully self contained component that is as loosly coupled to the rest of the application as possible.<br>
 
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
@@ -12,8 +12,7 @@ You can find the most recent version of create-react-app guide [here](https://gi
 - [Available Scripts](#available-scripts)
   - [npm start](#npm-start)
   - [npm test](#npm-test)
-  - [npm run build](#npm-run-build)
-  - [npm run eject](#npm-run-eject)
+  - [npm build](#npm-run-build)
   - for now cd inside server and run node index.js to start the server.
 
 
@@ -35,8 +34,9 @@ my-app/
   src/
     assets/
       css/
-      js/
       font/
+      js/
+      img/
     components/
       component/
         index.js
@@ -58,6 +58,7 @@ You can delete or rename the other files.
 
 You may create subdirectories inside `src`. For faster rebuilds, only files inside `src` are processed by Webpack.<br>
 You need to **put any JS and CSS files inside `src`**, otherwise Webpack won’t see them.
+I put them all in assets and ran a single webpack.config.js file in the root..
 
 Only files inside `public` can be used from `public/index.html`.<br>
 Read instructions below for using assets from JavaScript and HTML.
@@ -91,13 +92,3 @@ The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
 See the section about [deployment](#deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
