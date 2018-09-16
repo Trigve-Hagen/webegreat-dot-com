@@ -115,4 +115,4 @@ This is called in index.js and kicks off the build database script. It gets pass
 
 ### `Architecture Plans`
 
-All Components will house all code including all components, reducers, css, server code file, routing file, and Arm config file that will be consolidated into single blocks of code and object arrays on page load. This will allow developers to create Modules that we can just call Components for this framework.
+All Components will house all code included in a component including main component, secondary components related to the main component, reducer, css, server code file, routing file, and Arm config file that will be consolidated into single blocks of code and object arrays on page load. This will allow developers to create Modules that we can just call Components based on the ideal behind this framework.
