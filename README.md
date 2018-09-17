@@ -128,11 +128,11 @@ All Components will house all code included in a component including main compon
 
 People who have little bits of code in here but do not know it. Hehe. Learned alot from them.
 
-`Keith Weaver`
-https://github.com/keithweaver/MERN-boilerplate
-https://www.youtube.com/channel/UCK4Onn_G6hYTQyo6tC3XY1w
-`React-U`
-https://github.com/react-u/
-https://www.youtube.com/c/reactuniversity
-`Code Realm`
+`Keith Weaver` 
+https://github.com/keithweaver/MERN-boilerplate 
+https://www.youtube.com/channel/UCK4Onn_G6hYTQyo6tC3XY1w  
+`React-U` 
+https://github.com/react-u/ 
+https://www.youtube.com/c/reactuniversity  
+`Code Realm` 
 https://www.youtube.com/channel/UCUDLFXXKG6zSA1d746rbzLQ
