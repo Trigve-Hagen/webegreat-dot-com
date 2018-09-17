@@ -173,8 +173,8 @@ module.exports = function(database, config, connection) {
                                     table_fields: rowResults
                                 });
                                 if(tablesAndRowsDb.length == results.length) {
-                                    console.log(tablesAndRowsDb);
-                                    console.log(tablesAndRowsConfig);
+                                    //console.log(tablesAndRowsDb);
+                                    //console.log(tablesAndRowsConfig);
                                     addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
                                     addAndRemoveRows(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
                                 }

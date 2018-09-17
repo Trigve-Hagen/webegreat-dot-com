@@ -21,31 +21,36 @@ class Register extends React.Component {
 
 	onSubmit(e) {
 		e.preventDefault();
+		console.log(this.state);
 		const {
 			registerName,
 			registerEmail,
 			registerPassword
 		} = this.state;
 
-		fetch('/api/account/signup', {
+		fetch('http://localhost:4000/api/account/signup', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				fullName: registerName,
+				name: registerName,
 				email: registerEmail,
 				password: registerPassword
 			})
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-					const now = new Date();
-					const regex1 = RegExp('localhost'); let siteUrl = '';
-					console.log(window.location.href + ", " + regex1.test(window.location.href));
-                    if(regex1.test(window.location.href)) siteUrl = config.site_url_dev; else siteUrl = config.site_url;
+					console.log("Successfull Registration.");
+					this.setState({
+						registerError: json.message
+					});
+					//const now = new Date();
+					//const regex1 = RegExp('localhost'); let siteUrl = '';
+					//console.log(window.location.href + ", " + regex1.test(window.location.href));
+                    //if(regex1.test(window.location.href)) siteUrl = config.site_url_dev; else siteUrl = config.site_url;
                     // eslint-disable-next-line
-                    window.location = siteUrl + '/check?success=casino' + '&token=' + json.token + '&id=' + json.id + '&created=' + now;
+                    //window.location = siteUrl + '/check?success=casino' + '&token=' + json.token + '&id=' + json.id + '&created=' + now;
 				} else {
                     this.setState({
 						registerError: json.message

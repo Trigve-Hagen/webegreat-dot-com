@@ -1,30 +1,39 @@
-const mysql = require('mysql');
+//const mysql = require('mysql');
 const config = require('../../config/mysqldbconfig');
+const bcrypt = require('bcryptjs');
+const moment = require('moment');
 
-const connection = mysql.createConnection({
-    host: config.host,
-    user: config.user,
-    password: config.pass,
-    database: config.name
+/*const connection = mysql.createConnection({
+    host: config.connection.name,
+    user: config.connection.user,
+    password: config.connection.pass,
+    database: config.connection.name
 });
 
 connection.connect(err => {
     if(err) {
-        return err;
+        console.log(err);
     }
-});
+});*/
 
-module.exports = (app) => {
+function generateHash(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
 
+function validatePassword(password) {
+    return bcrypt.compareSync(password, this.password);
+};
+
+module.exports = (app, connection) => {
     app.post('/api/account/signup', (req, res, next) => {
         const { body } = req;
         const {
-            fullName,
+            name,
             password
         } = body;
         let { email } = body;
 
-        if(!fullName) {
+        if(!name) {
             return res.send({
             success: false,
             message: 'Error: Name cannot be blank'
@@ -45,71 +54,68 @@ module.exports = (app) => {
 
         email = email.toLowerCase();
 
-        const CHECK_IF_USER_EXISTS = `SELECT * FROM ${config.name} WHERE ${config.tables[3].table_fields[1]}='${email}'`;
-        console.log(CHECK_IF_USER_EXISTS)
-        connection.query(CHECK_IF_USER_EXISTS, (err, results) => {
-            if(err) {
-                console.log(err);
-                //return res.send(err);
-            } else {
-                console.log(results);
-                //return res.json({
-                    //data: results
-                //})
-            }
-        });
-
-        /*User.find({
-            email: email
-        }, (err, previousUsers) => {
-            if(err) {
-                console.log(err);
-                return res.send({
-                    success: false,
-                    message: 'Error: Server Error'
-                });
-            } else if (previousUsers.length > 0) {
-                return res.send({
-                    success: false,
-                    message: 'Error: Account already exists'
-                });
-            }
-            const newUser = new User();
-    
-            newUser.email = email;
-            newUser.fullName = fullName;
-            newUser.avatarUrl = avatarUrl;
-            newUser.username = username;
-            newUser.password = newUser.generateHash(password);
-            newUser.save((err, user) => {
+        const CHECK_IF_USER_EXISTS = `SELECT 1 FROM ${config.tables[2].table_name} WHERE ${config.tables[2].table_fields[4].Field}='${email}'`;
+        console.log(CHECK_IF_USER_EXISTS);
+        try {
+            connection.query(CHECK_IF_USER_EXISTS, (err, results) => {
                 if(err) {
-                    console.log(err);
+                    exist(err);
+                    console.log("Error: in SignIn: " + err);
                     return res.send({
                         success: false,
-                        message: 'Error: Server Error'
+                        message: 'Server Error in Check User Exsists',
+                        token: null,
+                        id: null
                     });
                 } else {
-                    const userSession = new UserSession();
-                    userSession.userId = user._id;
-                    userSession.loginType = 'casino';
-                    userSession.save((err, doc) => {
-                        if(err) {
-                            console.log(err);
-                            return res.send({
-                                success: false,
-                                message: 'Error: Server Error'
-                            });
-                        }
-                        return res.send({
-                            success: true,
-                            message: 'Valid Signin',
-                            token: doc._id,
-                            id: user._id
-                        });
+                    console.log("Results: in SignIn: " + results);
+                    return res.send({
+                        success: false,
+                        message: 'User Exists',
+                        token: null,
+                        id: null
                     });
                 }
             });
-        });*/
+        } catch(e) {
+            currentTimestamp = moment().unix();//in seconds
+            let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+            //console.log(myDate);
+            //const CHECK_INSERT_INTO_USERS_DATABASE = `INSERT INTO ${config.tables[2].table_name} VALUES(DEFAULT, '${myDate}', '${myDate}', '${name}', '${email}', '${generateHash(password)}', 1);`;
+            //console.log(CHECK_INSERT_INTO_USERS_DATABASE);
+            connection.query('INSERT INTO ' + config.tables[2].table_name + ' VALUES(DEFAULT, ' + myDate + ', ' + myDate + ', ' + name + ', ' + email + ', ' + generateHash(password) + ', 1)', (err, result) => {
+                if(err) {
+                    console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in Register',
+                        token: null,
+                        id: null
+                    });
+                } else {
+                    const CHECK_INSERT_INTO_USERSESSION_DATABASE = `INSERT INTO ${config.tables[3].table_name} VALUES(DEFAULT, '${myDate}', '${myDate}', 0);`;
+                    connection.query(CHECK_INSERT_INTO_USERSESSION_DATABASE, (err, results) => {
+                        if(err) {
+                            console.log("Error: in Register Session: " + err);
+                            return res.send({
+                                success: false,
+                                message: 'Server Error in Register Session',
+                                token: null,
+                                id: null
+                            });
+                        } else {
+                            console.log("Results: in SignIn: " + results);
+                            return res.send({
+                                success: true,
+                                message: 'Valid Signin',
+                                token: results.insertId,
+                                id: result.insertId
+                            });
+                        }
+                    });
+                }
+            });
+        }
     });
 
     app.post('/api/account/signin', (req, res, next) => {
