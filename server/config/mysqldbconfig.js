@@ -7,109 +7,6 @@ module.exports = {
     },
     tables: [
         {
-            table_name: 'users',
-            table_fields: [
-                {
-                    Field: 'userid',
-                    Type: 'int(11)',
-                    Null: 'NOT NULL',
-                    Key: 'PRI',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'email',
-                    Type: 'varchar(255)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'name',
-                    Type: 'varchar(255)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'password',
-                    Type: 'varchar(255)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                }
-            ]
-        },
-        {
-            table_name: 'usersessions',
-            table_fields: [
-                {
-                    Field: 'usersessionid',
-                    Type: 'int(11)',
-                    Null: 'NOT NULL',
-                    Key: 'PRI',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'created_at',
-                    Type: 'date',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'updated_at',
-                    Type: 'date',
-                    Null: 'NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'if_deleted',
-                    Type: 'int(1)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                }
-            ]
-        },
-        {
-            table_name: 'userroles',
-            table_fields: [
-                {
-                    Field: 'userrolesid',
-                    Type: 'int',
-                    Null: 'NOT NULL',
-                    Key: 'PRI',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'name',
-                    Type: 'varchar(255)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'role',
-                    Type: 'int(1)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                }
-            ]
-        },
-        {
             table_name: 'products',
             table_fields: [
                 {
@@ -118,29 +15,29 @@ module.exports = {
                     Null: 'NOT NULL',
                     Key: 'PRI',
                     Default: null,
-                    Extra: ''
+                    Extra: 'AUTO_INCREMENT'
                 },
                 {
                     Field: 'created_at',
-                    Type: 'date',
+                    Type: 'TIMESTAMP',
                     Null: 'NOT NULL',
                     Key: '',
-                    Default: null,
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
                     Extra: ''
                 },
                 {
                     Field: 'updated_at',
-                    Type: 'date',
+                    Type: 'TIMESTAMP',
                     Null: 'NOT NULL',
                     Key: '',
-                    Default: null,
-                    Extra: ''
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: 'ON UPDATE CURRENT_TIMESTAMP'
                 },
                 {
                     Field: 'user_id',
                     Type: 'int(11)',
                     Null: 'NOT NULL',
-                    Key: 'FOR',
+                    Key: '',
                     Default: null,
                     Extra: ''
                 },
@@ -171,6 +68,133 @@ module.exports = {
                 {
                     Field: 'price',
                     Type: 'varchar(25)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                }
+            ]
+        },
+        {
+            table_name: 'userroles',
+            table_fields: [
+                {
+                    Field: 'userrolesid',
+                    Type: 'int(11)',
+                    Null: 'NOT NULL',
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: 'AUTO_INCREMENT'
+                },
+                {
+                    Field: 'name',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'role',
+                    Type: 'int(1)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                }
+            ]
+        },
+        {
+            table_name: 'users',
+            table_fields: [
+                {
+                    Field: 'userid',
+                    Type: 'int(11)',
+                    Null: 'NOT NULL',
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: 'AUTO_INCREMENT'
+                },
+                {
+                    Field: 'created_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: ''
+                },
+                {
+                    Field: 'updated_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: 'ON UPDATE CURRENT_TIMESTAMP'
+                },
+                {
+                    Field: 'name',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'email',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'password',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'role',
+                    Type: 'int(1)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT 1',
+                    Extra: ''
+                }
+            ]
+        },
+        {
+            table_name: 'usersessions',
+            table_fields: [
+                {
+                    Field: 'usersessionid',
+                    Type: 'int(11)',
+                    Null: 'NOT NULL',
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: 'AUTO_INCREMENT'
+                },
+                {
+                    Field: 'created_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: ''
+                },
+                {
+                    Field: 'updated_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: 'ON UPDATE CURRENT_TIMESTAMP'
+                },
+                {
+                    Field: 'if_deleted',
+                    Type: 'int(1)',
                     Null: 'NOT NULL',
                     Key: '',
                     Default: null,

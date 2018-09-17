@@ -7,7 +7,6 @@ class Register extends React.Component {
 		this.state = {
 			registerError: '',
 			registerName: '',
-			registerUsername: '',
 			registerEmail: '',
 			registerPassword: ''
 		}
@@ -24,7 +23,6 @@ class Register extends React.Component {
 		e.preventDefault();
 		const {
 			registerName,
-			registerUsername,
 			registerEmail,
 			registerPassword
 		} = this.state;
@@ -36,9 +34,7 @@ class Register extends React.Component {
 			},
 			body: JSON.stringify({
 				fullName: registerName,
-				avatarUrl: '',
 				email: registerEmail,
-				username: registerUsername,
 				password: registerPassword
 			})
 		}).then(res => res.json())
@@ -59,7 +55,7 @@ class Register extends React.Component {
 	}
 
     render() {
-        const { registerEmail, registerError, registerName, registerPassword, registerUsername } = this.state;
+        const { registerEmail, registerError, registerName, registerPassword } = this.state;
         return (
             <div className="container">
                 <div className="row">
@@ -75,9 +71,6 @@ class Register extends React.Component {
                         <form name="register" onSubmit={this.onSubmit}>
                             <fieldset className="form-group">
                                 <input value={registerName} onChange={this.onChange} type="text" name="registerName" className="form-element" id="registerName" placeholder="Full Name"/>
-                            </fieldset>
-                            <fieldset className="form-group">
-                                <input value={registerUsername} onChange={this.onChange} type="text" name="registerUsername" className="form-element" id="registerUsername" placeholder="Username"/>
                             </fieldset>
                             <fieldset className="form-group">
                                 <input value={registerEmail} onChange={this.onChange} type="email" name="registerEmail" className="form-element" id="registerEmail" placeholder="someone@somewhere.com"/>

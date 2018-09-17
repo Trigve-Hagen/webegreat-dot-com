@@ -78,12 +78,9 @@ module.exports = function(database, config, connection) {
                 let queryString = `CREATE TABLE IF NOT EXISTS ${table_name}(`; let count = 0; let ifPri = false; let priField = '';
                 element.table_fields.forEach(field => {
                     if(field.Key == 'PRI') {
-                        queryString += `${field.Field} ${field.Type.toUpperCase()} NOT NULL AUTO_INCREMENT, `; ifPri = true; priField = field.Field;
-                    }
-                    if(field.Type == 'date' && field.Field == 'created_at') queryString += `${field.Field} TIMESTAMP DEFAULT CURRENT_TIMESTAMP, `;
-                    if(field.Type == 'date' && field.Field == 'updated_at') queryString += `${field.Field} TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, `;
-                    if(field.Type != 'date' &&  field.Key != 'PRI') {
-                        queryString += `${field.Field} ${field.Type.toUpperCase()} ${field.Null}, `;
+                        queryString += `${field.Field} ${field.Type} ${field.Null} ${field.Extra}, `; ifPri = true; priField = field.Field;
+                    } else {
+                        queryString += `${field.Field} ${field.Type} ${field.Null} ${field.Default} ${field.Extra}, `;
                     }
                     if(count == element.table_fields.length - 1) {
                         if(ifPri) queryString += `PRIMARY KEY (${priField}));`;
@@ -116,6 +113,43 @@ module.exports = function(database, config, connection) {
         });
     }
 
+    // what if they want to update the names for tighter security
+    function addInitialRows(configObject) {
+        configObject.forEach(element => {
+            if(element.table_name == 'userroles') {
+                // basic, unlimited, admin
+                const userRoles = [
+                    `INSERT INTO ${element.table_name} VALUES(1, 'basic', 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(2, 'unlimited', 2);`,
+                    `INSERT INTO ${element.table_name} VALUES(3, 'admin', 3);`
+                ];
+                userRoles.forEach(insert => {
+                    connection.query(insert, (error, results) => {
+                        if(error) {
+                            console.log(error);
+                            //return res.send(error);
+                        } else {
+                            console.log(results);
+                        }
+                    });
+                });
+            }
+            /*if(element.table_name == 'users') {
+                // basic, unlimited, admin
+                const ADMIN_USER = `INSERT INTO users VALUES(1, 'basic', 3);`;
+                    connection.query(insert, (error, results) => {
+                        if(error) {
+                            console.log(error);
+                            //return res.send(error);
+                        } else {
+                            console.log(results);
+                        }
+                    });
+                });
+            }*/
+        });
+    }
+
     module.buildTables = function(req, res) {
         const GET_DATABASE_TABLES = `SELECT table_name FROM information_schema.tables where table_schema='${database}';`;
         connection.query(GET_DATABASE_TABLES, (err, results) => {
@@ -125,6 +159,7 @@ module.exports = function(database, config, connection) {
             } else {
                 if(results[0] == undefined) {
                     addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
+                    addInitialRows(tablesAndRowsConfig.sort(compare));
                 } else {
                     results.forEach(element => {
                         const GET_COLUMN_NAMES = `DESCRIBE ${element.table_name};`;
@@ -137,8 +172,9 @@ module.exports = function(database, config, connection) {
                                     table_name: element.table_name,
                                     table_fields: rowResults
                                 });
-                                //console.log(tablesAndRowsDb.length + ', ' + results.length);
                                 if(tablesAndRowsDb.length == results.length) {
+                                    console.log(tablesAndRowsDb);
+                                    console.log(tablesAndRowsConfig);
                                     addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
                                     addAndRemoveRows(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
                                 }

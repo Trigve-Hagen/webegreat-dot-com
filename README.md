@@ -120,16 +120,16 @@ In a minute I will update npm Modules and the scripts in package.json to start t
 This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js. There is only creating and dropping databases at the moment. I will work on it futher in the future.
 
 `Fields`<br>
-Put all fields in for each row. They all follow the mysql database schema except Null.<br>
-created_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP<br>
-updated_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+Put all fields in for each row. They all follow the mysql database schema except Null and Key.
+No Foriegn Key at the moment and just NULL and NOT NULL. PRIMARY KEYS are also as is.
+You can get layouts for PRIMARY KEYS and TIMESTAMP from the code. They are all that has been tested.
 
-* `Field: 'productid'` - name of row
-* `Type: 'int(11)'` - int, varchar, text, etc...
-* `Null: 'NOT NULL'` - NULL, or NOT NULL
-* `Key: 'PRI'` - only using PRI or ''
-* `Default: null` - Not sure if this will put a default value in it yet. I didn't code it to.
-* `Extra: ''` - Didn't code for this yet.
+* `Field: 'productid'` - userid, name, created_at, updated_at, etc...
+* `Type: 'int(11)'` - int(11), varchar(255), text, timestamp, etc...
+* `Null: 'NOT NULL'` - NULL or NOT NULL
+* `Key: 'PRI'` - PRI or ''
+* `Default: null` - DEFAULT 1, DEFAULT CURRENT_TIMESTAMP, etc...
+* `Extra: 'AUTO_INCREMENT'` - AUTO_INCREMENT, ON UPDATE CURRENT_TIMESTAMP, etc...
 
 `CAUTION`<br>
 When you erase from the array of objects you delete the corresponding tables in the database and loose any data you might have in it. Be carefull!
