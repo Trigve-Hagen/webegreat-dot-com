@@ -107,7 +107,7 @@ See the section about [deployment](#deployment) for more information.
 
 for now cd inside server from the root at webegreat-dot-com and run node index.js to start the server.
 
-### `Arm Class`
+## Arm Class
 
 The Arm stands for Array to Relational Database Mapping. Like ORM Object Relational Database Mapping it compares a data structure to the schema and update the database when A change is made to the data structure. Thus allowing you to work on your code without having to go back and forth to the database.
 
@@ -120,11 +120,11 @@ This is called in index.js and kicks off the build database script. It gets pass
 
 * CAUTION - When you erase from the array of objects you delete the corresponding tables and rows in the database and loose any data you might have in it. Be carefull!
 
-### `Architecture Plans`
+## Architecture Plans
 
 All Components will house all code included in a component including main component, secondary components related to the main component, reducer, css, server code file, routing file, and Arm config file that will be consolidated into single blocks of code and object arrays on page load. This will allow developers to create Modules that we can just call Components based on the ideal behind this framework.
 
-### `Credits`
+## Credits
 
 People who have little bits of code in here but do not know it. Hehe. Learned alot from them.
 
