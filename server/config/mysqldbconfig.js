@@ -13,7 +13,7 @@ module.exports = {
                     Field: 'userid',
                     Type: 'int(11)',
                     Null: 'NOT NULL',
-                    Key: '',
+                    Key: 'PRI',
                     Default: null,
                     Extra: ''
                 },
@@ -50,7 +50,7 @@ module.exports = {
                     Field: 'usersessionid',
                     Type: 'int(11)',
                     Null: 'NOT NULL',
-                    Key: '',
+                    Key: 'PRI',
                     Default: null,
                     Extra: ''
                 },
@@ -131,7 +131,7 @@ module.exports = {
                 {
                     Field: 'updated_at',
                     Type: 'date',
-                    Null: 'yes',
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''

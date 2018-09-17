@@ -4,7 +4,7 @@ What I intend to create is a CMS style e-commerce store that can use components 
 
 Below you will find some information on how to perform common tasks and folder stucture of webegreat-dot-com. I haven't got much done yet so I haven't uploaded it to webegreat.com yet. It will use Twitter Bootstrap but you can change it to Material Ui, or Semantic UI or some other framework you like working with. I will work hard to keep each component in the tradition of a fully self contained component that is as loosly coupled to the rest of the application as possible.<br>
 
-To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see how the back end is comming along. I just also added `npm run server-start` to start them both. Run this one from webegreat.com. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
+To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. You might have to delete the package-lock.json to run npm install. If nothing gets downloaded erase it and try again. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see how the back end is comming along. I just also added `npm run server-start` to start them both. Run this one from webegreat.com. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
 
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
@@ -27,9 +27,7 @@ After creation, your project should look like this:
 
 ```
 my-app/
-  README.md
   node_modules/
-  package.json
   public/
     index.html
     favicon.ico
@@ -51,12 +49,15 @@ my-app/
         index.js
         other-related.js
         reducer.js
-    App.css
-    App.js
-    App.test.js
-    index.css
-    index.js
-    logo.svg
+      App.js
+      App.test.js
+      index.css
+      index.js
+    .babelrc
+    package-lock.json
+    package.json
+    README.md
+    webpack.config.js
 ```
 
 For the project to build, **these files must exist with exact filenames**:
@@ -117,6 +118,19 @@ In a minute I will update npm Modules and the scripts in package.json to start t
 * mysqlhelpers.buildTables();
 
 This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js. There is only creating and dropping databases at the moment. I will work on it futher in the future.
+
+`Fields`<br>
+Put all fields in for each row. They all follow the mysql database schema except Null.<br>
+created_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+
+* Field: 'productid', - name of row
+* Type: 'int(11)', - int, varchar, text, etc...
+* Null: 'NOT NULL', - NULL, or NOT NULL
+* Key: 'PRI', - only using PRI or ''
+* Default: null, - Not sure if this will put a default value in it yet. I didn't code it to.
+* Extra: '' - Didn't code for this yet.
+
 
 * CAUTION - When you erase from the array of objects you delete the corresponding tables in the database and loose any data you might have in it. Be carefull!
 

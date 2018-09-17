@@ -77,20 +77,21 @@ module.exports = function(database, config, connection) {
             if(element.table_name == table_name) {
                 let queryString = `CREATE TABLE IF NOT EXISTS ${table_name}(`; let count = 0; let ifPri = false; let priField = '';
                 element.table_fields.forEach(field => {
-                    if(field.Field == 'ID' && field.Key == 'PRI') {
+                    if(field.Key == 'PRI') {
                         queryString += `${field.Field} ${field.Type.toUpperCase()} NOT NULL AUTO_INCREMENT, `; ifPri = true; priField = field.Field;
                     }
-                    if(field.Type == 'date') queryString += `${field.Field} TIMESTAMP ${field.Null} DEFAULT CURRENT_TIMESTAMP, `;
+                    if(field.Type == 'date' && field.Field == 'created_at') queryString += `${field.Field} TIMESTAMP DEFAULT CURRENT_TIMESTAMP, `;
+                    if(field.Type == 'date' && field.Field == 'updated_at') queryString += `${field.Field} TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, `;
                     if(field.Type != 'date' &&  field.Key != 'PRI') {
-                        if(count == element.table_fields.length - 1 ) queryString += `${field.Field} ${field.Type.toUpperCase()} ${field.Null} `;
-                        else queryString += `${field.Field} ${field.Type.toUpperCase()} ${field.Null}, `;
+                        queryString += `${field.Field} ${field.Type.toUpperCase()} ${field.Null}, `;
                     }
                     if(count == element.table_fields.length - 1) {
-                        if(ifPri) queryString += `PRIMARY KEY (${priField}))`;
-                        else queryString += `)`;
+                        if(ifPri) queryString += `PRIMARY KEY (${priField}));`;
+                        else queryString += `);`;
                     }
                     count++;
                 });
+                //console.log(queryString);
                 connection.query(queryString, (error, results) => {
                     if(error) {
                         console.log(error);
@@ -104,7 +105,7 @@ module.exports = function(database, config, connection) {
     }
 
     function removeTables(table_name) {
-        let queryString = `DROP TABLE IF EXISTS ${table_name}`;
+        let queryString = `DROP TABLE IF EXISTS ${table_name};`;
         connection.query(queryString, (error, results) => {
             if(error) {
                 console.log(error);
@@ -122,25 +123,29 @@ module.exports = function(database, config, connection) {
                 console.log(err);
                 //return res.send(err);
             } else {
-                results.forEach(element => {
-                    const GET_COLUMN_NAMES = `DESCRIBE ${element.table_name};`;
-                    connection.query(GET_COLUMN_NAMES, (error, rowResults) => {
-                        if(error) {
-                            console.log(error);
-                            //return res.send(error);
-                        } else {
-                            tablesAndRowsDb.push({
-                                table_name: element.table_name,
-                                table_fields: rowResults
-                            });
-                            //console.log(tablesAndRowsDb.length + ', ' + results.length);
-                            if(tablesAndRowsDb.length == results.length) {
-                                addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
-                                addAndRemoveRows(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
+                if(results[0] == undefined) {
+                    addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
+                } else {
+                    results.forEach(element => {
+                        const GET_COLUMN_NAMES = `DESCRIBE ${element.table_name};`;
+                        connection.query(GET_COLUMN_NAMES, (error, rowResults) => {
+                            if(error) {
+                                console.log(error);
+                                //return res.send(error);
+                            } else {
+                                tablesAndRowsDb.push({
+                                    table_name: element.table_name,
+                                    table_fields: rowResults
+                                });
+                                //console.log(tablesAndRowsDb.length + ', ' + results.length);
+                                if(tablesAndRowsDb.length == results.length) {
+                                    addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
+                                    addAndRemoveRows(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
+                                }
                             }
-                        }
+                        });
                     });
-                });
+                }
                 //return res.json({
                     //data: results
                 //});
