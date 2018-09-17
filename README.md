@@ -121,16 +121,15 @@ This is called in index.js and kicks off the build database script. It gets pass
 
 `Fields`<br>
 Put all fields in for each row. They all follow the mysql database schema except Null.<br>
-created_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-updated_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+created_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP<br>
+updated_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 
-* Field: 'productid', - name of row
-* Type: 'int(11)', - int, varchar, text, etc...
-* Null: 'NOT NULL', - NULL, or NOT NULL
-* Key: 'PRI', - only using PRI or ''
-* Default: null, - Not sure if this will put a default value in it yet. I didn't code it to.
+* Field: 'productid' - name of row
+* Type: 'int(11)' - int, varchar, text, etc...
+* Null: 'NOT NULL' - NULL, or NOT NULL
+* Key: 'PRI' - only using PRI or ''
+* Default: null - Not sure if this will put a default value in it yet. I didn't code it to.
 * Extra: '' - Didn't code for this yet.
-
 
 * CAUTION - When you erase from the array of objects you delete the corresponding tables in the database and loose any data you might have in it. Be carefull!
 
