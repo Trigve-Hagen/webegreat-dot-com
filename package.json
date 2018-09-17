@@ -25,6 +25,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --port 4000 --compress --mode development",
+    "server-start": "node server/index.js & npm start",
     "build": "webpack --mode production --progress"
   },
   "devDependencies": {

@@ -4,7 +4,7 @@ What I intend to create is a CMS style e-commerce store that can use components 
 
 Below you will find some information on how to perform common tasks and folder stucture of webegreat-dot-com. I haven't got much done yet so I haven't uploaded it to webegreat.com yet. It will use Twitter Bootstrap but you can change it to Material Ui, or Semantic UI or some other framework you like working with. I will work hard to keep each component in the tradition of a fully self contained component that is as loosly coupled to the rest of the application as possible.<br>
 
-To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see how the back end is comming along. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
+To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see how the back end is comming along. I just also added `npm run server-start` to start them both. Run this one from webegreat.com. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
 
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
@@ -15,7 +15,7 @@ You can find the most recent version of create-react-app guide [here](https://gi
   - [npm start](#npm-start)
   - [npm test](#npm-test)
   - [npm build](#npm-run-build)
-  - [cd server && node index.js](#cd-server-&&-node-index.js)
+  - [npm run server-start](#npm-run-server-start)
 - [Arm Class](#arm-class)
 - [Architecture Plans](#architecture-plans)
 - [Credits](#credits)
@@ -103,9 +103,9 @@ Your app is ready to be deployed!
 
 See the section about [deployment](#deployment) for more information.
 
-### `cd server && node index.js`
+### `npm run server-start`
 
-for now cd inside server from the root at webegreat-dot-com and run node index.js to start the server.
+run from root to start both the front end and server.
 
 ## Arm Class
 
@@ -116,9 +116,9 @@ In a minute I will update npm Modules and the scripts in package.json to start t
 * const mysqlhelpers = require('./config/mysqldbhelpers')(config.connection.name, config, connection);
 * mysqlhelpers.buildTables();
 
-This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js.
+This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js. There is only creating and dropping databases at the moment. I will work on it futher in the future.
 
-* CAUTION - When you erase from the array of objects you delete the corresponding tables and rows in the database and loose any data you might have in it. Be carefull!
+* CAUTION - When you erase from the array of objects you delete the corresponding tables in the database and loose any data you might have in it. Be carefull!
 
 ## Architecture Plans
 
