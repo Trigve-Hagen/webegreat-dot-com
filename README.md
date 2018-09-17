@@ -4,6 +4,8 @@ What I intend to create is a CMS style e-commerce store that can use components 
 
 Below you will find some information on how to perform common tasks and folder stucture of webegreat-dot-com. I haven't got much done yet so I haven't uploaded it to webegreat.com yet. It will use Twitter Bootstrap but you can change it to Material Ui, or Semantic UI or some other framework you like working with. I will work hard to keep each component in the tradition of a fully self contained component that is as loosly coupled to the rest of the application as possible.<br>
 
+To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see hoow the back end is comming along. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
+
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
 ## Table of Contents
@@ -13,9 +15,10 @@ You can find the most recent version of create-react-app guide [here](https://gi
   - [npm start](#npm-start)
   - [npm test](#npm-test)
   - [npm build](#npm-run-build)
-  - for now cd inside server and run node index.js to start the server.
+  - [cd server && node index.js](#cd-server-&&-node-index.js)
 - [Arm Class](#arm-class)
 - [Architecture Plans](#architecture-plans)
+- [Credits](#credits)
 
 
 ## Folder Structure
@@ -80,7 +83,7 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://localhost:4000](http://localhost:4000) to view it in the browser.
 
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
@@ -100,6 +103,10 @@ Your app is ready to be deployed!
 
 See the section about [deployment](#deployment) for more information.
 
+### `cd server && node index.js`
+
+for now cd inside server from the root at webegreat-dot-com and run node index.js to start the server.
+
 ### `Arm Class`
 
 The Arm stands for Array to Relational Database Mapping. Like ORM Object Relational Database Mapping it compares a data structure to the schema and update the database when A change is made to the data structure. Thus allowing you to work on your code without having to go back and forth to the database.
@@ -116,3 +123,16 @@ This is called in index.js and kicks off the build database script. It gets pass
 ### `Architecture Plans`
 
 All Components will house all code included in a component including main component, secondary components related to the main component, reducer, css, server code file, routing file, and Arm config file that will be consolidated into single blocks of code and object arrays on page load. This will allow developers to create Modules that we can just call Components based on the ideal behind this framework.
+
+### `Credits`
+
+People who have little bits of code in here but do not know it. Hehe. Learned alot from them.
+
+`Keith Weaver`
+https://github.com/keithweaver/MERN-boilerplate
+https://www.youtube.com/channel/UCK4Onn_G6hYTQyo6tC3XY1w
+`React-U`
+https://github.com/react-u/
+https://www.youtube.com/c/reactuniversity
+`Code Realm`
+https://www.youtube.com/channel/UCUDLFXXKG6zSA1d746rbzLQ
