@@ -131,7 +131,8 @@ updated_at with Type: 'date' = TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CUR
 * Default: null - Not sure if this will put a default value in it yet. I didn't code it to.
 * Extra: '' - Didn't code for this yet.
 
-* CAUTION - When you erase from the array of objects you delete the corresponding tables in the database and loose any data you might have in it. Be carefull!
+`CAUTION`<br>
+When you erase from the array of objects you delete the corresponding tables in the database and loose any data you might have in it. Be carefull!
 
 ## Architecture Plans
 
