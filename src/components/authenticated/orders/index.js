@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Navigation from '../../navigation';
+import Footer from '../../footer';
 
 class Orders extends React.Component {
     constructor(props) {
@@ -22,8 +23,13 @@ class Orders extends React.Component {
             <div>
                 <Navigation path={path} authenticated={authenticated}/>
                 <div className="container">
-                    <h1>Orders Page</h1>
+                    <div className="row space-top-20px space-bottom-50px">
+                        <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
+                            <h1>Orders Page</h1>
+                        </div>
+                    </div>
                 </div>
+                <Footer />
             </div>
         )
     }

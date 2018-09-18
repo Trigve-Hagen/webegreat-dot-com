@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Navigation from '../navigation';
+import Footer from '../footer';
 
 /*export const cartItemsWithQuantities = (cartItems) => {
     return cartItems.reduce((acc, item) => {
@@ -31,30 +32,35 @@ class Cart extends React.Component {
             <div>
                 <Navigation path={path} authenticated={authenticated}/>
                 <div className="container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Quality</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                sort(this.props.cart).map( item => <tr key={item.id}>
-                                    <td>{ item.name }</td>
-                                    <td>{ item.quantity }</td>
-                                    <td>
-                                        <button onClick={() => this.props.addToCart(item)}>+</button>
-                                        <button onClick={() => this.props.removeFromCart(item)}>-</button>
-                                    </td>
-                                    <td><button onClick={() => this.props.removeAllFromCart(item)}>Remove All</button></td>
-                                </tr>)
-                            }
-                        </tbody>
-                    </table>
+                    <div className="row space-top-50px space-bottom-50px">
+                        <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quality</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        sort(this.props.cart).map( item => <tr key={item.id}>
+                                            <td>{ item.name }</td>
+                                            <td>{ item.quantity }</td>
+                                            <td>
+                                                <button onClick={() => this.props.addToCart(item)}>+</button>
+                                                <button onClick={() => this.props.removeFromCart(item)}>-</button>
+                                            </td>
+                                            <td><button onClick={() => this.props.removeAllFromCart(item)}>Remove All</button></td>
+                                        </tr>)
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+                <Footer />
             </div>
         )
     }

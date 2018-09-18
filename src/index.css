@@ -44,6 +44,39 @@ a, a:active, a:focus {
   left: 100;
 }
 
+.space-bottom-50px {
+  margin-bottom: 50px;
+}
+
+.space-top-50px {
+  margin-top: 50px;
+}
+
+.space-top-20px {
+  margin-top: 20px;
+}
+
+.footer-para-text {
+  margin-top: 30px;
+  padding-left: 20px;
+  color: #dddddd;
+  font-size: 16px;
+}
+
+.footer-list-text {
+  list-style: none;
+}
+
+.footer-link-text {
+  color: #dddddd;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.navbar{
+  border-radius:0 !important;
+}
+
 @media (min-width: 768px) {
   .text {
     position: absolute;

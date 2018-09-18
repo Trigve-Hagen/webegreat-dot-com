@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import ProductListing from '../product-listing';
 import products from '../../data/products';
 import Navigation from '../navigation';
+import Footer from '../footer';
 
 class Home extends React.Component {
     constructor(props) {
@@ -25,6 +26,7 @@ class Home extends React.Component {
                 <div className="container">
                     <ProductListing products={products}/>
                 </div>
+                <Footer />
             </div>
         )
     }

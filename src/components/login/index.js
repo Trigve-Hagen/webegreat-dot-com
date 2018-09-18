@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import config from '../../config/config';
 import { connect } from 'react-redux';
 import Navigation from '../navigation';
+import Footer from '../footer';
 
 class Login extends React.Component {
     constructor(props) {
@@ -64,30 +65,35 @@ class Login extends React.Component {
             <div>
                 <Navigation path={path} authenticated={authenticated}/>
                 <div className="container">
-                    <div className="row">
-                        <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
-                        </div>
-                        <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
-                            <form name="login" onSubmit={this.onSubmit}>
-                                <h3>Login</h3>
-                                {
-                                    (loginError) ? (
-                                        <label>{loginError}</label>
-                                    ) : (null)
-                                }
-                                <fieldset className="form-group">
-                                    <input type="text" value={loginEmail} onChange={this.onChange} name="loginEmail" className="form-element" id="loginEmail" placeholder="Email"/>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <input type="password" value={loginPassword} onChange={this.onChange} name="loginPassword" className="form-element" id="loginPassword" placeholder="Password"/>
-                                </fieldset>
-                                <button type="submit" className="btn btn-army" >Login</button>
-                            </form>
-                        </div>
-                        <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
+                    <div className="row space-top-20px space-bottom-50px">
+						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+							<h1>Login</h1>
+							<div className="row">
+                                <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
+                                </div>
+                                <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+                                    <form name="login" onSubmit={this.onSubmit}>
+                                        {
+                                            (loginError) ? (
+                                                <label>{loginError}</label>
+                                            ) : (null)
+                                        }
+                                        <fieldset className="form-group">
+                                            <input type="text" value={loginEmail} onChange={this.onChange} name="loginEmail" className="form-element" id="loginEmail" placeholder="Email"/>
+                                        </fieldset>
+                                        <fieldset className="form-group">
+                                            <input type="password" value={loginPassword} onChange={this.onChange} name="loginPassword" className="form-element" id="loginPassword" placeholder="Password"/>
+                                        </fieldset>
+                                        <button type="submit" className="btn btn-army" >Login</button>
+                                    </form>
+                                </div>
+                                <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <Footer />
             </div>
         )
     }
