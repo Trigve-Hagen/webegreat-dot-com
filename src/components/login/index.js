@@ -24,7 +24,7 @@ class Login extends React.Component {
             loginPassword,
 		} = this.state;
 
-		fetch('/api/account/signin', {
+		fetch('http://localhost:4000/api/account/signin', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -36,12 +36,16 @@ class Login extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-                    const now = new Date();
-                    const regex1 = RegExp('localhost'); let siteUrl = '';
-					console.log(window.location.href + ", " + regex1.test(window.location.href));
-                    if(regex1.test(window.location.href)) siteUrl = config.site_url_dev; else siteUrl = config.site_url;
+                    console.log("Successfull SignIn.");
+					this.setState({
+						loginError: json.message
+					});
+                    //const now = new Date();
+                    //const regex1 = RegExp('localhost'); let siteUrl = '';
+					//console.log(window.location.href + ", " + regex1.test(window.location.href));
+                    //if(regex1.test(window.location.href)) siteUrl = config.site_url_dev; else siteUrl = config.site_url;
                     // eslint-disable-next-line
-                    window.location = siteUrl + '/check?success=casino' + '&token=' + json.token + '&id=' + json.id + '&created=' + now;
+                    //window.location = siteUrl + '/check?success=casino' + '&token=' + json.token + '&id=' + json.id + '&created=' + now;
                     //window.location = config.site_url + '/check?success=casino' + '&token=' + json.token + '&id=' + json.id + '&created=' + now;
 				} else {
                     this.setState({
