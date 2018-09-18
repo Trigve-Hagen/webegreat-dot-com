@@ -17,7 +17,7 @@ class Products extends React.Component {
     }
 
     render() {
-        const { path } = this.state;
+        const { path, authenticated } = this.state;
         return (
             <div>
                 <Navigation path={path} authenticated={authenticated}/>
