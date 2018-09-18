@@ -1,5 +1,6 @@
 import React from 'react';
-import config from '../../config/config'
+import config from '../../config/config';
+import { connect } from 'react-redux';
 
 class Login extends React.Component {
     constructor(props) {
@@ -87,4 +88,18 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+function mapStateToProps(state) {
+    return {
+        authentication: state.authentication
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        updateAuth: (value) => {
+            dispatch( { type: 'UPDATE_AUTH', payload: value} )
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

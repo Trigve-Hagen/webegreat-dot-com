@@ -1,5 +1,6 @@
 import React from 'react';
-import config from '../../config/config'
+import config from '../../config/config';
+import { connect } from 'react-redux';
 
 class Register extends React.Component {
     constructor(props) {
@@ -94,4 +95,18 @@ class Register extends React.Component {
     }
 }
 
-export default Register;
+function mapStateToProps(state) {
+    return {
+        authentication: state.authentication
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        updateAuth: (value) => {
+            dispatch( { type: 'UPDATE_AUTH', payload: value} )
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

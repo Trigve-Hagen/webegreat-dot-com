@@ -177,6 +177,14 @@ module.exports = {
                     Extra: 'AUTO_INCREMENT'
                 },
                 {
+                    Field: 'user_id',
+                    Type: 'int(11)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
                     Field: 'created_at',
                     Type: 'TIMESTAMP',
                     Null: 'NOT NULL',

@@ -94,6 +94,7 @@ app.post('/api/account/signup', (req, res, next) => {
                 var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1)";
                 var inserts = [config.tables[2].table_name, myDate, myDate, name, email, generateHash(password)];
                 insertUserIfNonExists = mysql.format(insertUserIfNonExists, inserts);
+                //console.log(insertUserIfNonExists);
                 connection.query(insertUserIfNonExists, function (err, result, fields) {
                     if(err) {
                         //console.log("Error: in Register New User: " + err);
@@ -104,8 +105,9 @@ app.post('/api/account/signup', (req, res, next) => {
                             id: null
                         });
                     } else {
-                        var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, 0)";
-                        var inserts = [config.tables[3].table_name, myDate, myDate];
+                        //console.log(result.insertId);
+                        var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                        var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
                         insertUserSession = mysql.format(insertUserSession, inserts);
                         connection.query(insertUserSession, function (error, results, fields) {
                             if(error) {
@@ -172,8 +174,8 @@ app.post('/api/account/signin', (req, res, next) => {
                     currentTimestamp = moment().unix();//in seconds
                     let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                    var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, 0)";
-                    var inserts = [config.tables[3].table_name, myDate, myDate];
+                    var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                    var inserts = [config.tables[3].table_name, results[0].userid, myDate, myDate];
                     insertUserSession = mysql.format(insertUserSession, inserts);
                     connection.query(insertUserSession, function (error, result, fields) {
                         if(error) {
@@ -190,7 +192,7 @@ app.post('/api/account/signin', (req, res, next) => {
                                 success: true,
                                 message: 'Successfull SignIn',
                                 token: result.insertId,
-                                id: results.insertId
+                                id: results[0].userid
                             });
                         }
                     });
@@ -208,35 +210,41 @@ app.post('/api/account/signin', (req, res, next) => {
     });
 });
 
-/*app.get('/api/account/verify', (req, res, next) => {
+app.get('/api/account/verify', (req, res, next) => {
     const { query } = req;
     const { token } = query;
 
-    UserSession.find({
-        _id: token,
-        isDeleted: false
-    }, (err, sessions) => {
-        if(err) {
+    let testForExistingSession = "SELECT * FROM ?? WHERE ?? = ? AND ?? = 0";
+    let inserts = [config.tables[3].table_name, config.tables[3].table_fields[0].Field, token, config.tables[3].table_fields[3].Field];
+    testForExistingSession = mysql.format(testForExistingSession, inserts);
+    //console.log(testForExistingUser);
+    connection.query(testForExistingSession, function (error, results, fields) {
+        if(error) {
+            //console.log("Error: in SignIn: " + error);
             return res.send({
                 success: false,
-                message: 'Error: Server Error'
-            });
-        }
-        if(sessions.length != 1) {
-            return res.send({
-                success: false,
-                message: 'Error: Multiple users'
+                message: 'Server Error in Check User Exsists',
+                token: null,
+                id: null
             });
         } else {
-            return res.send({
-                success: true,
-                message: 'Verified'
-            });
+            if(results.length != 1) {
+                return res.send({
+                    success: false,
+                    message: 'Invalid Session. Please Sign In.'
+                });
+            } else {
+                //console.log("Results: in SignIn: Please Register");
+                return res.send({
+                    success: true,
+                    message: 'Session Valid.'
+                });
+            }
         }
     });
 });
 
-app.get('/api/account/logout', (req, res, next) => {
+/*app.get('/api/account/logout', (req, res, next) => {
     const { query } = req;
     const { token } = query;
 

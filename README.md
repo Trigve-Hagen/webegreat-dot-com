@@ -33,10 +33,6 @@ my-app/
     favicon.ico
   server/
     config/
-    server-routes/
-      api/
-        starter-server-modules.js
-      index.js
     index.js
   src/
     assets/

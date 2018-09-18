@@ -7,16 +7,18 @@ class Navigation extends React.Component {
         super(props)
         this.state = {
             path: '',
+            authenticated: false
         }
     }
 
     componentDidMount() {
-        this.props.updatePath(window.location.pathname);
+        this.props.updatePath( window.location.pathname );
         this.setState({ path: window.location.pathname });
     }
 
     render() {
         const count = this.props.cart.length;
+        const path = this.state.path;
         return (
             <nav className="navbar navbar-inverse navbar-static-top">
                 <div className="container-fluid">
@@ -33,18 +35,18 @@ class Navigation extends React.Component {
                     <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul className="nav navbar-nav">
                         {
-                            window.location.pathname === '/'
+                            this.state.path === '/'
                                 ? <li className="active"><NavLink to='/'>Home</NavLink></li>
                                 : <li><NavLink to='/'>Home</NavLink></li>
                         }
                         {
-                            window.location.pathname === '/about'
+                            this.state.path === '/about'
                                 ? <li className="active"><NavLink to='/about'>About</NavLink></li>
                                 : <li><NavLink to='/about'>About</NavLink></li>
                         }
                         {
                             count > 0 ?
-                                window.location.pathname === '/cart'
+                                this.state.path === '/cart'
                                     ? <li className="active"><NavLink to='/cart'><span className="glyphicon glyphicon-shopping-cart"></span></NavLink></li>
                                     : <li><NavLink to='/cart'><span className="glyphicon glyphicon-shopping-cart"></span> <span></span></NavLink></li>
                             : null
@@ -52,17 +54,17 @@ class Navigation extends React.Component {
                     </ul>
                     <ul className="nav navbar-nav navbar-right">
                         {
-                            window.location.pathname === '/contact'
+                            this.state.path === '/contact'
                                 ? <li className="active"><NavLink to='/contact'>Contact</NavLink></li>
                                 : <li><NavLink to='/contact'>Contact</NavLink></li>
                         }
                         {
-                            window.location.pathname === '/register'
+                            this.state.path === '/register'
                                 ? <li className="active"><NavLink to='/register'>Register</NavLink></li>
                                 : <li><NavLink to='/register'>Register</NavLink></li>
                         }
                         {
-                            window.location.pathname === '/login'
+                            this.state.path === '/login'
                                 ? <li className="active"><NavLink to='/login'>Login</NavLink></li>
                                 : <li><NavLink to='/login'>Login</NavLink></li>
                         }
@@ -77,7 +79,8 @@ class Navigation extends React.Component {
 function mapStateToProps(state) {
     return {
         cart: state.cart,
-        navigation: state.navigation
+        navigation: state.navigation,
+        authentication: state.authentication
     }
 }
 
