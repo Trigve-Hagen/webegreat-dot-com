@@ -123,8 +123,7 @@ app.post('/api/account/signup', (req, res, next) => {
                                 return res.send({
                                     success: true,
                                     message: 'Successfull Registration',
-                                    token: results.insertId,
-                                    id: result.insertId
+                                    token: results.insertId
                                 });
                             }
                         });
@@ -191,8 +190,7 @@ app.post('/api/account/signin', (req, res, next) => {
                             return res.send({
                                 success: true,
                                 message: 'Successfull SignIn',
-                                token: result.insertId,
-                                id: results[0].userid
+                                token: result.insertId
                             });
                         }
                     });

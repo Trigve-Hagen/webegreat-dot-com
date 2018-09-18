@@ -27,6 +27,11 @@ import Register from './components/register';
 import Login from './components/login';
 import Cart from './components/cart';
 
+import Orders from './components/authenticated/orders';
+import Logout from './components/authenticated/logout';
+import Profile from './components/authenticated/profile';
+import Products from './components/authenticated/products';
+
 import( /* webpackChunkName: 'application' */ './App')
     .then(({ default: App }) =>
         render(
@@ -40,6 +45,10 @@ import( /* webpackChunkName: 'application' */ './App')
                             <Route exact path="/register" component={Register}/>
                             <Route exact path="/login" component={Login}/>
                             <Route exact path="/cart" component={Cart}/>
+                            <Route exact path="/logout" component={Logout}/>
+                            <Route exact path="/profile" component={Profile}/>
+                            <Route exact path="/orders" component={Orders}/>
+                            <Route exact path="/products" component={Products}/>
                             <Route component={NotFound}/>
                         </Switch>
                     </App>

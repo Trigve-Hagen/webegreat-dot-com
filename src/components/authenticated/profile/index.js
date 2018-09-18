@@ -1,19 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Navigation from '../navigation';
+import Navigation from '../../navigation';
 
-class About extends React.Component {
+class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            path: '/about',
+            path: '/profile',
             authenticated: this.props.authentication[0].authenticated
         }
     }
 
     componentDidMount() {
         console.log(this.state);
-        this.props.updatePath({ path: this.state.path });
     }
 
     render() {
@@ -22,7 +21,7 @@ class About extends React.Component {
             <div>
                 <Navigation path={path} authenticated={authenticated}/>
                 <div className="container">
-                    <h1>About Page</h1>
+                    <h1>Profile Page</h1>
                 </div>
             </div>
         )
@@ -31,17 +30,8 @@ class About extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        navigation: state.navigation,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updatePath: (value) => {
-            dispatch( { type: 'UPDATE_PATH', payload: value} )
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(About)
+export default connect(mapStateToProps)(Profile)
