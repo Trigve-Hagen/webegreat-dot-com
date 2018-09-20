@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+//import Images from '../../../assets/img/images';
 import user from '../../../assets/img/user.jpg';
 
 class AvatarImage extends React.Component {

@@ -10,7 +10,7 @@ class Login extends React.Component {
         super(props)
         this.state = {
             path: '/login',
-            authenticated: this.props.authentication[0].authenticated,
+            authenticated: false,
 			loginEmail: '',
             loginPassword: '',
             loginError: '',
@@ -18,6 +18,14 @@ class Login extends React.Component {
 		}
 		this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentWillReceiveProps() {
+        if(this.props.authentication[0].authenticated != undefined) {
+            this.setState({
+                authenticated: this.props.authentication[0].authenticated 
+            });
+        }
     }
 
     onChange(e) {
@@ -109,9 +117,6 @@ function mapDispatchToProps(dispatch) {
     return {
         updateAuth: (value) => {
             dispatch( { type: 'UPDATE_AUTH', payload: value} )
-        },
-        updatePath: (value) => {
-            dispatch( { type: 'UPDATE_PATH', payload: value} )
         }
     }
 }

@@ -8,12 +8,16 @@ class Contact extends React.Component {
         super(props);
         this.state = {
             path: '/contact',
-            authenticated: this.props.authentication[0].authenticated
+            authenticated: false
         }
     }
 
-    componentDidMount() {
-        console.log(this.state);
+    componentWillReceiveProps() {
+        if(this.props.authentication[0].authenticated != undefined) {
+            this.setState({
+                authenticated: this.props.authentication[0].authenticated 
+            });
+        }
     }
 
     render() {

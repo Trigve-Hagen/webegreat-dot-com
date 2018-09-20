@@ -9,6 +9,25 @@ class Logout extends React.Component {
 
     componentDidMount() {
         this.props.updateAuth({ authenticated: false, token: null });
+        fetch('http://localhost:4000/api/account/logout', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+					console.log("Successfull Logout.");
+				} else {
+                    this.setState({
+						registerError: json.message
+					});
+                }
+			});
+        
     }
 
     render() {
@@ -18,7 +37,6 @@ class Logout extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        navigation: state.navigation,
         authentication: state.authentication
     }
 }

@@ -8,13 +8,16 @@ class About extends React.Component {
         super(props);
         this.state = {
             path: '/about',
-            authenticated: this.props.authentication[0].authenticated
+            authenticated: false
         }
     }
 
-    componentDidMount() {
-        console.log(this.state);
-        this.props.updatePath({ path: this.state.path });
+    componentWillReceiveProps() {
+        if(this.props.authentication[0].authenticated != undefined) {
+            this.setState({
+                authenticated: this.props.authentication[0].authenticated 
+            });
+        }
     }
 
     render() {
@@ -37,17 +40,8 @@ class About extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        navigation: state.navigation,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updatePath: (value) => {
-            dispatch( { type: 'UPDATE_PATH', payload: value} )
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(About)
+export default connect(mapStateToProps)(About)

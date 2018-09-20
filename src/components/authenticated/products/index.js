@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import Footer from '../../footer';
+import UploadProducts from '../products/upload-products';
+import UpdateProducts from '../products/update-products';
 
 class Products extends React.Component {
     constructor(props) {
@@ -24,8 +26,12 @@ class Products extends React.Component {
                 <Navigation path={path} authenticated={authenticated}/>
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                            <h1>Product Upload Page</h1>
+                        <h1>Product Upload Page</h1>
+                        <div className="col-lg-4 col-md-4 col-sm-12 col xs-24">
+                            <UploadProducts />
+                        </div>
+                        <div className="col-lg-8 col-md-8 col-sm-12 col xs-24">
+                            <UpdateProducts />
                         </div>
                     </div>
                 </div>
@@ -37,7 +43,6 @@ class Products extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        navigation: state.navigation,
         authentication: state.authentication
     }
 }
