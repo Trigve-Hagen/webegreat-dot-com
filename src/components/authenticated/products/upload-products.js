@@ -33,9 +33,8 @@ class UploadProducts extends React.Component {
             body: data,
 		}).then(res => res.json())
 			.then(json => {
-                this.setState({ proUploadImageUrl: body.file });
 				if(json.success) {
-					console.log("Successfull Registration.");
+					console.log("Product upload successfull.");
 					this.props.updateProduct({
                         id: json.id,
                         name: json.name,
@@ -51,7 +50,7 @@ class UploadProducts extends React.Component {
                         proUploadImageUrl: '',
                         uploadInput: '',
                         fileName: ''
-					});
+                    });
 				} else {
                     console.log(json.message);
                     this.setState({
@@ -62,15 +61,15 @@ class UploadProducts extends React.Component {
 	}
 
     render() {
-        const{ proUploadError } = this.state;
+        //const{ proUploadError } = this.state;
         return (
 			<div>
                 <h2>Product Upload</h2>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         {
-                            (proUploadError) ? (
-                                <label>{proUploadError}</label>
+                            (this.state.proUploadError) ? (
+                                <label>{this.state.proUploadError}</label>
                             ) : (null)
                         }
                         <img src={this.state.proUploadImageUrl} className="img-responsive" alt="img" />
@@ -109,7 +108,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         updateProduct: (value) => {
-            dispatch( { type: 'UPDATE_PRODUCT', payload: value} )
+            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
         }
     }
 }

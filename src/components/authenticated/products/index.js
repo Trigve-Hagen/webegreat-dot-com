@@ -8,22 +8,12 @@ import UpdateProducts from '../products/update-products';
 class Products extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            path: '/products',
-            authenticated: this.props.authentication[0].authenticated
-        }
-    }
-
-    componentDidMount() {
-        console.log(this.state);
-        this.props.updatePath({ path: this.state.path });
     }
 
     render() {
-        const { path, authenticated } = this.state;
         return (
             <div>
-                <Navigation path={path} authenticated={authenticated}/>
+                <Navigation path="/products" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
                         <h1>Product Upload Page</h1>
@@ -47,12 +37,4 @@ function mapStateToProps(state) {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updatePath: (value) => {
-            dispatch( { type: 'UPDATE_PATH', payload: value} )
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Products)
+export default connect(mapStateToProps)(Products)

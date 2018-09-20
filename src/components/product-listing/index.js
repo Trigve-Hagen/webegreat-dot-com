@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductItem from './product-item';
+import ProductItem from '../product-components/product-item';
 import { connect } from 'react-redux';
 
 const style = {

@@ -6,25 +6,12 @@ import Footer from '../footer';
 class Contact extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            path: '/contact',
-            authenticated: false
-        }
-    }
-
-    componentWillReceiveProps() {
-        if(this.props.authentication[0].authenticated != undefined) {
-            this.setState({
-                authenticated: this.props.authentication[0].authenticated 
-            });
-        }
     }
 
     render() {
-        const { path, authenticated } = this.state;
         return (
             <div>
-                <Navigation path={path} authenticated={authenticated}/>
+                <Navigation path="/contact" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">

@@ -8,25 +8,12 @@ import Footer from '../footer';
 class Home extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            path: '/',
-            authenticated: false
-        }
-    }
-
-    componentWillReceiveProps() {
-        if(this.props.authentication[0].authenticated != undefined) {
-            this.setState({
-                authenticated: this.props.authentication[0].authenticated 
-            });
-        }
     }
 
     render() {
-        const { path, authenticated } = this.state;
         return (
             <div>
-                <Navigation path={path} authenticated={authenticated}/>
+                <Navigation path="/" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
                     <ProductListing products={products}/>
                 </div>

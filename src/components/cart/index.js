@@ -20,17 +20,12 @@ function sort(items) {
 class Cart extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            path: '/cart',
-            authenticated: this.props.authentication[0].authenticated
-        }
     }
 
     render() {
-        const { path, authenticated } = this.state;
         return (
             <div>
-                <Navigation path={path} authenticated={authenticated}/>
+                <Navigation path="/cart" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
                     <div className="row space-top-50px space-bottom-50px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">

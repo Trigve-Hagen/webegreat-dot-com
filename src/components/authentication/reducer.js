@@ -4,7 +4,8 @@ const authenticationReducer = (state=[], action) => {
             state=[];
             return [...state, action.payload];
         default:
-            return state;
+            if(state.legnth < 1) return state=[{ authenticated: false, token: null }];
+            else return state;
     }
 }
 

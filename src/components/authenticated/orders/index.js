@@ -6,22 +6,12 @@ import Footer from '../../footer';
 class Orders extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            path: '/orders',
-            authenticated: this.props.authentication[0].authenticated
-        }
-    }
-
-    componentDidMount() {
-        console.log(this.state);
-        this.props.updatePath({ path: this.state.path });
     }
 
     render() {
-        const { path, authenticated } = this.state;
         return (
             <div>
-                <Navigation path={path} authenticated={authenticated}/>
+                <Navigation path="/orders" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
@@ -37,17 +27,8 @@ class Orders extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        navigation: state.navigation,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updatePath: (value) => {
-            dispatch( { type: 'UPDATE_PATH', payload: value} )
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Orders)
+export default connect(mapStateToProps)(Orders)

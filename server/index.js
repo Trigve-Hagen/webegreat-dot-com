@@ -40,26 +40,6 @@ mysqlhelpers.buildTables();
 //require('./server-routes')(app);
 
 // need to encrypt the token and decrypt the token for local storage
-function getUserIdFromSession(token) {
-    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-    let inserts = [
-        config.tables[3].table_fields[1].Field,
-        config.tables[3].table_name,
-        config.tables[3].table_fields[0].Field,
-        token
-    ];
-    getUserIdSession = mysql.format(getUserIdSession, inserts);
-    //console.log(getUserIdSession);
-    connection.query(getUserIdSession, function (error, results, fields) {
-        if(error) {
-            console.log(error);
-            return false;
-        } else {
-            console.log(results[0]['user_id']);
-            return results[0]['user_id'];
-        }
-    });
-}
 
 function generateHash(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
@@ -68,6 +48,11 @@ function generateHash(password) {
 function validatePassword(password, dbPassword) {
     return bcrypt.compareSync(password, dbPassword);
 };
+
+/*
+ ************************ Registration && Signup ***********************
+ ***********************************************************************
+ */
 
 app.post('/api/account/signup', (req, res, next) => {
     const { body } = req;
@@ -241,6 +226,32 @@ app.post('/api/account/signin', (req, res, next) => {
     });
 });
 
+app.post('/api/account/logout', (req, res, next) => {
+    const { body } = req;
+    const { token } = body;
+    //console.log(token+", here");
+    //console.log(util.inspect(token, {showHidden: false, depth: null}))
+    let setLoggedOutSession = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
+    let inserts = [config.tables[3].table_name, config.tables[3].table_fields[4].Field, config.tables[3].table_fields[0].Field, token];
+    setLoggedOutSession = mysql.format(setLoggedOutSession, inserts);
+    //console.log(setLoggedOutSession);
+    connection.query(setLoggedOutSession, function (error, result, fields) {
+        if(error) {
+            //console.log("Error: in Register Session: " + error);
+            return res.send({
+                success: false,
+                message: 'Server Error in log out Session'
+            });
+        } else {
+            //console.log("Results: in SignIn: " + result);
+            return res.send({
+                success: true,
+                message: 'Successfull Logout'
+            });
+        }
+    });
+});
+
 app.get('/api/account/verify', (req, res, next) => {
     const { query } = req;
     const { token } = query;
@@ -279,6 +290,11 @@ app.get('/api/account/verify', (req, res, next) => {
     });
 });
 
+/*
+ ********************** Product Upload && Update ***********************
+ ***********************************************************************
+ */
+
 app.post('/api/product/upload', function(req, res) {
     const { body } = req;
     const {
@@ -288,6 +304,7 @@ app.post('/api/product/upload', function(req, res) {
         price,
         token
     } = body;
+    
     if (!req.files) {
         return res.send({
             success: false,
@@ -336,14 +353,132 @@ app.post('/api/product/upload', function(req, res) {
     let reqPath = path.join(__dirname, '../');
     let image = req.body.filename + ext;
 
-    let userid = getUserIdFromSession(token);
-    console.log(token + ", " + userid);
-    if(!userid || !/[0-9]+/.test(pattern)) {
+    imageFile.mv(
+        `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
+        function(err) {
+            if (err) {
+                return res.send({
+                    success: false,
+                    message: 'Server error uploading image.'
+                });
+            } else {
+                let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+                let userIdInserts = [
+                    config.tables[3].table_fields[1].Field,
+                    config.tables[3].table_name,
+                    config.tables[3].table_fields[0].Field,
+                    token
+                ];
+                getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+                //console.log(getUserIdSession);
+                connection.query(getUserIdSession, function (error, results, fields) {
+                    if(error) {
+                        return res.send({
+                            success: false,
+                            message: 'Server Error in get userid.'
+                        });
+                    } else {
+                        console.log( + ", UserId");
+                        currentTimestamp = moment().unix();//in seconds
+                        let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+
+                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+                        var insertProductInserts = [
+                            config.tables[0].table_name,
+                            myDate, myDate, results[0]['user_id'], name,
+                            description, image, price
+                        ];
+                        insertProduct = mysql.format(insertProduct, insertProductInserts);
+                        //console.log(insertProduct);
+                        connection.query(insertProduct, function (error, result, fields) {
+                            if(error) {
+                                //console.log("Error: in Register New User: " + err);
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in product upload'
+                                });
+                            } else {
+                                return res.send({
+                                    success: true,
+                                    message: 'Your Product has been successfully uploaded.',
+                                    id: result.insertId,
+                                    name: name,
+                                    description: description,
+                                    price: price,
+                                    image: image
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+    });
+});
+
+app.post('/api/product/update', function(req, res) {
+    const { body } = req;
+    const {
+        proid,
+        filename,
+        name,
+        description,
+        price,
+        token
+    } = body;
+    
+    if (!req.files) {
         return res.send({
             success: false,
-            message: 'Userid invalid or cannot be left empty.'
+            message: 'No file was uploaded.'
         });
     }
+    if(!proid || !pattern.test(pattern)) {
+        return res.send({
+            success: false,
+            message: 'Image name invalid or cannot be left empty.'
+        });
+    }
+    if(!filename || !pattern.test(pattern)) {
+        return res.send({
+            success: false,
+            message: 'Image name invalid or cannot be left empty.'
+        });
+    }
+    if(!name || !pattern.test(pattern)) {
+        return res.send({
+            success: false,
+            message: 'Product name invalid or cannot be left empty.'
+        });
+    }
+    if(!description || !pattern.test(pattern)) {
+        return res.send({
+            success: false,
+            message: 'Description invalid or cannot be left empty.'
+        });
+    }
+    if(!price || !pattern.test(pattern)) {
+        return res.send({
+            success: false,
+            message: 'Price invalid or cannot be left empty.'
+        });
+    }
+    if(!token || !pattern.test(pattern)) {
+        return res.send({
+            success: false,
+            message: 'Invalid token.'
+        });
+    }
+    let ext = '';
+    var splitRes = req.files.file.mimetype.split("/");
+    switch(splitRes[1]) {
+        case 'jpeg': ext = '.jpg'; break;
+        case 'jpg': ext = '.jpg'; break;
+        case 'png': ext = '.png'; break;
+        case 'gif': ext = '.gif'; break;
+    }
+    let imageFile = req.files['file'];
+    let reqPath = path.join(__dirname, '../');
+    let image = req.body.filename + ext;
 
     imageFile.mv(
         `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
@@ -354,66 +489,56 @@ app.post('/api/product/upload', function(req, res) {
                     message: 'Server error uploading image.'
                 });
             } else {
-
-                currentTimestamp = moment().unix();//in seconds
-                let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-
-                var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
-                var inserts = [
-                    config.tables[0].table_name,
-                    myDate, myDate, userid, name,
-                    description, image, price
+                let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+                let userIdInserts = [
+                    config.tables[3].table_fields[1].Field,
+                    config.tables[3].table_name,
+                    config.tables[3].table_fields[0].Field,
+                    token
                 ];
-                insertProduct = mysql.format(insertProduct, inserts);
-                console.log(insertProduct);
-                connection.query(insertProduct, function (error, result, fields) {
+                getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+                //console.log(getUserIdSession);
+                connection.query(getUserIdSession, function (error, results, fields) {
                     if(error) {
-                        //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
-                            message: 'Server Error in Register',
-                            token: null,
-                            id: null
+                            message: 'Server Error in get userid.'
                         });
                     } else {
-                        return res.send({
-                            success: true,
-                            message: 'Your Product has been successfully uploaded.',
-                            id: result.insertId,
-                            name: name,
-                            description: description,
-                            price: price,
-                            image: image
+                        console.log( + ", UserId");
+                        currentTimestamp = moment().unix();//in seconds
+                        let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+
+                        var updateProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+                        var updateProductInserts = [
+                            config.tables[0].table_name,
+                            myDate, myDate, results[0]['user_id'], name,
+                            description, image, price
+                        ];
+                        updateProduct = mysql.format(updateProduct, updateProductInserts);
+                        //console.log(insertProduct);
+                        connection.query(updateProduct, function (error, result, fields) {
+                            if(error) {
+                                //console.log("Error: in Register New User: " + err);
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in product update'
+                                });
+                            } else {
+                                return res.send({
+                                    success: true,
+                                    message: 'Your Product has been successfully updated.',
+                                    id: result.insertId,
+                                    name: name,
+                                    description: description,
+                                    price: price,
+                                    image: image
+                                });
+                            }
                         });
                     }
                 });
             }
-    });
-});
-
-app.post('/api/account/logout', (req, res, next) => {
-    const { body } = req;
-    const { token } = body;
-    //console.log(token+", here");
-    //console.log(util.inspect(token, {showHidden: false, depth: null}))
-    let setLoggedOutSession = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
-    let inserts = [config.tables[3].table_name, config.tables[3].table_fields[4].Field, config.tables[3].table_fields[0].Field, token];
-    setLoggedOutSession = mysql.format(setLoggedOutSession, inserts);
-    //console.log(setLoggedOutSession);
-    connection.query(setLoggedOutSession, function (error, result, fields) {
-        if(error) {
-            //console.log("Error: in Register Session: " + error);
-            return res.send({
-                success: false,
-                message: 'Server Error in log out Session'
-            });
-        } else {
-            //console.log("Results: in SignIn: " + result);
-            return res.send({
-                success: true,
-                message: 'Successfull Logout'
-            });
-        }
     });
 });
 

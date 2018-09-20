@@ -8,8 +8,6 @@ class Register extends React.Component {
     constructor(props) {
 		super(props);
 		this.state = {
-			path: '/register',
-			authenticated: false,
 			redirect: false,
 			registerError: '',
 			registerName: '',
@@ -20,14 +18,6 @@ class Register extends React.Component {
 		this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 	}
-
-	componentWillReceiveProps() {
-        if(this.props.authentication[0].authenticated != undefined) {
-            this.setState({
-                authenticated: this.props.authentication[0].authenticated 
-            });
-        }
-    }
 
 	onChange(e) {
 		this.setState({ [e.target.name]: e.target.value});
@@ -83,7 +73,7 @@ class Register extends React.Component {
 		if(redirect) return <Redirect to='/profile' />
         return (
 			<div>
-				<Navigation path={path} authenticated={authenticated} />
+				<Navigation path="/register" authenticated={this.props.authentication[0].authenticated} />
 				<div className="container">
 					<div className="row space-top-20px space-bottom-50px">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">

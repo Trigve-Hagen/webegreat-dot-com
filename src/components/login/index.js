@@ -9,8 +9,6 @@ class Login extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            path: '/login',
-            authenticated: false,
 			loginEmail: '',
             loginPassword: '',
             loginError: '',
@@ -18,14 +16,6 @@ class Login extends React.Component {
 		}
 		this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-    }
-
-    componentWillReceiveProps() {
-        if(this.props.authentication[0].authenticated != undefined) {
-            this.setState({
-                authenticated: this.props.authentication[0].authenticated 
-            });
-        }
     }
 
     onChange(e) {
@@ -71,7 +61,7 @@ class Login extends React.Component {
         if(loginRedirect) return <Redirect to='/profile' />;
         return (
             <div>
-                <Navigation path={path} authenticated={authenticated}/>
+                <Navigation path="/login" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">

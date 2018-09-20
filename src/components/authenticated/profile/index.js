@@ -10,21 +10,12 @@ import Footer from '../../footer';
 class Profile extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            path: '/profile',
-            authenticated: this.props.authentication[0].authenticated
-        }
-    }
-
-    componentDidMount() {
-        console.log(this.state);
     }
 
     render() {
-        const { path, authenticated } = this.state;
         return (
             <div>
-                <Navigation path={path} authenticated={authenticated}/>
+                <Navigation path="/profile" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
                     <div className="row space-bottom-50px">
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
