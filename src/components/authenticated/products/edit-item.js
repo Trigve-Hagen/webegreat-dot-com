@@ -5,30 +5,18 @@ import ProductItem from '../../product-components/product-item';
 class EditItem extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            product = {},
-        }
-    }
-
-    componentWillReceiveProps() {
-        if(this.props.product[0].id != undefined) {
-            this.setState({
-                product: this.props.product 
-            });
-        }
-        console.log(this.state);
     }
 
     render() {
         return (
             <div className="row space-top-20px space-bottom-50px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                    <div className="product-listing" style={style}>
-                        <ProductItem key={this.product.id}
-                            product={this.product}
-                            addToCart={props.addToCart}
-                            removeFromCart={props.removeFromCart}
-                            cartItem={props.cart.filter(cartItem => cartItem.id === product.id)[0]}
+                    <div className="product-listing">
+                        <ProductItem key={this.props.product[0].id}
+                            product={this.props.product}
+                            addToCart={this.props.addToCart}
+                            removeFromCart={this.props.removeFromCart}
+                            cartItem={this.props.cart.filter(cartItem => cartItem.id === this.props.product[0].id)[0]}
                         />
                     </div>
                 </div>

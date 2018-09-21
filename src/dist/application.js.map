@@ -1,0 +1,1 @@
+{"version":3,"file":"application.js","sources":["webpack:///./src/App.js"],"sourcesContent":["import React from 'react';\n\nconst App = ({ children }) => (\n    <div>\n      {children}\n    </div>\n);\n\nexport default App;\n"],"mappings":"AAAA","sourceRoot":""}

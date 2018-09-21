@@ -1,11 +1,15 @@
-const authenticationReducer = (state=[], action) => {
+const initialState = {
+    authenticated: false,
+    token: null
+}
+
+const authenticationReducer = (state=[initialState], action) => {
     switch(action.type) {
         case 'UPDATE_AUTH':
             state=[];
             return [...state, action.payload];
         default:
-            if(state.legnth < 1) return state=[{ authenticated: false, token: null }];
-            else return state;
+            return state;
     }
 }
 

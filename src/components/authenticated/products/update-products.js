@@ -35,7 +35,7 @@ class UpdateProducts extends React.Component {
 			.then(json => {
                 this.setState({ proUpdateImageUrl: body.file });
 				if(json.success) {
-					console.log("Successfull Registration.");
+					console.log("Successfull Product Update.");
 					this.props.updateProduct({
                         id: json.id,
                         name: json.name,
@@ -62,18 +62,17 @@ class UpdateProducts extends React.Component {
 	}
 
     render() {
-        const{ proUpdateError } = this.state;
+        //const{ proUpdateError } = this.state;
         return (
 			<div>
                 <h2>Product Update</h2>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         {
-                            (proUpdateError) ? (
-                                <label>{proUpdateError}</label>
+                            (this.state.proUpdateError) ? (
+                                <label>{this.state.proUpdateError}</label>
                             ) : (null)
                         }
-                        <img src={this.state.proUpdateImageUrl} className="img-responsive" alt="img" />
                         <form name="proUpdate" onSubmit={this.onSubmit}>
                             <fieldset className="form-group">
                                 <input ref={(ref) => { this.state.updateInput = ref; }} type="file" className="form-control-file btn btn-army"/>

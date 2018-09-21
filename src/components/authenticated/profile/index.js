@@ -6,6 +6,7 @@ import StoreControls from './store-controls';
 import UpdateProfile from './update-profile';
 import UpdatePassword from './update-password';
 import Footer from '../../footer';
+import UpdatePaypal from './update-paypal';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -25,6 +26,7 @@ class Profile extends React.Component {
                         </div>
                         <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
                             <UpdateProfile />
+                            <UpdatePaypal />
                             <UpdatePassword />
                         </div>
                     </div>

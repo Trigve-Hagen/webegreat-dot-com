@@ -4,6 +4,7 @@ import Navigation from '../../navigation';
 import Footer from '../../footer';
 import UploadProducts from '../products/upload-products';
 import UpdateProducts from '../products/update-products';
+import EditItem from './edit-item';
 
 class Products extends React.Component {
     constructor(props) {
@@ -21,6 +22,7 @@ class Products extends React.Component {
                             <UploadProducts />
                         </div>
                         <div className="col-lg-8 col-md-8 col-sm-12 col xs-24">
+                            <EditItem />
                             <UpdateProducts />
                         </div>
                     </div>

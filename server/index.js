@@ -9,6 +9,7 @@ const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const app = express();
 const pattern = /[A-Za-z0-9_/-/.]+/i;
+const emptyPattern = /([A-Za-z0-9_/-/.]|^\s*$)+/i;
 
 const clientRootFolder = 'src';
 
@@ -295,6 +296,75 @@ app.get('/api/account/verify', (req, res, next) => {
  ***********************************************************************
  */
 
+app.post('/api/product/front', function(req, res) {
+    const { body } = req;
+    const {
+        perPage,
+        currentPage
+    } = body;
+    
+    if(!perPage || !/[0-9]+/.test(perPage)) {
+        return res.send({
+            success: false,
+            message: 'Per page invalid or cannot be left empty.'
+        });
+    }
+    if(!currentPage || !/[0-9]+/.test(currentPage)) {
+        return res.send({
+            success: false,
+            message: 'Current page name invalid or cannot be left empty.'
+        });
+    }
+
+    let countFrontProducts = "SELECT COUNT(??) FROM ??";
+    let countFrontProductsInserts = [
+        config.tables[0].table_fields[0].Field,
+        config.tables[0].table_name
+    ];
+    countFrontProducts = mysql.format(countFrontProducts, countFrontProductsInserts);
+    //console.log(getUserIdSession);
+    connection.query(countFrontProducts, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in count products.'
+            });
+        } else {
+            let pages = Math.ceil(results[0]['COUNT(`productid`)'] / perPage);
+            let start = (currentPage-1)*perPage;
+            //console.log(util.inspect(results[0]['COUNT(`productid`)'], {showHidden: false, depth: null}))
+            //console.log(start + ", Pages");
+
+            var getFrontProducts = "SELECT * FROM ?? ORDER BY ?? DESC LIMIT ?, ?";
+            var getFrontProductInserts = [
+                config.tables[0].table_name,
+                config.tables[0].table_fields[7].Field,
+                start, perPage
+            ];
+            getFrontProducts = mysql.format(getFrontProducts, getFrontProductInserts);
+            //console.log(getFrontProducts);
+            connection.query(getFrontProducts, function (err, result, fields) {
+                if(err) {
+                    console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in product upload'
+                    });
+                } else {
+                    //jsonObj = {};
+                    //jsonObj['results'] = result;
+                    //console.log(util.inspect(jsonObj['results'], {showHidden: false, depth: null}));
+                    return res.send({
+                        success: true,
+                        message: 'success',
+                        products: result
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.post('/api/product/upload', function(req, res) {
     const { body } = req;
     const {
@@ -311,31 +381,31 @@ app.post('/api/product/upload', function(req, res) {
             message: 'No file was uploaded.'
         });
     }
-    if(!filename || !pattern.test(pattern)) {
+    if(!filename || !pattern.test(filename)) {
         return res.send({
             success: false,
             message: 'Image name invalid or cannot be left empty.'
         });
     }
-    if(!name || !pattern.test(pattern)) {
+    if(!name || !pattern.test(name)) {
         return res.send({
             success: false,
             message: 'Product name invalid or cannot be left empty.'
         });
     }
-    if(!description || !pattern.test(pattern)) {
+    if(!description || !pattern.test(description)) {
         return res.send({
             success: false,
             message: 'Description invalid or cannot be left empty.'
         });
     }
-    if(!price || !pattern.test(pattern)) {
+    if(!price || !pattern.test(price)) {
         return res.send({
             success: false,
             message: 'Price invalid or cannot be left empty.'
         });
     }
-    if(!token || !pattern.test(pattern)) {
+    if(!token || !pattern.test(token)) {
         return res.send({
             success: false,
             message: 'Invalid token.'
@@ -425,121 +495,184 @@ app.post('/api/product/update', function(req, res) {
         price,
         token
     } = body;
-    
-    if (!req.files) {
-        return res.send({
-            success: false,
-            message: 'No file was uploaded.'
-        });
-    }
-    if(!proid || !pattern.test(pattern)) {
-        return res.send({
-            success: false,
-            message: 'Image name invalid or cannot be left empty.'
-        });
-    }
-    if(!filename || !pattern.test(pattern)) {
-        return res.send({
-            success: false,
-            message: 'Image name invalid or cannot be left empty.'
-        });
-    }
-    if(!name || !pattern.test(pattern)) {
-        return res.send({
-            success: false,
-            message: 'Product name invalid or cannot be left empty.'
-        });
-    }
-    if(!description || !pattern.test(pattern)) {
-        return res.send({
-            success: false,
-            message: 'Description invalid or cannot be left empty.'
-        });
-    }
-    if(!price || !pattern.test(pattern)) {
-        return res.send({
-            success: false,
-            message: 'Price invalid or cannot be left empty.'
-        });
-    }
-    if(!token || !pattern.test(pattern)) {
-        return res.send({
-            success: false,
-            message: 'Invalid token.'
-        });
-    }
-    let ext = '';
-    var splitRes = req.files.file.mimetype.split("/");
-    switch(splitRes[1]) {
-        case 'jpeg': ext = '.jpg'; break;
-        case 'jpg': ext = '.jpg'; break;
-        case 'png': ext = '.png'; break;
-        case 'gif': ext = '.gif'; break;
-    }
-    let imageFile = req.files['file'];
-    let reqPath = path.join(__dirname, '../');
-    let image = req.body.filename + ext;
+    let updateObj = [];
 
-    imageFile.mv(
-        `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
-        function(err) {
-            if (err) {
+    if(!proid || !/[0-9]+/.test(proid)) {
+        return res.send({
+            success: false,
+            message: 'Product id invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !/[0-9]+/.test(proid)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(emptyPattern.test(name)) updateObj.push({
+        name: config.tables[0].table_fields[4].Field,
+        content: name
+    });
+
+    if(emptyPattern.test(price)) updateObj.push({
+        name: config.tables[0].table_fields[7].Field,
+        content: price
+    });
+    
+    if(emptyPattern.test(description)) updateObj.push({
+        name: config.tables[0].table_fields[5].Field,
+        content: description
+    });
+    
+    if (req.files) {
+        if(!filename || !pattern.test(filename)) {
+            return res.send({
+                success: false,
+                message: 'Filename invalid or cannot be left empty.'
+            });
+        }
+        let ext = '';
+        var splitRes = req.files.file.mimetype.split("/");
+        switch(splitRes[1]) {
+            case 'jpeg': ext = '.jpg'; break;
+            case 'jpg': ext = '.jpg'; break;
+            case 'png': ext = '.png'; break;
+            case 'gif': ext = '.gif'; break;
+        }
+        let imageFile = req.files['file'];
+        let reqPath = path.join(__dirname, '../');
+        let image = req.body.filename + ext;
+        imageFile.mv(
+            `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
+            function(err) {
+                if (err) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error uploading image.'
+                    });
+                } else {
+                    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+                    let userIdInserts = [
+                        config.tables[3].table_fields[1].Field,
+                        config.tables[3].table_name,
+                        config.tables[3].table_fields[0].Field,
+                        token
+                    ];
+                    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+                    //console.log(getUserIdSession);
+                    connection.query(getUserIdSession, function (error, results, fields) {
+                        if(error) {
+                            return res.send({
+                                success: false,
+                                message: 'Server Error in get userid.'
+                            });
+                        } else {;
+                            currentTimestamp = moment().unix();//in seconds
+                            let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+    
+                            var updateProduct = "UPDATE ?? SET ?? = ?, ";
+                            var updateProductInserts = [
+                                config.tables[0].table_name,
+                                config.tables[0].table_fields[2].Field, myDate,
+                            ];
+                            updateObj.forEach(element => {
+                                updateProduct += "?? = ?, ";
+                                updateProductInserts.push(element.name);
+                                updateProductInserts.push(element.content);
+                            });
+                            updateProduct = "WHERE ?? = ? AND ?? = ?";
+                            updateProductInserts.push(config.tables[0].table_fields[0].Field);
+                            updateProductInserts.push(proid);
+                            updateProductInserts.push(config.tables[0].table_fields[3].Field);
+                            updateProductInserts.push(results[0]['user_id']);
+                            
+                            updateProduct = mysql.format(updateProduct, updateProductInserts);
+                            //console.log(insertProduct);
+                            connection.query(updateProduct, function (error, result, fields) {
+                                if(error) {
+                                    //console.log("Error: in Register New User: " + err);
+                                    return res.send({
+                                        success: false,
+                                        message: 'Server Error in product update'
+                                    });
+                                } else {
+                                    return res.send({
+                                        success: true,
+                                        message: 'Your Product has been successfully updated.',
+                                        id: result.insertId,
+                                        name: name,
+                                        description: description,
+                                        price: price,
+                                        image: image
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+        });
+    } else {
+        let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+        let userIdInserts = [
+            config.tables[3].table_fields[1].Field,
+            config.tables[3].table_name,
+            config.tables[3].table_fields[0].Field,
+            token
+        ];
+        getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+        //console.log(getUserIdSession);
+        connection.query(getUserIdSession, function (error, results, fields) {
+            if(error) {
                 return res.send({
                     success: false,
-                    message: 'Server error uploading image.'
+                    message: 'Server Error in get userid.'
                 });
-            } else {
-                let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-                let userIdInserts = [
-                    config.tables[3].table_fields[1].Field,
-                    config.tables[3].table_name,
-                    config.tables[3].table_fields[0].Field,
-                    token
+            } else {;
+                currentTimestamp = moment().unix();//in seconds
+                let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+
+                var updateProduct = "UPDATE ?? SET ?? = ?, ";
+                var updateProductInserts = [
+                    config.tables[0].table_name,
+                    config.tables[0].table_fields[2].Field, myDate,
                 ];
-                getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-                //console.log(getUserIdSession);
-                connection.query(getUserIdSession, function (error, results, fields) {
+                updateObj.forEach(element => {
+                    updateProduct += "?? = ?, ";
+                    updateProductInserts.push(element.name);
+                    updateProductInserts.push(element.content);
+                });
+                updateProduct = "WHERE ?? = ? AND ?? = ?";
+                updateProductInserts.push(config.tables[0].table_fields[0].Field);
+                updateProductInserts.push(proid);
+                updateProductInserts.push(config.tables[0].table_fields[3].Field);
+                updateProductInserts.push(results[0]['user_id']);
+                
+                updateProduct = mysql.format(updateProduct, updateProductInserts);
+                //console.log(insertProduct);
+                connection.query(updateProduct, function (error, result, fields) {
                     if(error) {
+                        //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
-                            message: 'Server Error in get userid.'
+                            message: 'Server Error in product update'
                         });
                     } else {
-                        console.log( + ", UserId");
-                        currentTimestamp = moment().unix();//in seconds
-                        let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-
-                        var updateProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
-                        var updateProductInserts = [
-                            config.tables[0].table_name,
-                            myDate, myDate, results[0]['user_id'], name,
-                            description, image, price
-                        ];
-                        updateProduct = mysql.format(updateProduct, updateProductInserts);
-                        //console.log(insertProduct);
-                        connection.query(updateProduct, function (error, result, fields) {
-                            if(error) {
-                                //console.log("Error: in Register New User: " + err);
-                                return res.send({
-                                    success: false,
-                                    message: 'Server Error in product update'
-                                });
-                            } else {
-                                return res.send({
-                                    success: true,
-                                    message: 'Your Product has been successfully updated.',
-                                    id: result.insertId,
-                                    name: name,
-                                    description: description,
-                                    price: price,
-                                    image: image
-                                });
-                            }
+                        return res.send({
+                            success: true,
+                            message: 'Your Product has been successfully updated.',
+                            id: result.insertId,
+                            name: name,
+                            description: description,
+                            price: price,
+                            image: image
                         });
                     }
                 });
             }
-    });
+        });
+    }
 });
 
 app.listen(4000, () => {

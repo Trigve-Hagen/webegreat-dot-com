@@ -65,12 +65,10 @@ class UpdateProfile extends React.Component {
                         }
                         <form className="checkPaypal" onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <label htmlFor="name">Full Name</label>
-                                <input type="text" value={profileName} onChange={this.onChange} className="form-control" id="name" placeholder="Somebody Cool" />
+                                <input type="text" value={profileName} onChange={this.onChange} className="form-element" id="name" placeholder="Full Name" />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="email">Email address</label>
-                                <input type="email" value={profileEmail} onChange={this.onChange} className="form-control" id="email" placeholder="name@example.com" />
+                                <input type="email" value={profileEmail} onChange={this.onChange} className="form-element" id="email" placeholder="Email Address" />
                             </div>
                             <button type="submit" className="btn btn-army">Update Profile</button>
                         </form>

@@ -57,9 +57,7 @@ class Footer extends React.Component {
                 <div className="container">
                     <div className="row space-top-20px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                            <p className="navbar-text pull-left">© 2018 - Site Built By Trigve Hagen -
-                                <a href="http://tinyurl.com/tbvalid" target="_blank" > HTML 5 Validation</a>
-                            </p>
+                            <p className="navbar-text pull-left">© 2018 - Site Built By Trigve Hagen</p>
 
                             <a href="http://globalwebmethods.com" className="navbar-btn btn-primary btn pull-right">
                             <span className="glyphicon glyphicon-star"></span>  Global Web Methods</a>

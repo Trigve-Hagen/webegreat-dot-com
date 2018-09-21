@@ -63,14 +63,12 @@ class UpdatePassword extends React.Component {
                                 <label>{passwordError}</label>
                             ) : (null)
                         }
-                        <form className="checkPaypal" onSubmit={this.onSubmit}>
+                        <form className="updatePassword" onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <label htmlFor="password">Password</label>
-                                <input type="text" value={password} onChange={this.onChange} className="form-control" id="password" placeholder="Somebody Cool" />
+                                <input type="text" value={password} onChange={this.onChange} className="form-element" id="password" placeholder="Password" />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="rePassword">Re Password</label>
-                                <input type="text" value={rePassword} onChange={this.onChange} className="form-control" id="rePassword" placeholder="name@example.com" />
+                                <input type="text" value={rePassword} onChange={this.onChange} className="form-element" id="rePassword" placeholder="Re-Password" />
                             </div>
                             <button type="submit" className="btn btn-army">Update Password</button>
                         </form>
