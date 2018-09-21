@@ -65,7 +65,7 @@ class UpdateProducts extends React.Component {
         //const{ proUpdateError } = this.state;
         return (
 			<div>
-                <h2>Product Update</h2>
+                <h3>Product Update</h3>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         {

@@ -50,33 +50,47 @@ class ProductList extends React.Component {
 			});
     }
 
-    onView(productid) {
-        console.log(productid);
+    onView(productId) {
+        console.log(productId);
+        this.state.products.map(product => {
+            if(product.id == productId) {
+                this.props.updateProduct({
+                    id: product.id,
+                    image: product.image,
+                    name: product.name,
+                    price: product.price,
+                    description: product.description
+                });
+            }
+        });
     }
 
-    onDelete(productid) {
-        console.log(productid);
+    onDelete(productId) {
+        console.log(productId);
     }
 
     render() {
         //this.props.resetProduct();
-        //console.log(this.state.products);
+        
+        const { products } = this.state;
+        console.log(products);
         return (
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         <Pagination />
-                        <ul className="pagination">
+                        <ul className="ul-styles">
                             {
-                                this.state.products.map(product => {
-                                    <li>
+                                products.map(product => 
+                                    <li key={product.id}> 
                                         {product.name} 
-                                        <a onClick={this.onView(product.id)}>View</a> 
-                                        <a onClick={this.onDelete(product.id)}>Delete</a>
+                                        <a href="#" onClick={() => this.onView(product.id)}> View</a>  
+                                        <a href="#" onClick={() => this.onDelete(product.id)}> Delete</a> 
                                     </li>
-                                })
+                                )
                             }
                         </ul>
+                        <Pagination />
                     </div>
                 </div>
             </div>
@@ -90,4 +104,12 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(ProductList);
+function mapDispatchToProps(dispatch) {
+    return {
+        updateProduct: (value) => {
+            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductList);

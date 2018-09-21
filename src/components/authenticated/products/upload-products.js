@@ -64,7 +64,7 @@ class UploadProducts extends React.Component {
         //this.props.resetProduct();
         return (
 			<div>
-                <h2>Product Upload</h2>
+                <h3>Product Upload</h3>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         {

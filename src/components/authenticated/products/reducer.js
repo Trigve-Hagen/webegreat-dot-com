@@ -1,9 +1,9 @@
 const initialState = {
-    id: 0,
-    image: 'smile.jpg',
-    name: 'Smile',
-    price: '0.00',
-    description: 'Smiles are free!'
+    id: 1,
+    image: "airborne-shirt.png",
+    name: "Army Airborne T-Shirt",
+    price: '39.99',
+    description: "Grey t-shirt with Airborne image on front and American flag on sleeve."
 }
 
 const productReducer = (state=[initialState], action) => {
