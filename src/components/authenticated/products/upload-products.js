@@ -61,7 +61,7 @@ class UploadProducts extends React.Component {
 	}
 
     render() {
-        //const{ proUploadError } = this.state;
+        //this.props.resetProduct();
         return (
 			<div>
                 <h2>Product Upload</h2>
@@ -109,6 +109,9 @@ function mapDispatchToProps(dispatch) {
     return {
         updateProduct: (value) => {
             dispatch({ type: 'UPDATE_PRODUCT', payload: value})
+        },
+        resetProduct: (value) => {
+            dispatch({ type: 'RESET_PRODUCT', payload: value})
         }
     }
 }

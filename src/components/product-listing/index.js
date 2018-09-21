@@ -7,7 +7,6 @@ const style = {
 }
 
 function ProductListing(props) {
-    console.log(props.products[0].id);
     return <div className="row space-top-20px space-bottom-50px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                     <h1>Army Shop</h1>

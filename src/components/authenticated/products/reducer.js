@@ -8,10 +8,8 @@ const initialState = {
 
 const productReducer = (state=[initialState], action) => {
     switch(action.type) {
-        case "RESET_APP":
+        case "RESET_PRODUCT":
             return [initialState];
-        case 'ADD_PRODUCTS':
-            return [...state, action.payload];
         case 'UPDATE_PRODUCT':
             state=[];
             return [...state, action.payload];

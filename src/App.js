@@ -1,8 +1,11 @@
 import React from 'react';
+import ErrorBoundary from '../src/components/error-boundry';
 
 const App = ({ children }) => (
     <div>
-      {children}
+      <ErrorBoundary>
+        {children}
+      </ErrorBoundary>
     </div>
 );
 

@@ -296,6 +296,44 @@ app.get('/api/account/verify', (req, res, next) => {
  ***********************************************************************
  */
 
+
+app.post('/api/product/pagination', function(req, res) {
+    const { body } = req;
+    const {
+        perPage
+    } = body;
+
+    if(!perPage || !/[0-9]+/.test(perPage)) {
+        return res.send({
+            success: false,
+            message: 'Per page invalid or cannot be left empty.'
+        });
+    }
+
+    let countFrontProducts = "SELECT COUNT(??) FROM ??";
+    let countFrontProductsInserts = [
+        config.tables[0].table_fields[0].Field,
+        config.tables[0].table_name
+    ];
+    countFrontProducts = mysql.format(countFrontProducts, countFrontProductsInserts);
+    //console.log(getUserIdSession);
+    connection.query(countFrontProducts, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in count products for pagination.'
+            });
+        } else {
+            let pages = Math.ceil(results[0]['COUNT(`productid`)'] / perPage);
+            return res.send({
+                success: true,
+                message: 'success',
+                pages: pages
+            });
+        }
+    });
+});
+
 app.post('/api/product/front', function(req, res) {
     const { body } = req;
     const {
@@ -330,7 +368,6 @@ app.post('/api/product/front', function(req, res) {
                 message: 'Server Error in count products.'
             });
         } else {
-            let pages = Math.ceil(results[0]['COUNT(`productid`)'] / perPage);
             let start = (currentPage-1)*perPage;
             //console.log(util.inspect(results[0]['COUNT(`productid`)'], {showHidden: false, depth: null}))
             //console.log(start + ", Pages");

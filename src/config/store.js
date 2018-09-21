@@ -2,6 +2,7 @@ import { createStore, combineReducers } from 'redux';
 import cartReducer from '../components/cart/reducer';
 import authenticationReducer from '../components/authentication/reducer'
 import productReducer from '../components/authenticated/products/reducer';
+import paginationReducer from '../components/product-components/pagination/reducer';
 
 function saveToLocalStorage(state) {
     try {
@@ -26,6 +27,7 @@ function loadFromLocalStorage() {
 const rootReducer = combineReducers({
     cart: cartReducer,
     product: productReducer,
+    pagination: paginationReducer,
     authentication: authenticationReducer
 });
 

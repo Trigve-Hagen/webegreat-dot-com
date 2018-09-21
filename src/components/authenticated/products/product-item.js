@@ -1,6 +1,6 @@
 import React from 'react';
-import AddButton from './add-button';
-import RemoveButton from './remove-button';
+import AddButton from '../../product-components/add-button';
+import RemoveButton from '../../product-components/remove-button';
 
 const style = {
     marginTop: '20px'

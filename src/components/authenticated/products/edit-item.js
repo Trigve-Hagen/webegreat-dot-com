@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProductItem from '../../product-components/product-item';
+import ProductItem from './product-item';
 
 class EditItem extends React.Component {
     constructor(props) {

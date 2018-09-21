@@ -1,19 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProductListing from '../product-listing';
-//import products from '../../data/products';
-import Navigation from '../navigation';
-import Footer from '../footer';
+import Pagination from '../../../product-components/pagination';
 
-class Home extends React.Component {
+class ProductList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             perPage: 15,
-            currentPage: 1,
             loadProductError: '',
             products: []
         }
+        this.onView = this.onView.bind(this);
+        this.onDelete = this.onDelete.bind(this);
     }
 
     componentDidMount() {
@@ -23,7 +21,7 @@ class Home extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				currentPage: this.state.currentPage,
+				currentPage: this.props.pagination[0].currentPage,
                 perPage: this.state.perPage,
 			})
 		}).then(res => res.json())
@@ -39,7 +37,7 @@ class Home extends React.Component {
                             description: value['description']
                         });
                     }
-                    console.log(arrayArgs);
+                    //console.log(arrayArgs);
 					this.setState({
                         loadProductError: json.message,
                         products: arrayArgs
@@ -52,16 +50,35 @@ class Home extends React.Component {
 			});
     }
 
+    onView(productid) {
+        console.log(productid);
+    }
+
+    onDelete(productid) {
+        console.log(productid);
+    }
+
     render() {
         //this.props.resetProduct();
-        console.log(this.state.products);
+        //console.log(this.state.products);
         return (
             <div>
-                <Navigation path="/" authenticated={this.props.authentication[0].authenticated}/>
-                <div className="container">
-                    <ProductListing products={this.state.products}/>
+                <div className="row">
+                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <Pagination />
+                        <ul className="pagination">
+                            {
+                                this.state.products.map(product => {
+                                    <li>
+                                        {product.name} 
+                                        <a onClick={this.onView(product.id)}>View</a> 
+                                        <a onClick={this.onDelete(product.id)}>Delete</a>
+                                    </li>
+                                })
+                            }
+                        </ul>
+                    </div>
                 </div>
-                <Footer />
             </div>
         )
     }
@@ -69,23 +86,8 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        product: state.product,
-        authentication: state.authentication
+        pagination: state.pagination
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateProduct: (value) => {
-            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
-        },
-        addProducts: (value) => {
-            dispatch({ type: 'ADD_PRODUCTS', payload: value})
-        },
-        resetProduct: () => {
-            dispatch({ type: 'RESET_APP'})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps)(ProductList);

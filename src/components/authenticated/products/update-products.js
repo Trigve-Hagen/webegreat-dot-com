@@ -108,7 +108,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         updateProduct: (value) => {
-            dispatch({ type: 'UPDATE_PRODUCT', paydate: value})
+            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
         }
     }
 }
