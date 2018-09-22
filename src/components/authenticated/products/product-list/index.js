@@ -100,6 +100,14 @@ class ProductList extends React.Component {
                         loadProductError: json.message,
                         products: arrayArgs
                     });
+                    this.props.updateProduct({
+                        id: arrayArgs[0].id,
+                        image: arrayArgs[0].image,
+                        name: arrayArgs[0].name,
+                        price: arrayArgs[0].price,
+                        description: arrayArgs[0].description
+                    });
+                    //location.reload();
 				} else {
                     this.setState({
 						loadProductError: json.message

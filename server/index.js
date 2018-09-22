@@ -9,8 +9,8 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const app = express();
-const pattern = /[A-Za-z0-9_/-/.]+/i;
-const emptyPattern = /([A-Za-z0-9_/-/.]|^\s*$)+/i;
+const pattern = /^[A-Za-z0-9_\-\.\s]+$/i;
+const emptyPattern = /^([A-Za-z0-9_\-\.\s]|^\s*$)+$/i;
 
 const clientRootFolder = 'src';
 
@@ -664,7 +664,6 @@ app.post('/api/product/update', function(req, res) {
         token
     } = body;
     let updateObj = [];
-    let reqPath = path.join(__dirname, '../');
 
     if(!proid || !/[0-9]+/.test(proid)) {
         return res.send({
@@ -682,31 +681,53 @@ app.post('/api/product/update', function(req, res) {
 
     //console.log(token + ", " + proid);
 
-    if(pattern.test(name)) updateObj.push({
-        name: config.tables[0].table_fields[4].Field,
-        content: name
-    });
+    if(pattern.test(name)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[4].Field,
+            content: name
+        });
+    } else {
+        if(name != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
 
-    if(pattern.test(price)) updateObj.push({
-        name: config.tables[0].table_fields[7].Field,
-        content: price
-    });
+    if(pattern.test(price)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[7].Field,
+            content: price
+        });
+    } else {
+        if(price != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
     
-    if(pattern.test(description)) updateObj.push({
-        name: config.tables[0].table_fields[5].Field,
-        content: description
-    });
+    if(pattern.test(description)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[5].Field,
+            content: description
+        });
+    } else {
+        if(description != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
     
     if (req.files) {
-        if(pattern.test(imagename)) updateObj.push({
-            name: config.tables[0].table_fields[6].Field,
-            content: imagename
-        });
-
         if(!filename || !pattern.test(filename)) {
             return res.send({
                 success: false,
-                message: 'Filename invalid or cannot be left empty.'
+                message: 'Filename empty or Letters Numbers Spaces _ - and . allowed.'
             });
         }
 
@@ -726,6 +747,7 @@ app.post('/api/product/update', function(req, res) {
                     message: 'Server Error in get userid.'
                 });
             } else {
+                let reqPath = path.join(__dirname, '../');
                 if(pattern.test(imagename)) {
                     if(urlExists(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`)) {
                         fs.unlink(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`, (err) => {
@@ -743,8 +765,14 @@ app.post('/api/product/update', function(req, res) {
                                     case 'png': ext = '.png'; break;
                                     case 'gif': ext = '.gif'; break;
                                 }
+                                
+                                let image = req.body.filename + ext;
+                                if(pattern.test(image)) updateObj.push({
+                                    name: config.tables[0].table_fields[6].Field,
+                                    content: image
+                                });
+
                                 let imageFile = req.files['file'];
-                                //let image = req.body.filename + ext;
                                 imageFile.mv(
                                     `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
                                     function(err) {
@@ -775,7 +803,7 @@ app.post('/api/product/update', function(req, res) {
                                             updateProductInserts.push(config.tables[0].table_fields[3].Field);
                                             
                                             updateProduct = mysql.format(updateProduct, updateProductInserts);
-                                            console.log(updateProduct);
+                                            //console.log(updateProduct);
                                             connection.query(updateProduct, function (error, result, fields) {
                                                 if(error) {
                                                     //console.log("Error: in Register New User: " + err);
@@ -792,14 +820,18 @@ app.post('/api/product/update', function(req, res) {
                                                         name: name,
                                                         description: description,
                                                         price: price,
-                                                        image: ''
+                                                        image: image
                                                     });
                                                 }
-                                            });
-                                                
+                                            });    
                                         }
                                 });
                             }
+                        });
+                    } else {
+                        return res.send({
+                            success: false,
+                            message: 'The Image does not exsist. Please delete the product and try again.'
                         });
                     }
                 }
@@ -869,6 +901,11 @@ app.post('/api/product/update', function(req, res) {
         });
     }
 });
+
+/*
+ ********************** Profile Upload && Update ***********************
+ ***********************************************************************
+ */
 
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');

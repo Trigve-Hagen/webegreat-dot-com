@@ -28,6 +28,8 @@ class UpdateProducts extends React.Component {
             data.append('price', this.state.proUpdatePrice.value);
             data.append('token', this.props.authentication[0].token);
 
+        //console.log("Description: "+this.state.proUpdateDescription.value);
+
 		fetch('http://localhost:4000/api/product/update', {
             method: 'POST',
             body: data,
@@ -36,15 +38,15 @@ class UpdateProducts extends React.Component {
 				if(json.success) {
                     console.log("Successfull Product Update.");
                     let obj = {}
-                    obj['id']=this.props.product[0].id;
+                    obj['id'] = this.props.product[0].id;
                     if(json.name != '') obj['name']=json.name;
-                    else obj['name']=this.props.product[0].name;
+                    else obj['name'] = this.props.product[0].name;
                     if(json.price != '') obj['price']=json.price;
-                    else obj['price']=this.props.product[0].price;
+                    else obj['price'] = this.props.product[0].price;
                     if(json.description != '') obj['description']=json.description;
-                    else obj['description']=this.props.product[0].description;
+                    else obj['description'] = this.props.product[0].description;
                     if(json.image != '') obj['image']=json.image;
-                    else obj['image']=this.props.product[0].image;
+                    else obj['image'] = this.props.product[0].image;
 
                     this.props.updateProduct(obj);
                     let imagename = obj.image.split(".");
@@ -55,7 +57,8 @@ class UpdateProducts extends React.Component {
                         proUpdateDescription: json.description != '' ? json.description : this.props.product[0].description,
                         updateInput: '',
                         fileName: imagename[0]
-					});
+                    });
+                    //location.reload();
 				} else {
                     console.log(json.message);
                     this.setState({
