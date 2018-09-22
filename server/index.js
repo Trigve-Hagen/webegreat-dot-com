@@ -307,7 +307,7 @@ app.post('/api/product/pagination', function(req, res) {
         perPage
     } = body;
 
-    if(!perPage || !/[0-9]+/.test(perPage)) {
+    if(!perPage || !/^[0-9]+$/.test(perPage)) {
         return res.send({
             success: false,
             message: 'Per page invalid or cannot be left empty.'
@@ -347,14 +347,14 @@ app.post('/api/product/delete-product', function(req, res) {
 
     let reqPath = path.join(__dirname, '../');
 
-    if(!id || !/[0-9]+/.test(id)) {
+    if(!id || !/^[0-9]+$/.test(id)) {
         return res.send({
             success: false,
             message: 'Id invalid or cannot be left empty.'
         });
     }
 
-    if(!token || !/[0-9]+/.test(token)) {
+    if(!token || !/^[0-9]+$/.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
@@ -465,13 +465,13 @@ app.post('/api/product/front', function(req, res) {
         currentPage
     } = body;
     
-    if(!perPage || !/[0-9]+/.test(perPage)) {
+    if(!perPage || !/^[0-9]+$/.test(perPage)) {
         return res.send({
             success: false,
             message: 'Per page invalid or cannot be left empty.'
         });
     }
-    if(!currentPage || !/[0-9]+/.test(currentPage)) {
+    if(!currentPage || !/^[0-9]+$/.test(currentPage)) {
         return res.send({
             success: false,
             message: 'Current page name invalid or cannot be left empty.'
@@ -665,14 +665,14 @@ app.post('/api/product/update', function(req, res) {
     } = body;
     let updateObj = [];
 
-    if(!proid || !/[0-9]+/.test(proid)) {
+    if(!proid || !/^[0-9]+$/.test(proid)) {
         return res.send({
             success: false,
             message: 'Product id invalid or cannot be left empty.'
         });
     }
 
-    if(!token || !/[0-9]+/.test(token)) {
+    if(!token || !/^[0-9]+$/.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
@@ -782,10 +782,6 @@ app.post('/api/product/update', function(req, res) {
                                                 message: 'Server error uploading image.'
                                             });
                                         } else {
-                                            //remember to delete the image
-                                            currentTimestamp = moment().unix(); //in seconds
-                                            let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-                    
                                             var updateProduct = "UPDATE ?? SET ";
                                             var updateProductInserts = [
                                                 config.tables[0].table_name
@@ -854,10 +850,7 @@ app.post('/api/product/update', function(req, res) {
                     success: false,
                     message: 'Server Error in get userid no image.'
                 });
-            } else {;
-                currentTimestamp = moment().unix();//in seconds
-                let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-
+            } else {
                 var updateProduct = "UPDATE ?? SET ";
                 var updateProductInserts = [
                     config.tables[0].table_name
@@ -875,7 +868,7 @@ app.post('/api/product/update', function(req, res) {
                 updateProductInserts.push(config.tables[0].table_fields[3].Field);
                 
                 updateProduct = mysql.format(updateProduct, updateProductInserts);
-                console.log(updateProduct);
+                //console.log(updateProduct);
                 connection.query(updateProduct, function (error, result, fields) {
                     if(error) {
                         //console.log("Error: in Register New User: " + err);

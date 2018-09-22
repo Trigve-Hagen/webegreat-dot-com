@@ -58,7 +58,7 @@ class UpdateProducts extends React.Component {
                         updateInput: '',
                         fileName: imagename[0]
                     });
-                    //location.reload();
+                    location.reload();
 				} else {
                     console.log(json.message);
                     this.setState({
