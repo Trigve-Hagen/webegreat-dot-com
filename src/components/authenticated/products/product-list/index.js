@@ -99,16 +99,21 @@ class ProductList extends React.Component {
     render() {
         //this.props.resetProduct();
         
-        const { products } = this.state;
-        console.log(products);
+        //const { products } = this.state;
+        //console.log(products);
         return (
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        {
+                            (this.state.loadProductError) ? (
+                                <label>{this.state.loadProductError}</label>
+                            ) : (null)
+                        }
                         <Pagination />
                         <ul className="ul-styles">
                             {
-                                products.map(product => 
+                                this.state.products.map(product => 
                                     <li key={product.id}> 
                                         {product.name} 
                                         <a href="#" onClick={() => this.onView(product.id)}> View</a>  

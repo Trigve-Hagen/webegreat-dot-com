@@ -43,10 +43,7 @@ mysqlhelpers.buildTables();
 
 // need to encrypt and decrypt the token in local storage and Paypal Credentials in the database.
 function urlExists(url) {
-    var http = new XMLHttpRequest();
-    http.open('HEAD', url, false);
-    http.send();
-    return http.status!=404;
+    return fs.existsSync(url);
 }
 
 function generateHash(password) {
@@ -334,7 +331,7 @@ app.post('/api/product/pagination', function(req, res) {
             let pages = Math.ceil(results[0]['COUNT(`productid`)'] / perPage);
             return res.send({
                 success: true,
-                message: 'success',
+                message: 'Success',
                 pages: pages
             });
         }
@@ -347,6 +344,7 @@ app.post('/api/product/delete-product', function(req, res) {
         id,
         image
     } = body;
+    let reqPath = path.join(__dirname, '../');
 
     if(!image || !pattern.test(image)) {
         return res.send({
@@ -385,12 +383,11 @@ app.post('/api/product/delete-product', function(req, res) {
                 } else {
                     return res.send({
                         success: true,
-                        message: 'success'
+                        message: 'Success'
                     });
                 }
             });
         }
-        console.log('successfully deleted /tmp/hello');
     });
 });
 
@@ -453,7 +450,7 @@ app.post('/api/product/front', function(req, res) {
                     //console.log(util.inspect(jsonObj['results'], {showHidden: false, depth: null}));
                     return res.send({
                         success: true,
-                        message: 'success',
+                        message: 'Success',
                         products: result
                     });
                 }
@@ -478,71 +475,77 @@ app.post('/api/product/upload', function(req, res) {
             message: 'No file was uploaded.'
         });
     }
+
     if(!filename || !pattern.test(filename)) {
         return res.send({
             success: false,
             message: 'Image name invalid or cannot be left empty.'
         });
     }
+
     if(!name || !pattern.test(name)) {
         return res.send({
             success: false,
             message: 'Product name invalid or cannot be left empty.'
         });
     }
+
     if(!description || !pattern.test(description)) {
         return res.send({
             success: false,
             message: 'Description invalid or cannot be left empty.'
         });
     }
+
     if(!price || !pattern.test(price)) {
         return res.send({
             success: false,
             message: 'Price invalid or cannot be left empty.'
         });
     }
+
     if(!token || !pattern.test(token)) {
         return res.send({
             success: false,
             message: 'Invalid token.'
         });
     }
-    let ext = '';
-    var splitRes = req.files.file.mimetype.split("/");
-    switch(splitRes[1]) {
-        case 'jpeg': ext = '.jpg'; break;
-        case 'jpg': ext = '.jpg'; break;
-        case 'png': ext = '.png'; break;
-        case 'gif': ext = '.gif'; break;
-    }
-    let imageFile = req.files['file'];
-    let reqPath = path.join(__dirname, '../');
-    let image = req.body.filename + ext;
 
-    imageFile.mv(
-        `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
-        function(err) {
-            if (err) {
-                return res.send({
-                    success: false,
-                    message: 'Server error uploading image.'
-                });
-            } else {
-                let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-                let userIdInserts = [
-                    config.tables[3].table_fields[1].Field,
-                    config.tables[3].table_name,
-                    config.tables[3].table_fields[0].Field,
-                    token
-                ];
-                getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-                //console.log(getUserIdSession);
-                connection.query(getUserIdSession, function (error, results, fields) {
-                    if(error) {
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid.'
+            });
+        } else {
+            let ext = '';
+            var splitRes = req.files.file.mimetype.split("/");
+            switch(splitRes[1]) {
+                case 'jpeg': ext = '.jpg'; break;
+                case 'jpg': ext = '.jpg'; break;
+                case 'png': ext = '.png'; break;
+                case 'gif': ext = '.gif'; break;
+            }
+            let imageFile = req.files['file'];
+            let reqPath = path.join(__dirname, '../');
+            let image = req.body.filename + ext;
+
+            imageFile.mv(
+                `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
+                function(err) {
+                    if (err) {
                         return res.send({
                             success: false,
-                            message: 'Server Error in get userid.'
+                            message: 'Server error uploading image.'
                         });
                     } else {
                         console.log( + ", UserId");
@@ -575,10 +578,10 @@ app.post('/api/product/upload', function(req, res) {
                                     image: image
                                 });
                             }
-                        });
+                        });    
                     }
-                });
-            }
+            });
+        }
     });
 });
 
@@ -594,6 +597,7 @@ app.post('/api/product/update', function(req, res) {
         token
     } = body;
     let updateObj = [];
+    let reqPath = path.join(__dirname, '../');
 
     if(!proid || !/[0-9]+/.test(proid)) {
         return res.send({
@@ -627,8 +631,6 @@ app.post('/api/product/update', function(req, res) {
     });
     
     if (req.files) {
-
-
         if(pattern.test(imagename)) updateObj.push({
             name: config.tables[0].table_fields[6].Field,
             content: imagename
@@ -641,101 +643,102 @@ app.post('/api/product/update', function(req, res) {
             });
         }
 
-        if(pattern.test(imagename)) {
-            if(urlExists(`${reqPath}${clientRootFolder}/assets/img/products/${image}`)) {
-                fs.unlink(`${reqPath}${clientRootFolder}/assets/img/products/${image}`, (err) => {
-                    if (err) {
-                        return res.send({
-                            success: false,
-                            message: 'Server Error in delete product image update product.'
-                        });
-                    } else {
-                        let ext = '';
-                        var splitRes = req.files.file.mimetype.split("/");
-                        switch(splitRes[1]) {
-                            case 'jpeg': ext = '.jpg'; break;
-                            case 'jpg': ext = '.jpg'; break;
-                            case 'png': ext = '.png'; break;
-                            case 'gif': ext = '.gif'; break;
-                        }
-                        let imageFile = req.files['file'];
-                        let reqPath = path.join(__dirname, '../');
-                        let image = req.body.filename + ext;
-                        imageFile.mv(
-                            `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
-                            function(err) {
-                                if (err) {
-                                    return res.send({
-                                        success: false,
-                                        message: 'Server error uploading image.'
-                                    });
-                                } else {
-                                    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-                                    let userIdInserts = [
-                                        config.tables[3].table_fields[1].Field,
-                                        config.tables[3].table_name,
-                                        config.tables[3].table_fields[0].Field,
-                                        token
-                                    ];
-                                    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-                                    //console.log(getUserIdSession);
-                                    connection.query(getUserIdSession, function (error, results, fields) {
-                                        if(error) {
+        let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+        let userIdInserts = [
+            config.tables[3].table_fields[1].Field,
+            config.tables[3].table_name,
+            config.tables[3].table_fields[0].Field,
+            token
+        ];
+        getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+        //console.log(getUserIdSession);
+        connection.query(getUserIdSession, function (error, results, fields) {
+            if(error) {
+                return res.send({
+                    success: false,
+                    message: 'Server Error in get userid.'
+                });
+            } else {
+                if(pattern.test(imagename)) {
+                    if(urlExists(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`)) {
+                        fs.unlink(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`, (err) => {
+                            if (err) {
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in delete product image update product.'
+                                });
+                            } else {
+                                let ext = '';
+                                var splitRes = req.files.file.mimetype.split("/");
+                                switch(splitRes[1]) {
+                                    case 'jpeg': ext = '.jpg'; break;
+                                    case 'jpg': ext = '.jpg'; break;
+                                    case 'png': ext = '.png'; break;
+                                    case 'gif': ext = '.gif'; break;
+                                }
+                                let imageFile = req.files['file'];
+                                let image = req.body.filename + ext;
+                                imageFile.mv(
+                                    `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
+                                    function(err) {
+                                        if (err) {
                                             return res.send({
                                                 success: false,
-                                                message: 'Server Error in get userid.'
+                                                message: 'Server error uploading image.'
                                             });
                                         } else {
-                                            //remember to delete the image
-                                            currentTimestamp = moment().unix(); //in seconds
-                                            let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-                    
-                                            var updateProduct = "UPDATE ?? SET ";
-                                            var updateProductInserts = [
-                                                config.tables[0].table_name
-                                            ];
-                                            let objCount=0;
-                                            updateObj.forEach(element => {
-                                                if(updateObj.length - 1 == objCount) updateProduct += "?? = ? ";
-                                                else updateProduct += "?? = ?, ";
-                                                updateProductInserts.push(element.name);
-                                                updateProductInserts.push(element.content);
-                                                objCount++;
-                                            });
-                                            updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
-                                            updateProductInserts.push(config.tables[0].table_fields[0].Field);
-                                            updateProductInserts.push(config.tables[0].table_fields[3].Field);
                                             
-                                            updateProduct = mysql.format(updateProduct, updateProductInserts);
-                                            console.log(updateProduct);
-                                            connection.query(updateProduct, function (error, result, fields) {
-                                                if(error) {
-                                                    //console.log("Error: in Register New User: " + err);
-                                                    return res.send({
-                                                        success: false,
-                                                        message: 'Server Error in product update'
+                                                    //remember to delete the image
+                                                    currentTimestamp = moment().unix(); //in seconds
+                                                    let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+                            
+                                                    var updateProduct = "UPDATE ?? SET ";
+                                                    var updateProductInserts = [
+                                                        config.tables[0].table_name
+                                                    ];
+                                                    let objCount=0;
+                                                    updateObj.forEach(element => {
+                                                        if(updateObj.length - 1 == objCount) updateProduct += "?? = ? ";
+                                                        else updateProduct += "?? = ?, ";
+                                                        updateProductInserts.push(element.name);
+                                                        updateProductInserts.push(element.content);
+                                                        objCount++;
                                                     });
-                                                } else {
-                                                    // do results here
-                                                    return res.send({
-                                                        success: true,
-                                                        message: 'Your Product has been successfully updated.',
-                                                        id: result.insertId,
-                                                        name: name,
-                                                        description: description,
-                                                        price: price,
-                                                        image: ''
+                                                    updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
+                                                    updateProductInserts.push(config.tables[0].table_fields[0].Field);
+                                                    updateProductInserts.push(config.tables[0].table_fields[3].Field);
+                                                    
+                                                    updateProduct = mysql.format(updateProduct, updateProductInserts);
+                                                    console.log(updateProduct);
+                                                    connection.query(updateProduct, function (error, result, fields) {
+                                                        if(error) {
+                                                            //console.log("Error: in Register New User: " + err);
+                                                            return res.send({
+                                                                success: false,
+                                                                message: 'Server Error in product update'
+                                                            });
+                                                        } else {
+                                                            // do results here
+                                                            return res.send({
+                                                                success: true,
+                                                                message: 'Your Product has been successfully updated.',
+                                                                id: result.insertId,
+                                                                name: name,
+                                                                description: description,
+                                                                price: price,
+                                                                image: ''
+                                                            });
+                                                        }
                                                     });
-                                                }
-                                            });
+                                                
                                         }
-                                    });
-                                }
+                                });
+                            }
                         });
                     }
-                });
+                }
             }
-        }
+        });
     } else {
         let image = '';
         let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
