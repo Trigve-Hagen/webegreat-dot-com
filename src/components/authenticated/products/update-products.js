@@ -23,6 +23,8 @@ class UpdateProducts extends React.Component {
         const data = new FormData();
             data.append('file', this.state.updateInput.files[0]);
             data.append('filename', this.state.fileName.value);
+            data.append('proid', this.props.product[0].id);
+            data.append('imagename', this.props.product[0].image);
             data.append('name', this.state.proUpdateName.value);
 			data.append('description', this.state.proUpdateDescription.value);
             data.append('price', this.state.proUpdatePrice.value);
@@ -33,16 +35,20 @@ class UpdateProducts extends React.Component {
             body: data,
 		}).then(res => res.json())
 			.then(json => {
-                this.setState({ proUpdateImageUrl: body.file });
 				if(json.success) {
-					console.log("Successfull Product Update.");
-					this.props.updateProduct({
-                        id: json.id,
-                        name: json.name,
-                        price: json.price,
-                        description: json.description,
-                        image: json.image
-                    });
+                    console.log("Successfull Product Update.");
+                    let obj = {}
+                    obj['id']=this.props.product[0].id;
+                    if(json.name != '') obj['name']=json.name;
+                    else obj['name']=this.props.product[0].name;
+                    if(json.price != '') obj['price']=json.price;
+                    else obj['price']=this.props.product[0].price;
+                    if(json.description != '') obj['description']=json.description;
+                    else obj['description']=this.props.product[0].description;
+                    if(json.image != '') obj['image']=json.image;
+                    else obj['image']=this.props.product[0].image;
+
+					this.props.updateProduct(obj);
 					this.setState({
 						proUpdateError: json.message,
                         proUpdateName: '',
@@ -62,7 +68,7 @@ class UpdateProducts extends React.Component {
 	}
 
     render() {
-        //const{ proUpdateError } = this.state;
+        //this.props.resetProduct();
         return (
 			<div>
                 <h3>Product Update</h3>
@@ -107,6 +113,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        resetProduct: (value) => {
+            dispatch({ type: 'RESET_PRODUCT', payload: value})
+        },
         updateProduct: (value) => {
             dispatch({ type: 'UPDATE_PRODUCT', payload: value})
         }

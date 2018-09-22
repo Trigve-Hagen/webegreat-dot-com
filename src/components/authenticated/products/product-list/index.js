@@ -50,23 +50,50 @@ class ProductList extends React.Component {
 			});
     }
 
-    onView(productId) {
-        console.log(productId);
+    getProductObject(productId) {
+        let obj={};
         this.state.products.map(product => {
             if(product.id == productId) {
-                this.props.updateProduct({
-                    id: product.id,
-                    image: product.image,
-                    name: product.name,
-                    price: product.price,
-                    description: product.description
-                });
+                obj.id = product.id;
+                obj.image = product.image;
+                obj.name = product.name;
+                obj.price = product.price;
+                obj.description = product.description;
             }
         });
+        return obj;
+    }
+
+    onView(productId) {
+        this.props.updateProduct(this.getProductObject(productId));
     }
 
     onDelete(productId) {
         console.log(productId);
+        let productObject = this.getProductObject(productId);
+        if (confirm(`Are you sure you want to delete ${productObject.name}?`)) {
+            fetch('http://localhost:4000/api/product/delete-product', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                id: productId,
+                image: productObject.image
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+					this.setState({
+                        loadProductError: json.message
+					});
+				} else {
+                    this.setState({
+						loadProductError: json.message
+					});
+                }
+			});
+        }
     }
 
     render() {

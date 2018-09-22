@@ -52,7 +52,6 @@ class UploadProducts extends React.Component {
                         fileName: ''
                     });
 				} else {
-                    console.log(json.message);
                     this.setState({
 						proUploadError: json.message
 					});
@@ -61,7 +60,6 @@ class UploadProducts extends React.Component {
 	}
 
     render() {
-        //this.props.resetProduct();
         return (
 			<div>
                 <h3>Product Upload</h3>
