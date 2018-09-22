@@ -22,19 +22,7 @@ export default function ProductItem(props) {
                 <p>${ props.product[0].price }</p>
             </div>
             <div className="product-button">
-                <AddButton 
-                    cartItem={props.cartItem}
-                    product={props.product}
-                    addToCart={props.addToCart}
-                />
-                {
-                    props.cartItem
-                        ? <RemoveButton 
-                            cartItem={props.cartItem}
-                            product={props.product}
-                            removeFromCart={props.removeFromCart}
-                        /> : null
-                }
+            <button className="btn btn-army">Add To Cart (0)</button>
             </div>
         </div>
     </div>

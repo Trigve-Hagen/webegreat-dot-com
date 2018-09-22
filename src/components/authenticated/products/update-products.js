@@ -9,11 +9,9 @@ class UpdateProducts extends React.Component {
             proUpdateName: '',
             proUpdatePrice: '',
             proUpdateDescription: '',
-            proUpdateImageUrl: '',
             updateInput: '',
             fileName: ''
 		}
-
 		this.onSubmit = this.onSubmit.bind(this);
 	}
 
@@ -48,15 +46,15 @@ class UpdateProducts extends React.Component {
                     if(json.image != '') obj['image']=json.image;
                     else obj['image']=this.props.product[0].image;
 
-					this.props.updateProduct(obj);
+                    this.props.updateProduct(obj);
+                    let imagename = obj.image.split(".");
 					this.setState({
 						proUpdateError: json.message,
-                        proUpdateName: '',
-                        proUpdatePrice: '',
-                        proUpdateDescription: '',
-                        proUpdateImageUrl: '',
+                        proUpdateName: json.name != '' ? json.name : this.props.product[0].name,
+                        proUpdatePrice: json.price != '' ? json.price : this.props.product[0].price,
+                        proUpdateDescription: json.description != '' ? json.description : this.props.product[0].description,
                         updateInput: '',
-                        fileName: ''
+                        fileName: imagename[0]
 					});
 				} else {
                     console.log(json.message);
@@ -69,6 +67,12 @@ class UpdateProducts extends React.Component {
 
     render() {
         //this.props.resetProduct();
+        const valueObj = {
+            filename: this.props.product[0].image.split(".")[0],
+            proUpdateName: this.props.product[0].name,
+            proUpdatePrice: this.props.product[0].price,
+            proUpdateDescription: this.props.product[0].description,
+        }
         return (
 			<div>
                 <h3>Product Update</h3>

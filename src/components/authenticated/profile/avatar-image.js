@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 //import Images from '../../../assets/img/images';
-import user from '../../../assets/img/user.jpg';
+import user from '../../../assets/img/user-avatar.jpg';
 
 class AvatarImage extends React.Component {
     constructor(props) {

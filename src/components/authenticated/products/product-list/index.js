@@ -79,14 +79,27 @@ class ProductList extends React.Component {
 			},
 			body: JSON.stringify({
                 id: productId,
-                image: productObject.image
+                token: this.props.authentication[0].token
 			})
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-					this.setState({
-                        loadProductError: json.message
-					});
+                    let arrayArgs = [];
+                    this.state.products.map(product => {
+                        if(productId != product.id) {
+                            arrayArgs.push({
+                                id: product.id,
+                                image: product.image,
+                                name: product.name,
+                                price: product.price,
+                                description: product.description
+                            });
+                        }
+                    });
+                    this.setState({
+                        loadProductError: json.message,
+                        products: arrayArgs
+                    });
 				} else {
                     this.setState({
 						loadProductError: json.message
@@ -132,7 +145,8 @@ class ProductList extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        pagination: state.pagination
+        pagination: state.pagination,
+        authentication: state.authentication
     }
 }
 
