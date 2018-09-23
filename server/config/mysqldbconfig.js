@@ -1,4 +1,10 @@
 module.exports = {
+    patterns: {
+        names: /^[\w\s.&$_-]+$/i,
+        numbers: /^[0-9]+$/,
+        emails: /^[\w.]+@[\w.]+.[A-Za-z]{2,}$/,
+        passwords: /^[\w\W]+$/
+    },
     connection: {
         host: 'localhost',
         user: 'trigve',

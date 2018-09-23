@@ -48,6 +48,10 @@ a, a:active, a:focus {
   margin-bottom: 50px;
 }
 
+.margin-bottom-20px {
+  margin-bottom: 20px;
+}
+
 .space-top-50px {
   margin-top: 50px;
 }
@@ -58,6 +62,12 @@ a, a:active, a:focus {
 
 .margin-left-5px {
   margin-left: 5px;
+}
+
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
 }
 
 .ul-styles {

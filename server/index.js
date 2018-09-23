@@ -4,22 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql');
-const config = require('./config/mysqldbconfig');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const app = express();
 
 let reqPath = path.join(__dirname, '../');
-const pattern = /^[\w\s.-]+$/i;
-const passwordPattern = /^[\w\W]+$/;
-const emailPattern = /^[\w.]+@[\w.]+.[A-Za-z]{2,}$/;
-const numberPattern = /^[0-9]+$/;
+const config = require('./config/mysqldbconfig');
 
 let currentTimestamp = moment().unix();
 let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-
-const clientRootFolder = 'src';
 
 app.use(cors());
 app.use(express.json());
@@ -31,19 +25,12 @@ const connection = mysql.createConnection({
     password: config.connection.pass,
     database: config.connection.name
 });
+connection.connect(err => { if(err) console.log(err); });
 
-connection.connect(err => {
-    if(err) {
-        console.log(err);
-    }
-});
-
-const mysqlhelpers = require('./config/mysqldbhelpers')(
-    config.connection.name,
-    config,
-    connection
-    );
-mysqlhelpers.buildTables();
+const mysqlBuildTables = require('./config/mysqldbhelpers')(
+    config.connection.name, config, connection
+);
+mysqlBuildTables.buildTables();
 
 // API routes
 // require('./server-routes')(app);
@@ -338,7 +325,7 @@ app.post('/api/product/pagination', function(req, res) {
         perPage
     } = body;
 
-    if(!perPage || !numberPattern.test(perPage)) {
+    if(!perPage || !config.patterns.numbers.test(perPage)) {
         return res.send({
             success: false,
             message: 'Per page invalid or cannot be left empty.'
@@ -376,14 +363,14 @@ app.post('/api/product/delete-product', function(req, res) {
         token
     } = body;
 
-    if(!id || !numberPattern.test(id)) {
+    if(!id || !config.patterns.numbers.test(id)) {
         return res.send({
             success: false,
             message: 'Id invalid or cannot be left empty.'
         });
     }
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
@@ -423,8 +410,8 @@ app.post('/api/product/delete-product', function(req, res) {
                         message: 'Server Error in get product by id to delete.'
                     });
                 } else {
-                    if(urlExists(`${reqPath}${clientRootFolder}/assets/img/products/${results[0]['image']}`)) {
-                        fs.unlink(`${reqPath}${clientRootFolder}/assets/img/products/${results[0]['image']}`, (err) => {
+                    if(urlExists(`${reqPath}src/assets/img/products/${results[0]['image']}`)) {
+                        fs.unlink(`${reqPath}src/assets/img/products/${results[0]['image']}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -494,13 +481,13 @@ app.post('/api/product/front', function(req, res) {
         currentPage
     } = body;
     
-    if(!perPage || !numberPattern.test(perPage)) {
+    if(!perPage || !config.patterns.numbers.test(perPage)) {
         return res.send({
             success: false,
             message: 'Per page invalid or cannot be left empty.'
         });
     }
-    if(!currentPage || !numberPattern.test(currentPage)) {
+    if(!currentPage || !config.patterns.numbers.test(currentPage)) {
         return res.send({
             success: false,
             message: 'Current page name invalid or cannot be left empty.'
@@ -572,35 +559,35 @@ app.post('/api/product/upload', function(req, res) {
         });
     }
 
-    if(!filename || !pattern.test(filename)) {
+    if(!filename || !config.patterns.names.test(filename)) {
         return res.send({
             success: false,
             message: 'Image name invalid or cannot be left empty.'
         });
     }
 
-    if(!name || !pattern.test(name)) {
+    if(!name || !config.patterns.names.test(name)) {
         return res.send({
             success: false,
             message: 'Product name invalid or cannot be left empty.'
         });
     }
 
-    if(!description || !pattern.test(description)) {
+    if(!description || !config.patterns.names.test(description)) {
         return res.send({
             success: false,
             message: 'Description invalid or cannot be left empty.'
         });
     }
 
-    if(!price || !pattern.test(price)) {
+    if(!price || !config.patterns.names.test(price)) {
         return res.send({
             success: false,
             message: 'Price invalid or cannot be left empty.'
         });
     }
 
-    if(!token || !pattern.test(token)) {
+    if(!token || !config.patterns.names.test(token)) {
         return res.send({
             success: false,
             message: 'Invalid token.'
@@ -635,7 +622,7 @@ app.post('/api/product/upload', function(req, res) {
             let image = req.body.filename + ext;
 
             imageFile.mv(
-                `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
+                `${reqPath}src/assets/img/products/${req.body.filename}${ext}`,
                 function(err) {
                     if (err) {
                         return res.send({
@@ -693,14 +680,14 @@ app.post('/api/product/update', function(req, res) {
     } = body;
     let updateObj = [];
 
-    if(!proid || !numberPattern.test(proid)) {
+    if(!proid || !config.patterns.numbers.test(proid)) {
         return res.send({
             success: false,
             message: 'Product id invalid or cannot be left empty.'
         });
     }
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
@@ -709,7 +696,7 @@ app.post('/api/product/update', function(req, res) {
 
     //console.log(token + ", " + proid);
 
-    if(pattern.test(name)) {
+    if(config.patterns.names.test(name)) {
         updateObj.push({
             name: config.tables[0].table_fields[4].Field,
             content: name
@@ -723,7 +710,7 @@ app.post('/api/product/update', function(req, res) {
         }
     }
 
-    if(pattern.test(price)) {
+    if(config.patterns.names.test(price)) {
         updateObj.push({
             name: config.tables[0].table_fields[7].Field,
             content: price
@@ -737,7 +724,7 @@ app.post('/api/product/update', function(req, res) {
         }
     }
     
-    if(pattern.test(description)) {
+    if(config.patterns.names.test(description)) {
         updateObj.push({
             name: config.tables[0].table_fields[5].Field,
             content: description
@@ -752,7 +739,7 @@ app.post('/api/product/update', function(req, res) {
     }
     
     if (req.files) {
-        if(!filename || !pattern.test(filename)) {
+        if(!filename || !config.patterns.names.test(filename)) {
             return res.send({
                 success: false,
                 message: 'Filename empty or Letters Numbers Spaces _ - and . allowed.'
@@ -775,9 +762,9 @@ app.post('/api/product/update', function(req, res) {
                     message: 'Server Error in get userid.'
                 });
             } else {
-                if(pattern.test(imagename)) {
-                    if(urlExists(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`)) {
-                        fs.unlink(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`, (err) => {
+                if(config.patterns.names.test(imagename)) {
+                    if(urlExists(`${reqPath}src/assets/img/products/${imagename}`)) {
+                        fs.unlink(`${reqPath}src/assets/img/products/${imagename}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -794,14 +781,14 @@ app.post('/api/product/update', function(req, res) {
                                 }
                                 
                                 let image = req.body.filename + ext;
-                                if(pattern.test(image)) updateObj.push({
+                                if(config.patterns.names.test(image)) updateObj.push({
                                     name: config.tables[0].table_fields[6].Field,
                                     content: image
                                 });
 
                                 let imageFile = req.files['file'];
                                 imageFile.mv(
-                                    `${reqPath}${clientRootFolder}/assets/img/products/${req.body.filename}${ext}`,
+                                    `${reqPath}src/assets/img/products/${req.body.filename}${ext}`,
                                     function(err) {
                                         if (err) {
                                             return res.send({
@@ -933,7 +920,7 @@ app.post('/api/product/update', function(req, res) {
         token
     } = body;
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Invalid token.'
@@ -999,21 +986,21 @@ app.post('/api/avatar/update-avatar', function(req, res) {
         });
     }
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Invalid token.'
         });
     }
 
-    if(!filename || !pattern.test(filename)) {
+    if(!filename || !config.patterns.names.test(filename)) {
         return res.send({
             success: false,
             message: 'No filename or Letters Numbers Spaces _ - and . allowed.'
         });
     }
 
-    if(!imagename || !pattern.test(imagename)) {
+    if(!imagename || !config.patterns.names.test(imagename)) {
         return res.send({
             success: false,
             message: 'No Imagename or Letters Numbers Spaces _ - and . allowed.'
@@ -1036,8 +1023,8 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                 message: 'Server Error in get userid update avatar.'
             });
         } else {
-            if(urlExists(`${reqPath}${clientRootFolder}/assets/img/avatar/${imagename}`)) {
-                fs.unlink(`${reqPath}${clientRootFolder}/assets/img/avatar/${imagename}`, (err) => {
+            if(urlExists(`${reqPath}src/assets/img/avatar/${imagename}`)) {
+                fs.unlink(`${reqPath}src/assets/img/avatar/${imagename}`, (err) => {
                     if (err) {
                         return res.send({
                             success: false,
@@ -1056,7 +1043,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                         let image = req.body.filename + ext;
                         let imageFile = req.files['file'];
                         imageFile.mv(
-                            `${reqPath}${clientRootFolder}/assets/img/avatar/${req.body.filename}${ext}`,
+                            `${reqPath}src/assets/img/avatar/${req.body.filename}${ext}`,
                             function(err) {
                                 if (err) {
                                     return res.send({
@@ -1116,14 +1103,14 @@ app.post('/api/profile/update-profile', function(req, res) {
 
     let updateObj = [];
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
         });
     }
 
-    if(pattern.test(name)) {
+    if(config.patterns.names.test(name)) {
         updateObj.push({
             name: config.tables[2].table_fields[3].Field,
             content: name
@@ -1137,7 +1124,7 @@ app.post('/api/profile/update-profile', function(req, res) {
         }
     }
 
-    if(emailPattern.test(email)) {
+    if(config.patterns.emails.test(email)) {
         updateObj.push({
             name: config.tables[2].table_fields[4].Field,
             content: email.toLowerCase()
@@ -1215,35 +1202,35 @@ app.post('/api/profile/update-paypal', function(req, res) {
         token
     } = body;
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
         });
     }
 
-    if(!username || !pattern.test(username)) {
+    if(!username || !config.patterns.names.test(username)) {
         return res.send({
             success: false,
             message: 'Paypal username invalid or cannot be left empty.'
         });
     }
 
-    if(!password || !pattern.test(password)) {
+    if(!password || !config.patterns.names.test(password)) {
         return res.send({
             success: false,
             message: 'Password invalid or cannot be left empty.'
         });
     }
 
-    if(!signature || !pattern.test(signature)) {
+    if(!signature || !config.patterns.names.test(signature)) {
         return res.send({
             success: false,
             message: 'Signature invalid or cannot be left empty.'
         });
     }
 
-    if(!appid || !pattern.test(appid)) {
+    if(!appid || !config.patterns.names.test(appid)) {
         return res.send({
             success: false,
             message: 'Appid invalid or cannot be left empty.'
@@ -1310,21 +1297,21 @@ app.post('/api/profile/update-password', function(req, res) {
         token
     } = body;
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
         });
     }
 
-    if(!password || !passwordPattern.test(password)) {
+    if(!password || !config.patterns.passwords.test(password)) {
         return res.send({
             success: false,
             message: 'Password invalid or cannot be left empty.'
         });
     }
 
-    if(!repassword || !passwordPattern.test(repassword)) {
+    if(!repassword || !config.patterns.passwords.test(repassword)) {
         return res.send({
             success: false,
             message: 'Repassword or cannot be left empty.'
@@ -1391,14 +1378,14 @@ app.post('/api/profile/update-visibility', function(req, res) {
         token
     } = body;
 
-    if(!token || !numberPattern.test(token)) {
+    if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
         });
     }
 
-    if(!visibility || !numberPattern.test(visibility)) {
+    if(!visibility || !config.patterns.numbers.test(visibility)) {
         return res.send({
             success: false,
             message: 'Visibility invalid or cannot be left empty.'
@@ -1464,14 +1451,14 @@ app.post('/api/newsletter/registration', function(req, res) {
     } = body;
     let { email } = body;
 
-    if(!name || !pattern.test(name)) {
+    if(!name || !config.patterns.names.test(name)) {
         return res.send({
             success: false,
             message: 'Letters Numbers Spaces _ - and . allowed.'
         });
     }
 
-    if(!email || !emailPattern.test(email)) {
+    if(!email || !config.patterns.emails.test(email)) {
         return res.send({
             success: false,
             message: 'Email invalid or cannot be left empty.'
