@@ -9,7 +9,6 @@ class UploadProducts extends React.Component {
             proUploadName: '',
             proUploadPrice: '',
             proUploadDescription: '',
-            proUploadImageUrl: '',
             uploadInput: '',
             fileName: ''
 		}
@@ -47,7 +46,6 @@ class UploadProducts extends React.Component {
                         proUploadName: '',
                         proUploadPrice: '',
                         proUploadDescription: '',
-                        proUploadImageUrl: '',
                         uploadInput: '',
                         fileName: ''
                     });
@@ -70,7 +68,6 @@ class UploadProducts extends React.Component {
                                 <label>{this.state.proUploadError}</label>
                             ) : (null)
                         }
-                        <img src={this.state.proUploadImageUrl} className="img-responsive" alt="img" />
                         <form name="proUpload" onSubmit={this.onSubmit}>
                             <fieldset className="form-group">
                                 <input ref={(ref) => { this.state.uploadInput = ref; }} type="file" className="form-control-file btn btn-army"/>

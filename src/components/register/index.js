@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import config from '../../config/config';
 import { connect } from 'react-redux';
 import Navigation from '../navigation';

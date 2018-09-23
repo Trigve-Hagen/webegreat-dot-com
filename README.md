@@ -6,6 +6,8 @@ Below you will find some information on how to perform common tasks and folder s
 
 To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. You might have to delete the package-lock.json to run npm install. If nothing gets downloaded erase it and try again. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see how the back end is comming along. I just also added `npm run server-start` to start them both. Run this one from webegreat.com. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
 
+For now only install and run in `npm run server-start`. I haven't configured webpack to load up the server yet.<br>
+
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
 ## Table of Contents

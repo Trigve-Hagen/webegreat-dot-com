@@ -9,8 +9,14 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const app = express();
+
+let reqPath = path.join(__dirname, '../');
 const pattern = /^[A-Za-z0-9_\-\.\s]+$/i;
 const emptyPattern = /^([A-Za-z0-9_\-\.\s]|^\s*$)+$/i;
+const numberPattern = /^[0-9]+$/;
+const passwordPattern = /^[A-Z0-9._%+-]+$/;
+/* from https://www.regular-expressions.info/email.html */
+const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/;
 
 const clientRootFolder = 'src';
 
@@ -39,9 +45,11 @@ const mysqlhelpers = require('./config/mysqldbhelpers')(
 mysqlhelpers.buildTables();
 
 // API routes
-//require('./server-routes')(app);
+// require('./server-routes')(app);
 
 // need to encrypt and decrypt the token in local storage and Paypal Credentials in the database.
+// checktoken always with admin actions that modify the database. Its our crf token for the database.
+// next we need a crf token for securing switching from page to page in admin from register or login to logout.
 function urlExists(url) {
     return fs.existsSync(url);
 }
@@ -67,22 +75,24 @@ app.post('/api/account/signup', (req, res, next) => {
     } = body;
     let { email } = body;
 
-    if(!name) {
+    if(!name || !pattern.test(name)) {
         return res.send({
-        success: false,
-        message: 'Error: Name cannot be blank'
+            success: false,
+            message: 'No name or Letters Numbers Spaces _ - and . allowed.'
         });
     }
-    if(!email) {
+
+    if(!email || !emailPattern.test(email)) {
         return res.send({
-        success: false,
-        message: 'Error: Email name cannot be blank'
+            success: false,
+            message: 'No email or invalid email.'
         });
     }
-    if(!password) {
+    
+    if(!password || !passwordPattern.test(password)) {
         return res.send({
-        success: false,
-        message: 'Error: Password name cannot be blank'
+            success: false,
+            message: 'No password or invalid password.'
         });
     }
 
@@ -114,8 +124,11 @@ app.post('/api/account/signup', (req, res, next) => {
                 currentTimestamp = moment().unix();//in seconds
                 let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1)";
-                var inserts = [config.tables[2].table_name, myDate, myDate, name, email, generateHash(password)];
+                let insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '')";
+                let inserts = [
+                    config.tables[2].table_name,
+                    myDate, myDate, name, email, generateHash(password)
+                ];
                 insertUserIfNonExists = mysql.format(insertUserIfNonExists, inserts);
                 //console.log(insertUserIfNonExists);
                 connection.query(insertUserIfNonExists, function (err, result, fields) {
@@ -129,8 +142,8 @@ app.post('/api/account/signup', (req, res, next) => {
                         });
                     } else {
                         //console.log(result.insertId);
-                        var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                        var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
+                        let insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                        let inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
                         insertUserSession = mysql.format(insertUserSession, inserts);
                         connection.query(insertUserSession, function (error, results, fields) {
                             if(error) {
@@ -162,17 +175,18 @@ app.post('/api/account/signin', (req, res, next) => {
     const { password } = body;
     let { email } = body;
 
-    if(!email) {
-      return res.send({
-        success: false,
-        message: 'Error: Email name cannot be blank'
-      });
+    if(!email || !emailPattern.test(email)) {
+        return res.send({
+            success: false,
+            message: 'No email or invalid email.'
+        });
     }
-    if(!password) {
-      return res.send({
-        success: false,
-        message: 'Error: Password name cannot be blank'
-      });
+    
+    if(!password || !passwordPattern.test(password)) {
+        return res.send({
+            success: false,
+            message: 'No password or invalid password.'
+        });
     }
 
     email = email.toLowerCase();
@@ -196,8 +210,8 @@ app.post('/api/account/signin', (req, res, next) => {
                     currentTimestamp = moment().unix();//in seconds
                     let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                    var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                    var inserts = [config.tables[3].table_name, results[0].userid, myDate, myDate];
+                    let insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                    let inserts = [config.tables[3].table_name, results[0].userid, myDate, myDate];
                     insertUserSession = mysql.format(insertUserSession, inserts);
                     connection.query(insertUserSession, function (error, result, fields) {
                         if(error) {
@@ -307,7 +321,7 @@ app.post('/api/product/pagination', function(req, res) {
         perPage
     } = body;
 
-    if(!perPage || !/^[0-9]+$/.test(perPage)) {
+    if(!perPage || !numberPattern.test(perPage)) {
         return res.send({
             success: false,
             message: 'Per page invalid or cannot be left empty.'
@@ -345,16 +359,14 @@ app.post('/api/product/delete-product', function(req, res) {
         token
     } = body;
 
-    let reqPath = path.join(__dirname, '../');
-
-    if(!id || !/^[0-9]+$/.test(id)) {
+    if(!id || !numberPattern.test(id)) {
         return res.send({
             success: false,
             message: 'Id invalid or cannot be left empty.'
         });
     }
 
-    if(!token || !/^[0-9]+$/.test(token)) {
+    if(!token || !numberPattern.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
@@ -465,13 +477,13 @@ app.post('/api/product/front', function(req, res) {
         currentPage
     } = body;
     
-    if(!perPage || !/^[0-9]+$/.test(perPage)) {
+    if(!perPage || !numberPattern.test(perPage)) {
         return res.send({
             success: false,
             message: 'Per page invalid or cannot be left empty.'
         });
     }
-    if(!currentPage || !/^[0-9]+$/.test(currentPage)) {
+    if(!currentPage || !numberPattern.test(currentPage)) {
         return res.send({
             success: false,
             message: 'Current page name invalid or cannot be left empty.'
@@ -595,7 +607,7 @@ app.post('/api/product/upload', function(req, res) {
             });
         } else {
             let ext = '';
-            var splitRes = req.files.file.mimetype.split("/");
+            let splitRes = req.files.file.mimetype.split("/");
             switch(splitRes[1]) {
                 case 'jpeg': ext = '.jpg'; break;
                 case 'jpg': ext = '.jpg'; break;
@@ -603,7 +615,6 @@ app.post('/api/product/upload', function(req, res) {
                 case 'gif': ext = '.gif'; break;
             }
             let imageFile = req.files['file'];
-            let reqPath = path.join(__dirname, '../');
             let image = req.body.filename + ext;
 
             imageFile.mv(
@@ -619,8 +630,8 @@ app.post('/api/product/upload', function(req, res) {
                         currentTimestamp = moment().unix();//in seconds
                         let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
-                        var insertProductInserts = [
+                        let insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+                        let insertProductInserts = [
                             config.tables[0].table_name,
                             myDate, myDate, results[0]['user_id'], name,
                             description, image, price
@@ -665,14 +676,14 @@ app.post('/api/product/update', function(req, res) {
     } = body;
     let updateObj = [];
 
-    if(!proid || !/^[0-9]+$/.test(proid)) {
+    if(!proid || !numberPattern.test(proid)) {
         return res.send({
             success: false,
             message: 'Product id invalid or cannot be left empty.'
         });
     }
 
-    if(!token || !/^[0-9]+$/.test(token)) {
+    if(!token || !numberPattern.test(token)) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
@@ -747,7 +758,6 @@ app.post('/api/product/update', function(req, res) {
                     message: 'Server Error in get userid.'
                 });
             } else {
-                let reqPath = path.join(__dirname, '../');
                 if(pattern.test(imagename)) {
                     if(urlExists(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`)) {
                         fs.unlink(`${reqPath}${clientRootFolder}/assets/img/products/${imagename}`, (err) => {
@@ -758,7 +768,7 @@ app.post('/api/product/update', function(req, res) {
                                 });
                             } else {
                                 let ext = '';
-                                var splitRes = req.files.file.mimetype.split("/");
+                                let splitRes = req.files.file.mimetype.split("/");
                                 switch(splitRes[1]) {
                                     case 'jpeg': ext = '.jpg'; break;
                                     case 'jpg': ext = '.jpg'; break;
@@ -782,8 +792,8 @@ app.post('/api/product/update', function(req, res) {
                                                 message: 'Server error uploading image.'
                                             });
                                         } else {
-                                            var updateProduct = "UPDATE ?? SET ";
-                                            var updateProductInserts = [
+                                            let updateProduct = "UPDATE ?? SET ";
+                                            let updateProductInserts = [
                                                 config.tables[0].table_name
                                             ];
                                             let objCount=0;
@@ -851,8 +861,8 @@ app.post('/api/product/update', function(req, res) {
                     message: 'Server Error in get userid no image.'
                 });
             } else {
-                var updateProduct = "UPDATE ?? SET ";
-                var updateProductInserts = [
+                let updateProduct = "UPDATE ?? SET ";
+                let updateProductInserts = [
                     config.tables[0].table_name
                 ];
                 let objCount=0;
@@ -899,6 +909,284 @@ app.post('/api/product/update', function(req, res) {
  ********************** Profile Upload && Update ***********************
  ***********************************************************************
  */
+
+app.post('/api/avatar/load-avatar', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !numberPattern.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Invalid token.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid load avatar.'
+            });
+        } else {
+            let loadAvatar = "SELECT ?? FROM ?? WHERE ?? = ?";
+            let loadAvatarInserts = [
+                config.tables[2].table_fields[7].Field,
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                results[0]['user_id']
+            ];
+            loadAvatar = mysql.format(loadAvatar, loadAvatarInserts);
+            //console.log(loadAvatar);
+            connection.query(loadAvatar, function (error, results, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in load avatar'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        avatar: results[0]['avatar']
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/avatar/update-avatar', function(req, res) {
+    const { body } = req;
+    const {
+        imagename,
+        filename,
+        token
+    } = body;
+    
+    if (!req.files) {
+        return res.send({
+            success: false,
+            message: 'No file was uploaded.'
+        });
+    }
+
+    if(!token || !numberPattern.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Invalid token.'
+        });
+    }
+
+    if(!filename || !pattern.test(filename)) {
+        return res.send({
+            success: false,
+            message: 'No filename or Letters Numbers Spaces _ - and . allowed.'
+        });
+    }
+
+    if(!imagename || !pattern.test(imagename)) {
+        return res.send({
+            success: false,
+            message: 'No Imagename or Letters Numbers Spaces _ - and . allowed.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid update avatar.'
+            });
+        } else {
+            if(urlExists(`${reqPath}${clientRootFolder}/assets/img/avatar/${imagename}`)) {
+                fs.unlink(`${reqPath}${clientRootFolder}/assets/img/avatar/${imagename}`, (err) => {
+                    if (err) {
+                        return res.send({
+                            success: false,
+                            message: 'Server Error in delete product image update product.'
+                        });
+                    } else {
+                        let ext = '';
+                        let splitRes = req.files.file.mimetype.split("/");
+                        switch(splitRes[1]) {
+                            case 'jpeg': ext = '.jpg'; break;
+                            case 'jpg': ext = '.jpg'; break;
+                            case 'png': ext = '.png'; break;
+                            case 'gif': ext = '.gif'; break;
+                        }
+                        
+                        let image = req.body.filename + ext;
+                        let imageFile = req.files['file'];
+                        imageFile.mv(
+                            `${reqPath}${clientRootFolder}/assets/img/avatar/${req.body.filename}${ext}`,
+                            function(err) {
+                                if (err) {
+                                    return res.send({
+                                        success: false,
+                                        message: 'Server error updating avatar.'
+                                    });
+                                } else {
+                                    let updateAvatar = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+                                    let updateAvatarInserts = [
+                                        config.tables[2].table_name,
+                                        config.tables[2].table_fields[7].Field,
+                                        image,
+                                        config.tables[2].table_fields[0].Field,
+                                        results[0]['user_id']
+                                    ];
+                                    updateAvatar = mysql.format(updateAvatar, updateAvatarInserts);
+                                    //console.log(updateProduct);
+                                    connection.query(updateAvatar, function (error, result, fields) {
+                                        if(error) {
+                                            //console.log("Error: in Register New User: " + err);
+                                            return res.send({
+                                                success: false,
+                                                message: 'Server Error in avatar update'
+                                            });
+                                        } else {
+                                            // do results here
+                                            return res.send({
+                                                success: true,
+                                                message: 'Your Avatar has been successfully updated.',
+                                                avatar: image
+                                            });
+                                        }
+                                    });    
+                                }
+                        });
+                    }
+                });
+            } else {
+                return res.send({
+                    success: false,
+                    message: 'The Image does not exsist. Please delete the product and try again.'
+                });
+            }
+        }
+    });
+});
+
+app.post('/api/profile/update-profile', function(req, res) {
+    const { body } = req;
+    const {
+        name,
+        token
+    } = body;
+    let { email } = body;
+
+    let updateObj = [];
+
+    if(!token || !numberPattern.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    //console.log(token + ", " + proid);
+
+    if(pattern.test(name)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[2].Field,
+            content: name
+        });
+    } else {
+        if(name != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(pattern.test(email)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[4].Field,
+            content: email.toLowerCase()
+        });
+    } else {
+        if(email != '') {
+            return res.send({
+                success: false,
+                message: 'Invalid email.'
+            });
+        }
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid update profile.'
+            });
+        } else {
+            let updateProfile = "UPDATE ?? SET ";
+            let updateProfileInserts = [
+                config.tables[2].table_name
+            ];
+            let objCount=0;
+            updateObj.forEach(element => {
+                if(updateObj.length - 1 == objCount) updateProfile += "?? = ? ";
+                else updateProfile += "?? = ?, ";
+                updateProfileInserts.push(element.name);
+                updateProfileInserts.push(element.content);
+                objCount++;
+            });
+            updateProfile += `WHERE ?? = ${results[0]['user_id']}`;
+            updateProfileInserts.push(config.tables[2].table_fields[0].Field);
+
+            updateProfile = mysql.format(updateProfile, updateProfileInserts);
+            //console.log(updateProfile);
+            connection.query(updateProfile, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in avatar update'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Your Avatar has been successfully updated.',
+                        name: name,
+                        email: email
+                    });
+                }
+            });
+        }
+    });
+});
 
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');

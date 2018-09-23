@@ -9,66 +9,54 @@ class UpdatePassword extends React.Component {
             password: '',
             rePassword: '',
         }
-        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    onChange(e) {
-		this.setState({ [e.target.name]: e.target.value});
-	}
-
 	onSubmit(e) {
-        e.preventDefault();
-        const {
-            password,
-            rePassword
-		} = this.state;
+		e.preventDefault();
 
-		fetch('http://localhost:4000/api/account/upload-image', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-                password: password,
-                rePassword: rePassword
-			})
+        const data = new FormData();
+            data.append('password', this.state.password);
+            data.append('repassword', this.state.rePassword);
+            data.append('token', this.props.authentication[0].token);
+
+		fetch('http://localhost:4000/api/avatar/update-avatar', {
+            method: 'POST',
+            body: data,
 		}).then(res => res.json())
 			.then(json => {
-				/*if(json.success) {
-                    console.log("Successfull SignIn." + json.token);
-					this.props.updateAuth({ authenticated: true, token: json.token });
+				if(json.success) {
+					console.log("Avatar update successfull.");
 					this.setState({
-                        loginError: json.message,
-                        loginRedirect: true
-					});
-                    
+                        passwordError: json.message,
+                        password: json.password,
+                        rePassword: json.repassword
+                    });
 				} else {
                     this.setState({
-						loginError: json.message
+						passwordError: json.message
 					});
-                }*/
+                }
 			});
     }
 
     render() {
-        const { password, rePassword, passwordError } = this.state;
         return (
             <div>
                 <div className="row space-top-20px">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         <h3>Update Password</h3>
                         {
-                            (passwordError) ? (
-                                <label>{passwordError}</label>
+                            (this.state.passwordError) ? (
+                                <label>{this.state.passwordError}</label>
                             ) : (null)
                         }
                         <form className="updatePassword" onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <input type="text" value={password} onChange={this.onChange} className="form-element" id="password" placeholder="Password" />
+                                <input ref={(ref) => { this.state.password = ref; }} type="text" className="form-element" id="password" placeholder="Password" />
                             </div>
                             <div className="form-group">
-                                <input type="text" value={rePassword} onChange={this.onChange} className="form-element" id="rePassword" placeholder="Re-Password" />
+                                <input ref={(ref) => { this.state.rePassword = ref; }} type="text" className="form-element" id="rePassword" placeholder="Re-Password" />
                             </div>
                             <button type="submit" className="btn btn-army">Update Password</button>
                         </form>

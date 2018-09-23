@@ -162,6 +162,14 @@ module.exports = {
                     Key: '',
                     Default: 'DEFAULT 1',
                     Extra: ''
+                },
+                {
+                    Field: 'avatar',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
                 }
             ]
         },
