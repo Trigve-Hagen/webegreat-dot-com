@@ -25,7 +25,7 @@ class AvatarImage extends React.Component {
 			.then(json => {
 				if(json.success) {
                     console.log("Avatar Load Successfull.");
-                    this.props.updateAvatar({ avatar: json.avatar });
+                    this.props.updateAvatar({ avatar: json.avatar ? json.avatar : 'user-avatar.jpg' });
 					this.setState({
 						avatarError: json.message
 					});

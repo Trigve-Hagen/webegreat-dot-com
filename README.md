@@ -6,13 +6,14 @@ Below you will find some information on how to perform common tasks and folder s
 
 To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. You might have to delete the package-lock.json to run npm install. If nothing gets downloaded erase it and try again. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see how the back end is comming along. I just also added `npm run server-start` to start them both. Run this one from webegreat.com. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
 
-For now only install and run in `npm run server-start`. I haven't configured webpack to load up the server yet.<br>
+For now only install and run in `npm run server-start`. I haven't configured webpack to load up the server yet. <br>
 
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
 ## Table of Contents
 
 - [Folder Structure](#folder-structure)
+- [Input Sanitization](#input-sanitization)
 - [Available Scripts](#available-scripts)
   - [npm start](#npm-start)
   - [npm test](#npm-test)
@@ -22,6 +23,12 @@ You can find the most recent version of create-react-app guide [here](https://gi
 - [Architecture Plans](#architecture-plans)
 - [Credits](#credits)
 
+## Input Sanitization
+
+* `/^[\w\s.-]+$/i` Everything other than
+* `/^[\w\W]+$/` Passwords way open - \w = [A-Za-z0-9_] - \W [^A-Za-z0-9_]
+* `/^[\w.]+@[\w.]+.[A-Za-z]{2,}$/` Emails - Sort of tight. - You might have to adjust to get it to accept yours.
+* `/^[0-9]+$/` Numbers
 
 ## Folder Structure
 
@@ -116,6 +123,8 @@ In a minute I will update npm Modules and the scripts in package.json to start t
 * mysqlhelpers.buildTables();
 
 This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js. There is only creating and dropping databases at the moment. I will work on it futher in the future.
+
+All config for the database is in server/config/mysqldbconfig.js. The databases are named alphabetically starting with a_ then b_ etc. to preserve the order when doing CRUD operations. If you add rows only add them to the end unless you want to recode whats already here. You will have to stop the server and restart it everytime you add new fields and tables. If you add new rows don't forget to update the CRUD already coded.
 
 `Fields`<br>
 Put all fields in for each row. They all follow the mysql database schema except Null and Key.

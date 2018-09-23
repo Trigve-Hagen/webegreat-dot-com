@@ -11,12 +11,10 @@ const fileUpload = require('express-fileupload');
 const app = express();
 
 let reqPath = path.join(__dirname, '../');
-const pattern = /^[\s\.a-zA-Z0-9_-]+$/i;
-const emptyPattern = /^([\s\.a-zA-Z0-9_-]|^\s*$)+$/i;
+const pattern = /^[\w\s.-]+$/i;
+const passwordPattern = /^[\w\W]+$/;
+const emailPattern = /^[\w.]+@[\w.]+.[A-Za-z]{2,}$/;
 const numberPattern = /^[0-9]+$/;
-const passwordPattern = /^[A-Z0-9._%+-]+$/;
-/* from https://www.regular-expressions.info/email.html */
-const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/;
 
 const clientRootFolder = 'src';
 
@@ -75,24 +73,22 @@ app.post('/api/account/signup', (req, res, next) => {
     } = body;
     let { email } = body;
 
-    if(!name || !pattern.test(name)) {
+    if(!name) {
         return res.send({
-            success: false,
-            message: 'No name or Letters Numbers Spaces _ - and . allowed.'
+        success: false,
+        message: 'Error: Name cannot be blank'
         });
     }
-
-    if(!email || !emailPattern.test(email)) {
+    if(!email) {
         return res.send({
-            success: false,
-            message: 'No email or invalid email.'
+        success: false,
+        message: 'Error: Email name cannot be blank'
         });
     }
-    
-    if(!password || !passwordPattern.test(password)) {
+    if(!password) {
         return res.send({
-            success: false,
-            message: 'No password or invalid password.'
+        success: false,
+        message: 'Error: Password name cannot be blank'
         });
     }
 
@@ -124,8 +120,8 @@ app.post('/api/account/signup', (req, res, next) => {
                 currentTimestamp = moment().unix();//in seconds
                 let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                let insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0)";
-                let inserts = [
+                var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0)";
+                var inserts = [
                     config.tables[2].table_name,
                     myDate, myDate, name, email, generateHash(password)
                 ];
@@ -136,37 +132,38 @@ app.post('/api/account/signup', (req, res, next) => {
                         //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
-                            message: 'Server Error in Register',
+                            message: 'Server error in register users insert',
                             token: null,
                             id: null
                         });
                     } else {
-                        //console.log(result.insertId);
-                        let insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                        let inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
-                        insertUserSession = mysql.format(insertUserSession, inserts);
-                        connection.query(insertUserSession, function (error, results, fields) {
+                        let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, '', '', '', '')";
+                        let inserts = [
+                            config.tables[4].table_name,
+                            result.insertId, myDate, myDate,
+                        ];
+                        insertPaypal = mysql.format(insertPaypal, inserts);
+                        console.log(insertUserIfNonExists);
+                        connection.query(insertPaypal, function (error, results, fields) {
                             if(error) {
                                 //console.log("Error: in Register Session: " + error);
                                 return res.send({
                                     success: false,
-                                    message: 'Server Error in Register Session',
+                                    message: 'Server error in register paypal insert',
                                     token: null,
                                     id: null
                                 });
                             } else {
-                                let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, '', '', '', '')";
-                                let inserts = [
-                                    config.tables[4].table_name,
-                                    result.insertId, myDate, myDate,
-                                ];
-                                insertPaypal = mysql.format(insertPaypal, inserts);
-                                connection.query(insertPaypal, function (error, results, fields) {
+                                //console.log(result.insertId);
+                                var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                                var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
+                                insertUserSession = mysql.format(insertUserSession, inserts);
+                                connection.query(insertUserSession, function (error, results, fields) {
                                     if(error) {
                                         //console.log("Error: in Register Session: " + error);
                                         return res.send({
                                             success: false,
-                                            message: 'Server Error in Register Session',
+                                            message: 'Server error in register session insert',
                                             token: null,
                                             id: null
                                         });
@@ -174,7 +171,7 @@ app.post('/api/account/signup', (req, res, next) => {
                                         //console.log("Results: in SignIn: " + results);
                                         return res.send({
                                             success: true,
-                                            message: 'Successfull Registration',
+                                            message: 'Successfull registration',
                                             token: results.insertId
                                         });
                                     }
@@ -193,18 +190,17 @@ app.post('/api/account/signin', (req, res, next) => {
     const { password } = body;
     let { email } = body;
 
-    if(!email || !emailPattern.test(email)) {
-        return res.send({
-            success: false,
-            message: 'No email or invalid email.'
-        });
+    if(!email) {
+      return res.send({
+        success: false,
+        message: 'Error: Email name cannot be blank'
+      });
     }
-    
-    if(!password || !passwordPattern.test(password)) {
-        return res.send({
-            success: false,
-            message: 'No password or invalid password.'
-        });
+    if(!password) {
+      return res.send({
+        success: false,
+        message: 'Error: Password name cannot be blank'
+      });
     }
 
     email = email.toLowerCase();
@@ -228,8 +224,8 @@ app.post('/api/account/signin', (req, res, next) => {
                     currentTimestamp = moment().unix();//in seconds
                     let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                    let insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                    let inserts = [config.tables[3].table_name, results[0].userid, myDate, myDate];
+                    var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                    var inserts = [config.tables[3].table_name, results[0].userid, myDate, myDate];
                     insertUserSession = mysql.format(insertUserSession, inserts);
                     connection.query(insertUserSession, function (error, result, fields) {
                         if(error) {
@@ -625,7 +621,7 @@ app.post('/api/product/upload', function(req, res) {
             });
         } else {
             let ext = '';
-            let splitRes = req.files.file.mimetype.split("/");
+            var splitRes = req.files.file.mimetype.split("/");
             switch(splitRes[1]) {
                 case 'jpeg': ext = '.jpg'; break;
                 case 'jpg': ext = '.jpg'; break;
@@ -648,8 +644,8 @@ app.post('/api/product/upload', function(req, res) {
                         currentTimestamp = moment().unix();//in seconds
                         let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                        let insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
-                        let insertProductInserts = [
+                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+                        var insertProductInserts = [
                             config.tables[0].table_name,
                             myDate, myDate, results[0]['user_id'], name,
                             description, image, price
@@ -786,7 +782,7 @@ app.post('/api/product/update', function(req, res) {
                                 });
                             } else {
                                 let ext = '';
-                                let splitRes = req.files.file.mimetype.split("/");
+                                var splitRes = req.files.file.mimetype.split("/");
                                 switch(splitRes[1]) {
                                     case 'jpeg': ext = '.jpg'; break;
                                     case 'jpg': ext = '.jpg'; break;
@@ -810,8 +806,8 @@ app.post('/api/product/update', function(req, res) {
                                                 message: 'Server error uploading image.'
                                             });
                                         } else {
-                                            let updateProduct = "UPDATE ?? SET ";
-                                            let updateProductInserts = [
+                                            var updateProduct = "UPDATE ?? SET ";
+                                            var updateProductInserts = [
                                                 config.tables[0].table_name
                                             ];
                                             let objCount=0;
@@ -879,8 +875,8 @@ app.post('/api/product/update', function(req, res) {
                     message: 'Server Error in get userid no image.'
                 });
             } else {
-                let updateProduct = "UPDATE ?? SET ";
-                let updateProductInserts = [
+                var updateProduct = "UPDATE ?? SET ";
+                var updateProductInserts = [
                     config.tables[0].table_name
                 ];
                 let objCount=0;
@@ -957,8 +953,8 @@ app.post('/api/avatar/load-avatar', function(req, res) {
                 message: 'Server Error in get userid load avatar.'
             });
         } else {
-            let loadAvatar = "SELECT ?? FROM ?? WHERE ?? = ?";
-            let loadAvatarInserts = [
+            var loadAvatar = "SELECT ?? FROM ?? WHERE ?? = ?";
+            var loadAvatarInserts = [
                 config.tables[2].table_fields[7].Field,
                 config.tables[2].table_name,
                 config.tables[2].table_fields[0].Field,
@@ -1046,7 +1042,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                         });
                     } else {
                         let ext = '';
-                        let splitRes = req.files.file.mimetype.split("/");
+                        var splitRes = req.files.file.mimetype.split("/");
                         switch(splitRes[1]) {
                             case 'jpeg': ext = '.jpg'; break;
                             case 'jpg': ext = '.jpg'; break;
@@ -1065,8 +1061,8 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                                         message: 'Server error updating avatar.'
                                     });
                                 } else {
-                                    let updateAvatar = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
-                                    let updateAvatarInserts = [
+                                    var updateAvatar = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+                                    var updateAvatarInserts = [
                                         config.tables[2].table_name,
                                         config.tables[2].table_fields[7].Field,
                                         image,
@@ -1077,7 +1073,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                                     //console.log(updateProduct);
                                     connection.query(updateAvatar, function (error, result, fields) {
                                         if(error) {
-                                            //console.log("Error: in Update Avatar: " + err);
+                                            //console.log("Error: in Register New User: " + err);
                                             return res.send({
                                                 success: false,
                                                 message: 'Server Error in avatar update'
@@ -1184,7 +1180,7 @@ app.post('/api/profile/update-profile', function(req, res) {
             updateProfileInserts.push(config.tables[2].table_fields[0].Field);
 
             updateProfile = mysql.format(updateProfile, updateProfileInserts);
-            console.log(updateProfile);
+            //console.log(updateProfile);
             connection.query(updateProfile, function (error, result, fields) {
                 if(error) {
                     //console.log("Error: in Register New User: " + err);
@@ -1283,7 +1279,7 @@ app.post('/api/profile/update-paypal', function(req, res) {
             ];
 
             updatePaypal = mysql.format(updatePaypal, updatePaypalInserts);
-            console.log(updatePaypal);
+            //console.log(updatePaypal);
             connection.query(updatePaypal, function (error, result, fields) {
                 if(error) {
                     //console.log("Error: in Register New User: " + err);
@@ -1295,9 +1291,7 @@ app.post('/api/profile/update-paypal', function(req, res) {
                     // do results here
                     return res.send({
                         success: true,
-                        message: 'Your profile has been successfully updated.',
-                        name: name,
-                        email: email
+                        message: 'Your paypal profile has been successfully updated.'
                     });
                 }
             });
@@ -1366,7 +1360,7 @@ app.post('/api/profile/update-password', function(req, res) {
                 ];
 
                 updatePassword = mysql.format(updatePassword, updatePasswordInserts);
-                console.log(updatePassword);
+                //console.log(updatePassword);
                 connection.query(updatePassword, function (error, result, fields) {
                     if(error) {
                         //console.log("Error: in Register New User: " + err);
@@ -1386,7 +1380,6 @@ app.post('/api/profile/update-password', function(req, res) {
         }
     });
 });
-
 
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');

@@ -7,7 +7,7 @@ module.exports = {
     },
     tables: [
         {
-            table_name: 'products', // 0
+            table_name: 'a_products', // 0
             table_fields: [
                 {
                     Field: 'productid',
@@ -76,7 +76,7 @@ module.exports = {
             ]
         },
         {
-            table_name: 'userroles', // 1
+            table_name: 'b_userroles', // 1
             table_fields: [
                 {
                     Field: 'userrolesid',
@@ -105,7 +105,7 @@ module.exports = {
             ]
         },
         {
-            table_name: 'users', // 2
+            table_name: 'c_users', // 2
             table_fields: [
                 {
                     Field: 'userid',
@@ -174,7 +174,7 @@ module.exports = {
                 {
                     Field: 'store_visible',
                     Type: 'int(1)',
-                    Null: 'NULL',
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: 'DEFAULT 0',
                     Extra: ''
@@ -182,7 +182,7 @@ module.exports = {
             ]
         },
         {
-            table_name: 'usersessions', // 3
+            table_name: 'd_usersessions', // 3
             table_fields: [
                 {
                     Field: 'usersessionid',
@@ -227,7 +227,7 @@ module.exports = {
             ]
         },
         {
-            table_name: 'paypal', // 4
+            table_name: 'e_paypal', // 4
             table_fields: [
                  {
                     Field: 'paypalid',
@@ -296,7 +296,7 @@ module.exports = {
             ]
         },
         {
-            table_name: 'newsletter', // 4
+            table_name: 'f_newsletter', // 5
             table_fields: [
                  {
                     Field: 'newsletterid',

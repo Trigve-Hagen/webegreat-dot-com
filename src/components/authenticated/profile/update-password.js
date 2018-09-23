@@ -53,10 +53,10 @@ class UpdatePassword extends React.Component {
                         }
                         <form className="updatePassword" onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.password = ref; }} type="text" className="form-element" id="password" placeholder="Password" />
+                                <input ref={(ref) => { this.state.password = ref; }} type="password" className="form-element" id="password" placeholder="Password" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.rePassword = ref; }} type="text" className="form-element" id="rePassword" placeholder="Re-Password" />
+                                <input ref={(ref) => { this.state.rePassword = ref; }} type="password" className="form-element" id="rePassword" placeholder="Re-Password" />
                             </div>
                             <button type="submit" className="btn btn-army">Update Password</button>
                         </form>
