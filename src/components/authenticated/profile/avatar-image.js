@@ -12,7 +12,7 @@ class AvatarImage extends React.Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    componentDidMount() {
+    /*componentDidMount() {
 		fetch('http://localhost:4000/api/avatar/load-avatar', {
 			method: 'POST',
 			headers: {
@@ -35,7 +35,7 @@ class AvatarImage extends React.Component {
 					});
                 }
 			});
-    }
+    }*/
 
 	onSubmit(e) {
         e.preventDefault();
@@ -52,7 +52,8 @@ class AvatarImage extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-					console.log("Avatar update successfull.");
+                    console.log("Avatar update successfull.");
+                    this.props.updateAvatar({ avatar: json.avatar });
 					this.setState({
                         avatarError: json.message,
                         avatar: json.avatar,

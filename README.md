@@ -124,6 +124,7 @@ In a minute I will update npm Modules and the scripts in package.json to start t
 
 This is called in index.js and kicks off the build database script. It gets passed the Database Name, the Database Array, and the Connection to the mysql database you are using. Don't forget to fill in your database configuation variables in config/mysqldbconfig.js. There is only creating and dropping databases at the moment. I will work on it futher in the future.
 
+`server/config/mysqldbconfig.js`<br>
 All config for the database is in server/config/mysqldbconfig.js. The databases are named alphabetically starting with a_ then b_ etc. to preserve the order when doing CRUD operations. If you add rows only add them to the end unless you want to recode whats already here. You will have to stop the server and restart it everytime you add new fields and tables. If you add new rows don't forget to update the CRUD already coded.
 
 `Fields`<br>

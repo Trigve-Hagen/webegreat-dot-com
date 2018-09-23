@@ -16,6 +16,9 @@ const passwordPattern = /^[\w\W]+$/;
 const emailPattern = /^[\w.]+@[\w.]+.[A-Za-z]{2,}$/;
 const numberPattern = /^[0-9]+$/;
 
+let currentTimestamp = moment().unix();
+let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+
 const clientRootFolder = 'src';
 
 app.use(cors());
@@ -117,8 +120,8 @@ app.post('/api/account/signup', (req, res, next) => {
                     id: null
                 });
             } else {
-                currentTimestamp = moment().unix();//in seconds
-                let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+                //currentTimestamp = moment().unix();//in seconds
+                //let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
                 var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0)";
                 var inserts = [
@@ -221,8 +224,8 @@ app.post('/api/account/signin', (req, res, next) => {
         } else {
             if(results.length == 1) {
                 if(results[0].email == email && validatePassword(password, results[0].password)) {
-                    currentTimestamp = moment().unix();//in seconds
-                    let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+                    //currentTimestamp = moment().unix();//in seconds
+                    //let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
                     var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
                     var inserts = [config.tables[3].table_name, results[0].userid, myDate, myDate];
@@ -641,8 +644,8 @@ app.post('/api/product/upload', function(req, res) {
                         });
                     } else {
                         console.log( + ", UserId");
-                        currentTimestamp = moment().unix();//in seconds
-                        let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
+                        //currentTimestamp = moment().unix();//in seconds
+                        //let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
                         var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
                         var insertProductInserts = [
@@ -924,7 +927,7 @@ app.post('/api/product/update', function(req, res) {
  ***********************************************************************
  */
 
-app.post('/api/avatar/load-avatar', function(req, res) {
+/*app.post('/api/avatar/load-avatar', function(req, res) {
     const { body } = req;
     const {
         token
@@ -979,7 +982,7 @@ app.post('/api/avatar/load-avatar', function(req, res) {
             });
         }
     });
-});
+});*/
 
 app.post('/api/avatar/update-avatar', function(req, res) {
     const { body } = req;
@@ -1377,6 +1380,124 @@ app.post('/api/profile/update-password', function(req, res) {
                     }
                 });
             }
+        }
+    });
+});
+
+app.post('/api/profile/update-visibility', function(req, res) {
+    const { body } = req;
+    const {
+        visibility,
+        token
+    } = body;
+
+    if(!token || !numberPattern.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!visibility || !numberPattern.test(visibility)) {
+        return res.send({
+            success: false,
+            message: 'Visibility invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update visibility.'
+            });
+        } else {
+            let updateVisibility = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+            let updateVisibilityInserts = [
+                config.tables[2].table_name,
+                config.tables[2].table_fields[8].Field,
+                visibility,
+                config.tables[2].table_fields[0].Field,
+                results[0]['user_id']
+            ];
+
+            updateVisibility = mysql.format(updateVisibility, updateVisibilityInserts);
+            //console.log(updateVisibility);
+            connection.query(updateVisibility, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in update visibility'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Your visibility has been successfully updated.',
+                        visibility: visibility
+                    });
+                }
+            });
+        }
+    });
+});
+
+/*
+ ************************** Newsletter Signup **************************
+ ***********************************************************************
+ */
+
+app.post('/api/newsletter/registration', function(req, res) {
+    const { body } = req;
+    const {
+        name
+    } = body;
+    let { email } = body;
+
+    if(!name || !pattern.test(name)) {
+        return res.send({
+            success: false,
+            message: 'Letters Numbers Spaces _ - and . allowed.'
+        });
+    }
+
+    if(!email || !emailPattern.test(email)) {
+        return res.send({
+            success: false,
+            message: 'Email invalid or cannot be left empty.'
+        });
+    }
+
+    let insertNewsletter = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?)";
+    let insertNewsletterInserts = [
+        config.tables[6].table_name,
+        myDate, myDate, name, email,
+
+    ];
+    insertNewsletter = mysql.format(insertNewsletter, insertNewsletterInserts);
+    //console.log(insertNewsletter);
+    connection.query(insertNewsletter, function (error, result, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in register for newsletter'
+            });
+        } else {
+            // do results here
+            return res.send({
+                success: true,
+                message: 'You successfully registered for our newsletter.'
+            });
         }
     });
 });

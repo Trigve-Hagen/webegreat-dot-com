@@ -1,5 +1,9 @@
 import React from 'react';
 
+const inputText = {
+    color: '#9d9d9d'
+}
+
 class Footer extends React.Component {
     constructor(props) {
         super(props);
@@ -8,50 +12,37 @@ class Footer extends React.Component {
             newsletterName: '',
             newsletterEmail: '',
         }
-        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    onChange(e) {
-		this.setState({ [e.target.name]: e.target.value});
-	}
-
 	onSubmit(e) {
         e.preventDefault();
-        const {
-            newsletterName,
-            newsletterEmail
-		} = this.state;
 
-		fetch('http://localhost:4000/api/account/upload-image', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-                name: newsletterName,
-                email: newsletterEmail
-			})
+        const data = new FormData();
+            data.append('name', this.state.newsletterName.value);
+            data.append('email', this.state.newsletterEmail.value);
+
+		fetch('http://localhost:4000/api/newsletter/registration', {
+            method: 'POST',
+            body: data,
 		}).then(res => res.json())
 			.then(json => {
-				/*if(json.success) {
-                    console.log("Successfull SignIn." + json.token);
-					this.props.updateAuth({ authenticated: true, token: json.token });
+				if(json.success) {
+                    console.log("Newsletter registration update successfull.");
 					this.setState({
-                        loginError: json.message,
-                        loginRedirect: true
-					});
-                    
+                        newsletterError: json.message,
+                        newsletterName: json.name,
+                        newsletterEmail: json.email
+                    });
 				} else {
                     this.setState({
-						loginError: json.message
+						newsletterError: json.message
 					});
-                }*/
+                }
 			});
     }
 
     render() {
-        const { newsletterError, newsletterEmail, newsletterName } = this.state;
         return (
             <div className="navbar navbar-inverse navbar-static-bottom rounded-0">
                 <div className="container">
@@ -80,18 +71,18 @@ class Footer extends React.Component {
 
                         </div>
                         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-                            <h2>Newsletter</h2>
+                            <h2 style={inputText}>Newsletter</h2>
                             <form name="newsletter" onSubmit={this.onSubmit}>
                                 {
-                                    (newsletterError) ? (
-                                        <label>{newsletterError}</label>
+                                    (this.state.newsletterError) ? (
+                                        <label style={inputText}>{this.state.newsletterError}</label>
                                     ) : (null)
                                 }
                                 <fieldset className="form-group">
-                                    <input type="text" value={newsletterName} onChange={this.onChange} name="newsletterName" className="form-element" placeholder="Name"/>
+                                    <input ref={(ref) => { this.state.newsletterName = ref; }} type="text" style={inputText} name="newsletterName" className="form-element" placeholder="Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input type="email" value={newsletterEmail} onChange={this.onChange} name="newsletterEmail" className="form-element" placeholder="Email"/>
+                                    <input ref={(ref) => { this.state.newsletterEmail = ref; }} type="email" style={inputText} name="newsletterEmail" className="form-element" placeholder="Email"/>
                                 </fieldset>
                                 <button type="submit" className="btn btn-army" >Subscribe</button>
                             </form>

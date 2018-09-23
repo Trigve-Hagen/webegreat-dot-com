@@ -296,7 +296,92 @@ module.exports = {
             ]
         },
         {
-            table_name: 'f_newsletter', // 5
+            table_name: 'f_orders', // 5
+            table_fields: [
+                 {
+                    Field: 'orderid',
+                    Type: 'int(11)',
+                    Null: 'NOT NULL',
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: 'AUTO_INCREMENT'
+                },
+                {
+                    Field: 'created_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: ''
+                },
+                {
+                    Field: 'updated_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: 'ON UPDATE CURRENT_TIMESTAMP'
+                },
+                {
+                    Field: 'name',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'address',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'city_state_zip',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'email',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'product_ids',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'number_ofs',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'prices',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                }
+            ]
+        },
+        {
+            table_name: 'g_newsletter', // 6
             table_fields: [
                  {
                     Field: 'newsletterid',
@@ -321,6 +406,14 @@ module.exports = {
                     Key: '',
                     Default: 'DEFAULT CURRENT_TIMESTAMP',
                     Extra: 'ON UPDATE CURRENT_TIMESTAMP'
+                },
+                {
+                    Field: 'name',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
                 },
                 {
                     Field: 'email',
