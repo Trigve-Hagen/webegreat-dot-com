@@ -16,11 +16,11 @@ class UpdatePassword extends React.Component {
 		e.preventDefault();
 
         const data = new FormData();
-            data.append('password', this.state.password);
-            data.append('repassword', this.state.rePassword);
+            data.append('password', this.state.password.value);
+            data.append('repassword', this.state.rePassword.value);
             data.append('token', this.props.authentication[0].token);
 
-		fetch('http://localhost:4000/api/avatar/update-avatar', {
+		fetch('http://localhost:4000/api/profile/update-password', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

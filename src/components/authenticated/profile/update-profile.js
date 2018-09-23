@@ -16,9 +16,11 @@ class UpdateProfile extends React.Component {
 		e.preventDefault();
 
         const data = new FormData();
-            data.append('name', this.state.profileName);
-            data.append('email', this.state.profileEmail);
+            data.append('name', this.state.profileName.value);
+            data.append('email', this.state.profileEmail.value);
             data.append('token', this.props.authentication[0].token);
+
+            console.log('Name: ' + this.state.profileName.value + ' Email: ' + this.state.profileEmail.value);
 
 		fetch('http://localhost:4000/api/profile/update-profile', {
             method: 'POST',
@@ -53,10 +55,10 @@ class UpdateProfile extends React.Component {
                         }
                         <form className="updateProfile" onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.profileName = ref; }} type="text" className="form-element" placeholder="Full Name" />
+                                <input ref={(ref) => { this.state.profileName = ref; }} type="text" className="form-element" id="profileName" placeholder="Full Name" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.profileEmail = ref; }} type="email" className="form-element" placeholder="Email Address" />
+                                <input ref={(ref) => { this.state.profileEmail = ref; }} type="email" className="form-element" id="profileEmail" placeholder="Email Address" />
                             </div>
                             <button type="submit" className="btn btn-army">Update Profile</button>
                         </form>

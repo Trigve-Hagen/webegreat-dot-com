@@ -11,8 +11,8 @@ const fileUpload = require('express-fileupload');
 const app = express();
 
 let reqPath = path.join(__dirname, '../');
-const pattern = /^[A-Za-z0-9_\-\.\s]+$/i;
-const emptyPattern = /^([A-Za-z0-9_\-\.\s]|^\s*$)+$/i;
+const pattern = /^[\s\.a-zA-Z0-9_-]+$/i;
+const emptyPattern = /^([\s\.a-zA-Z0-9_-]|^\s*$)+$/i;
 const numberPattern = /^[0-9]+$/;
 const passwordPattern = /^[A-Z0-9._%+-]+$/;
 /* from https://www.regular-expressions.info/email.html */
@@ -124,7 +124,7 @@ app.post('/api/account/signup', (req, res, next) => {
                 currentTimestamp = moment().unix();//in seconds
                 let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                let insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '')";
+                let insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0)";
                 let inserts = [
                     config.tables[2].table_name,
                     myDate, myDate, name, email, generateHash(password)
@@ -155,11 +155,29 @@ app.post('/api/account/signup', (req, res, next) => {
                                     id: null
                                 });
                             } else {
-                                //console.log("Results: in SignIn: " + results);
-                                return res.send({
-                                    success: true,
-                                    message: 'Successfull Registration',
-                                    token: results.insertId
+                                let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, '', '', '', '')";
+                                let inserts = [
+                                    config.tables[4].table_name,
+                                    result.insertId, myDate, myDate,
+                                ];
+                                insertPaypal = mysql.format(insertPaypal, inserts);
+                                connection.query(insertPaypal, function (error, results, fields) {
+                                    if(error) {
+                                        //console.log("Error: in Register Session: " + error);
+                                        return res.send({
+                                            success: false,
+                                            message: 'Server Error in Register Session',
+                                            token: null,
+                                            id: null
+                                        });
+                                    } else {
+                                        //console.log("Results: in SignIn: " + results);
+                                        return res.send({
+                                            success: true,
+                                            message: 'Successfull Registration',
+                                            token: results.insertId
+                                        });
+                                    }
                                 });
                             }
                         });
@@ -1059,7 +1077,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                                     //console.log(updateProduct);
                                     connection.query(updateAvatar, function (error, result, fields) {
                                         if(error) {
-                                            //console.log("Error: in Register New User: " + err);
+                                            //console.log("Error: in Update Avatar: " + err);
                                             return res.send({
                                                 success: false,
                                                 message: 'Server Error in avatar update'
@@ -1095,6 +1113,8 @@ app.post('/api/profile/update-profile', function(req, res) {
     } = body;
     let { email } = body;
 
+    console.log(name + ", " + email);
+
     let updateObj = [];
 
     if(!token || !numberPattern.test(token)) {
@@ -1104,11 +1124,9 @@ app.post('/api/profile/update-profile', function(req, res) {
         });
     }
 
-    //console.log(token + ", " + proid);
-
     if(pattern.test(name)) {
         updateObj.push({
-            name: config.tables[2].table_fields[2].Field,
+            name: config.tables[2].table_fields[3].Field,
             content: name
         });
     } else {
@@ -1120,7 +1138,7 @@ app.post('/api/profile/update-profile', function(req, res) {
         }
     }
 
-    if(pattern.test(email)) {
+    if(emailPattern.test(email)) {
         updateObj.push({
             name: config.tables[2].table_fields[4].Field,
             content: email.toLowerCase()
@@ -1147,7 +1165,7 @@ app.post('/api/profile/update-profile', function(req, res) {
         if(error) {
             return res.send({
                 success: false,
-                message: 'Server Error in get userid update profile.'
+                message: 'Server error in get userid update profile.'
             });
         } else {
             let updateProfile = "UPDATE ?? SET ";
@@ -1166,19 +1184,19 @@ app.post('/api/profile/update-profile', function(req, res) {
             updateProfileInserts.push(config.tables[2].table_fields[0].Field);
 
             updateProfile = mysql.format(updateProfile, updateProfileInserts);
-            //console.log(updateProfile);
+            console.log(updateProfile);
             connection.query(updateProfile, function (error, result, fields) {
                 if(error) {
                     //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
-                        message: 'Server Error in avatar update'
+                        message: 'Server error in update profile'
                     });
                 } else {
                     // do results here
                     return res.send({
                         success: true,
-                        message: 'Your Avatar has been successfully updated.',
+                        message: 'Your profile has been successfully updated.',
                         name: name,
                         email: email
                     });
@@ -1187,6 +1205,188 @@ app.post('/api/profile/update-profile', function(req, res) {
         }
     });
 });
+
+app.post('/api/profile/update-paypal', function(req, res) {
+    const { body } = req;
+    const {
+        username,
+        password,
+        signature,
+        appid,
+        token
+    } = body;
+
+    if(!token || !numberPattern.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!username || !pattern.test(username)) {
+        return res.send({
+            success: false,
+            message: 'Paypal username invalid or cannot be left empty.'
+        });
+    }
+
+    if(!password || !pattern.test(password)) {
+        return res.send({
+            success: false,
+            message: 'Password invalid or cannot be left empty.'
+        });
+    }
+
+    if(!signature || !pattern.test(signature)) {
+        return res.send({
+            success: false,
+            message: 'Signature invalid or cannot be left empty.'
+        });
+    }
+
+    if(!appid || !pattern.test(appid)) {
+        return res.send({
+            success: false,
+            message: 'Appid invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update paypal.'
+            });
+        } else {
+            let updatePaypal = "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ?, ?? = ? WHERE ?? = ?";
+            let updatePaypalInserts = [
+                config.tables[4].table_name,
+                config.tables[4].table_fields[4].Field,
+                username,
+                config.tables[4].table_fields[5].Field,
+                password,
+                config.tables[4].table_fields[6].Field,
+                signature,
+                config.tables[4].table_fields[7].Field,
+                appid,
+                config.tables[4].table_fields[1].Field,
+                results[0]['user_id']
+            ];
+
+            updatePaypal = mysql.format(updatePaypal, updatePaypalInserts);
+            console.log(updatePaypal);
+            connection.query(updatePaypal, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in update profile'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Your profile has been successfully updated.',
+                        name: name,
+                        email: email
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/profile/update-password', function(req, res) {
+    const { body } = req;
+    const {
+        password,
+        repassword,
+        token
+    } = body;
+
+    if(!token || !numberPattern.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!password || !passwordPattern.test(password)) {
+        return res.send({
+            success: false,
+            message: 'Password invalid or cannot be left empty.'
+        });
+    }
+
+    if(!repassword || !passwordPattern.test(repassword)) {
+        return res.send({
+            success: false,
+            message: 'Repassword or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update password.'
+            });
+        } else {
+            if(password != repassword) {
+                return res.send({
+                    success: false,
+                    message: 'Passwords do not match update password.'
+                });
+            } else {
+                let updatePassword = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+                let updatePasswordInserts = [
+                    config.tables[2].table_name,
+                    config.tables[2].table_fields[5].Field,
+                    generateHash(password),
+                    config.tables[2].table_fields[0].Field,
+                    results[0]['user_id']
+                ];
+
+                updatePassword = mysql.format(updatePassword, updatePasswordInserts);
+                console.log(updatePassword);
+                connection.query(updatePassword, function (error, result, fields) {
+                    if(error) {
+                        //console.log("Error: in Register New User: " + err);
+                        return res.send({
+                            success: false,
+                            message: 'Server error in update profile'
+                        });
+                    } else {
+                        // do results here
+                        return res.send({
+                            success: true,
+                            message: 'Your password has been successfully updated.'
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
 
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');

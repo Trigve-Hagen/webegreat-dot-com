@@ -18,10 +18,10 @@ class UpdatePaypal extends React.Component {
 		e.preventDefault();
 
         const data = new FormData();
-            data.append('username', this.state.paypalUsername);
-            data.append('password', this.state.paypalPassword);
-            data.append('signature', this.state.paypalSignature);
-            data.append('appid', this.state.paypalAppId);
+            data.append('username', this.state.paypalUsername.value);
+            data.append('password', this.state.paypalPassword.value);
+            data.append('signature', this.state.paypalSignature.value);
+            data.append('appid', this.state.paypalAppId.value);
             data.append('token', this.props.authentication[0].token);
 
 		fetch('http://localhost:4000/api/profile/update-paypal', {
