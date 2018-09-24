@@ -5,8 +5,7 @@ import Footer from '../footer';
 
 const descriptionStyle = {
     marginTop: '0',
-    paddingTop: '0',
-    fontSize: '18px'
+    paddingTop: '0'
 }
 
 const paddingTop = {
@@ -47,8 +46,38 @@ class Cart extends React.Component {
             cartCity: '',
             cartState: '',
             cartZip: '',
-            cartTotal: 0
+            cartProducts: []
         }
+    }
+
+	onSubmit(e) {
+        e.preventDefault();
+
+        const data = new FormData();
+            data.append('name', this.state.cartName.value);
+            data.append('email', this.state.cartEmail.value);
+            data.append('address', this.state.cartAddress.value);
+            data.append('city', this.state.cartCity.value);
+            data.append('state', this.state.cartState.value);
+            data.append('zip', this.state.cartZip.value);
+            data.append('products', this.props.cart[0].value);
+
+		fetch('http://localhost:4000/api/cart/call-paypal', {
+            method: 'POST',
+            body: data,
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    console.log("Call paypal successfull.");
+					this.setState({
+                        cartError: json.message
+                    });
+				} else {
+                    this.setState({
+						cartError: json.message
+					});
+                }
+			});
     }
 
     render() {
@@ -65,7 +94,7 @@ class Cart extends React.Component {
                                         <img src={ `/img/products/${ item.image }` } alt={item.name} className="img-responsive" style={imageStyle} />
                                     </div>
                                     <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24 text-center" style={paddingTop}>
-                                        <h1 style={zeroBottomSpacingStyle}>{item.name}</h1>
+                                        <h2 style={zeroBottomSpacingStyle}>{item.name}</h2>
                                         <p style={descriptionStyle}>{item.description}</p>
                                     </div>
                                     <div className="col-lg-3 col-md-3 col-sm-6 col-xs-24 text-center" style={paddingTop}>
@@ -84,39 +113,41 @@ class Cart extends React.Component {
                     </div>
                     <div className="row space-bottom-50px">
                         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-                        <h1 style={checkoutCheckout}>Checkout</h1>
+                        <h2 style={checkoutCheckout}>Checkout</h2>
                             {
                                 (this.state.cartError) ? (
                                     <label>{this.state.cartError}</label>
                                 ) : (null)
                             }
+                        <form name="cartForm" onSubmit={this.onSubmit}>
                             <div className="form-group">
                                 <input ref={(ref) => { this.state.cartName = ref; }} type="text" className="form-element" id="cartName" placeholder="Full Name" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.cartEmail = ref; }} type="text" className="form-element" id="cartEmail" placeholder="Email Address" />
+                                <input ref={(ref) => { this.state.cartEmail = ref; }} type="email" className="form-element" id="cartEmail" placeholder="Email Address" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.cartAddress = ref; }} type="text" className="form-element" id="paypalPassword" placeholder="Address" />
+                                <input ref={(ref) => { this.state.cartAddress = ref; }} type="text" className="form-element" id="cartAddress" placeholder="Address" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.cartCity = ref; }} type="text" className="form-element" id="paypalSignature" placeholder="City" />
+                                <input ref={(ref) => { this.state.cartCity = ref; }} type="text" className="form-element" id="cartCity" placeholder="City" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.cartState = ref; }} type="text" className="form-element" id="paypalAppId" placeholder="State" />
+                                <input ref={(ref) => { this.state.cartState = ref; }} type="text" className="form-element" id="cartState" placeholder="State" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.cartZip = ref; }} type="text" className="form-element" id="paypalAppId" placeholder="Zip" />
+                                <input ref={(ref) => { this.state.cartZip = ref; }} type="number" className="form-element" id="cartZip" placeholder="Zip" />
                             </div>
-                            <input type="hidden" ref={(ref) => { this.state.cartTotal = ref; }} value={ total.toFixed(2) } />  
+                            <button type="submit" className="btn btn-army">Checkout</button>
+                        </form>
                         </div>
                         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                             <div className="row margin-bottom-20px">
                                 <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-                                    <h1 style={totalCheckout}>Total: ${total.toFixed(2)}</h1>
+                                    <h2 style={totalCheckout}>Total: ${total.toFixed(2)}</h2>
                                 </div>
                                 <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24 text-right">
-                                    <button type="submit" onSubmit={this.onSubmit} className="btn btn-army">Checkout</button>
+                                    
                                 </div>
                             </div>
                             <div className="row">

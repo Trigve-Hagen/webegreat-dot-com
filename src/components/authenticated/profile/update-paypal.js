@@ -6,10 +6,8 @@ class UpdatePaypal extends React.Component {
         super(props);
         this.state = {
             paypalError: '',
-            paypalUsername: '',
-            paypalPassword: '',
-            paypalSignature: '',
-            paypalAppId: '',
+            paypalClient: '',
+            paypalSecret: ''
         }
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -18,10 +16,8 @@ class UpdatePaypal extends React.Component {
 		e.preventDefault();
 
         const data = new FormData();
-            data.append('username', this.state.paypalUsername.value);
-            data.append('password', this.state.paypalPassword.value);
-            data.append('signature', this.state.paypalSignature.value);
-            data.append('appid', this.state.paypalAppId.value);
+            data.append('client', this.state.paypalClient.value);
+            data.append('secret', this.state.paypalSecret.value);
             data.append('token', this.props.authentication[0].token);
 
 		fetch('http://localhost:4000/api/profile/update-paypal', {
@@ -33,10 +29,8 @@ class UpdatePaypal extends React.Component {
 					console.log("Paypal update successfull.");
 					this.setState({
                         paypalError: json.message,
-                        paypalUsername: '',
-                        paypalPassword: '',
-                        paypalSignature: '',
-                        paypalAppId: ''
+                        paypalClient: '',
+                        paypalSecret: ''
                     });
 				} else {
                     this.setState({
@@ -59,16 +53,10 @@ class UpdatePaypal extends React.Component {
                         }
                         <form className="paypalCredentials" onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.paypalUsername = ref; }} type="text" className="form-element" id="paypalUsername" placeholder="Paypal Username" />
+                                <input ref={(ref) => { this.state.paypalClient = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Client Id" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.paypalPassword = ref; }} type="text" className="form-element" id="paypalPassword" placeholder="Paypal Password" />
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.paypalSignature = ref; }} type="text" className="form-element" id="paypalSignature" placeholder="Paypal Signature" />
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.paypalAppId = ref; }} type="text" className="form-element" id="paypalAppId" placeholder="Paypal Application Id" />
+                                <input ref={(ref) => { this.state.paypalClient = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Secret" />
                             </div>
                             <button type="submit" className="btn btn-army">Update Paypal Credentials</button>
                         </form>

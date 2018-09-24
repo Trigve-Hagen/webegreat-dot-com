@@ -148,7 +148,7 @@ All Components will house all code included in a component including main compon
 
 ## Credits
 
-People who have little bits of code in here but do not know it. Hehe. Learned alot from them.
+People who have little bits of code in here but do not know it. Hehe. Learned alot from them. Also for help setting up your Paypal account please check out the bottom video from Traversy Media.
 
 `Keith Weaver`<br>
 https://github.com/keithweaver/MERN-boilerplate<br>
@@ -160,3 +160,6 @@ https://www.youtube.com/c/reactuniversity
 
 `Code Realm`<br>
 https://www.youtube.com/channel/UCUDLFXXKG6zSA1d746rbzLQ
+
+`Traversy Media`<br>
+https://www.youtube.com/watch?v=7k03jobKGXM

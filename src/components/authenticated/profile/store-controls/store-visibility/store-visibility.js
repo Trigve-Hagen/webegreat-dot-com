@@ -7,8 +7,14 @@ class StoreVisibility extends React.Component {
         this.state = {
             visibilityError: '',
             visibility: '',
+            selectedId: this.props.visibility[0].visibility
         }
+        this.onChange = this.dropdownChanged.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    dropdownChanged(e){
+        this.setState({ selectedId: e.target.value });
     }
 
 	onSubmit(e) {
@@ -51,9 +57,9 @@ class StoreVisibility extends React.Component {
                         }
                         <form className="storeVisibility" onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <select ref={ (ref) => { this.state.visibility = ref; }} className="form-element" id="storVisibility">
-                                    <option value="0" selected={ this.props.visibility[0].visibility ? 'selected' : '' }>Store is not visiblity in front.</option>
-                                    <option value="1" selected={ this.props.visibility[0].visibility ? 'selected' : '' }>Store is visible in front.</option>
+                                <select ref={ (ref) => { this.state.visibility = ref; }} value={this.selectedId} onChange={this.dropdownChanged.bind(this)} className="form-element">
+                                    <option value="0">Store is not visiblity in front.</option>
+                                    <option value="1">Store is visible in front.</option>
                                 </select>
                             </div>
                             <button type="submit" className="btn btn-army">Update Visibility</button>

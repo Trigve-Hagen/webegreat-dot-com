@@ -1,4 +1,10 @@
 module.exports = {
+    base: {
+        url: 'http://localhost:3000',
+        prod: 'https://webegreat.com',
+        return: 'http://localhost:3000/return',
+        cancel: 'http://localhost:3000/cancel'
+    },
     patterns: {
         names: /^[\w\s.&$_-]+$/i,
         numbers: /^[0-9]+$/,
@@ -268,7 +274,7 @@ module.exports = {
                     Extra: 'ON UPDATE CURRENT_TIMESTAMP'
                 },
                 {
-                    Field: 'username',
+                    Field: 'client',
                     Type: 'varchar(255)',
                     Null: 'NULL',
                     Key: '',
@@ -276,23 +282,7 @@ module.exports = {
                     Extra: ''
                 },
                 {
-                    Field: 'password',
-                    Type: 'varchar(255)',
-                    Null: 'NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'signature',
-                    Type: 'varchar(255)',
-                    Null: 'NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'appid',
+                    Field: 'secret',
                     Type: 'varchar(255)',
                     Null: 'NULL',
                     Key: '',
@@ -380,6 +370,14 @@ module.exports = {
                     Field: 'prices',
                     Type: 'varchar(255)',
                     Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'paypal_paykey',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
                     Key: '',
                     Default: null,
                     Extra: ''

@@ -7,6 +7,7 @@ const mysql = require('mysql');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const fileUpload = require('express-fileupload');
+const paypal = require('paypal-rest-sdk');
 const app = express();
 
 let reqPath = path.join(__dirname, '../');
@@ -127,7 +128,7 @@ app.post('/api/account/signup', (req, res, next) => {
                             id: null
                         });
                     } else {
-                        let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, '', '', '', '')";
+                        let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, '', '')";
                         let inserts = [
                             config.tables[4].table_name,
                             result.insertId, myDate, myDate,
@@ -1195,10 +1196,8 @@ app.post('/api/profile/update-profile', function(req, res) {
 app.post('/api/profile/update-paypal', function(req, res) {
     const { body } = req;
     const {
-        username,
-        password,
-        signature,
-        appid,
+        client,
+        secret,
         token
     } = body;
 
@@ -1209,31 +1208,17 @@ app.post('/api/profile/update-paypal', function(req, res) {
         });
     }
 
-    if(!username || !config.patterns.names.test(username)) {
+    if(!client || !config.patterns.names.test(client)) {
         return res.send({
             success: false,
-            message: 'Paypal username invalid or cannot be left empty.'
+            message: 'Paypal client invalid or cannot be left empty.'
         });
     }
 
-    if(!password || !config.patterns.names.test(password)) {
+    if(!secret || !config.patterns.names.test(secret)) {
         return res.send({
             success: false,
-            message: 'Password invalid or cannot be left empty.'
-        });
-    }
-
-    if(!signature || !config.patterns.names.test(signature)) {
-        return res.send({
-            success: false,
-            message: 'Signature invalid or cannot be left empty.'
-        });
-    }
-
-    if(!appid || !config.patterns.names.test(appid)) {
-        return res.send({
-            success: false,
-            message: 'Appid invalid or cannot be left empty.'
+            message: 'Paypal secret invalid or cannot be left empty.'
         });
     }
 
@@ -1253,17 +1238,13 @@ app.post('/api/profile/update-paypal', function(req, res) {
                 message: 'Server error in get userid update paypal.'
             });
         } else {
-            let updatePaypal = "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ?, ?? = ? WHERE ?? = ?";
+            let updatePaypal = "UPDATE ?? SET ?? = ?, ?? = ?  WHERE ?? = ?";
             let updatePaypalInserts = [
                 config.tables[4].table_name,
                 config.tables[4].table_fields[4].Field,
-                username,
+                client,
                 config.tables[4].table_fields[5].Field,
-                password,
-                config.tables[4].table_fields[6].Field,
-                signature,
-                config.tables[4].table_fields[7].Field,
-                appid,
+                secret,
                 config.tables[4].table_fields[1].Field,
                 results[0]['user_id']
             ];
@@ -1485,6 +1466,134 @@ app.post('/api/newsletter/registration', function(req, res) {
                 success: true,
                 message: 'You successfully registered for our newsletter.'
             });
+        }
+    });
+});
+
+/*
+ *************************** Cart && Paypal ****************************
+ ***********************************************************************
+ */
+
+app.post('/api/cart/call-paypal', function(req, res) {
+    const { body } = req;
+    const {
+        name,
+        address,
+        city,
+        state,
+        zip,
+        products
+    } = body;
+    let { email } = body;
+
+    if(!name || !config.patterns.names.test(name)) {
+        return res.send({
+            success: false,
+            message: 'Invalid name Letters Numbers Spaces _ - and . allowed or name is empty.'
+        });
+    }
+
+    if(!address || !config.patterns.names.test(address)) {
+        return res.send({
+            success: false,
+            message: 'Invalid address Letters Numbers Spaces _ - and . allowed or address is empty.'
+        });
+    }
+
+    if(!city || !config.patterns.names.test(city)) {
+        return res.send({
+            success: false,
+            message: 'Invalid city Letters Numbers Spaces _ - and . allowed or city is empty.'
+        });
+    }
+
+    if(!state || !config.patterns.names.test(state)) {
+        return res.send({
+            success: false,
+            message: 'Invalid state Letters Numbers Spaces _ - and . allowed or state is empty.'
+        });
+    }
+
+    if(!zip || !config.patterns.numbers.test(zip)) {
+        return res.send({
+            success: false,
+            message: 'Invalid zip numbers only or zip is empty.'
+        });
+    }
+
+    if(!email || !config.patterns.emails.test(email)) {
+        return res.send({
+            success: false,
+            message: 'Invalid email or email is empty.'
+        });
+    }
+
+    var loadCredentials = "SELECT * FROM ?? LIMIT 1";
+    var loadCredentialsInserts = [
+        config.tables[4].table_name
+    ];
+    loadCredentials = mysql.format(loadCredentials, loadCredentialsInserts);
+    //console.log(loadCredentials);
+    connection.query(loadCredentials, function (error, results, fields) {
+        if(error) {
+            //console.log("Error: in Register New User: " + err);
+            return res.send({
+                success: false,
+                message: 'Server Error in load credentials'
+            });
+        } else {
+            paypal.configure({
+                "mode": "sandbox",
+                "client_id": results[0]['client'],
+                "client_secret": results[0]['secret']
+            });
+            let items = []; let total = 0;
+            products.map(product => {
+                items.push({
+                    "name": product.name,
+                    "sku": product.id,
+                    "price": product.price,
+                    "currency": "USD",
+                    "quantity": product.quantity,
+                });
+                total += product.price * product.quantity;
+            });
+            let create_payment_json = {
+                "intent": "sale",
+                "payer": {
+                    "payment_method": "paypal"
+                },
+                "redirect_urls": {
+                    "return_url": config.base.return,
+                    "cancel_url": config.base.cancel
+                },
+                "transactions": [
+                    {
+                        "item_list": {
+                            "items": items
+                        },
+                        "amount": {
+                            "currency": "USD",
+                            "total": total.toFixed(2)
+                        },
+                        "description": "This is the payment description."
+                    }
+                ]
+            };
+            paypal.payment.create(create_payment_json, function (error, payment) {
+                if (error) {
+                    throw error;
+                } else {
+                    console.log("Create Payment Response");
+                    console.log(payment);
+                    return res.send({
+                        success: true,
+                        message: 'Success'
+                    });
+                }
+            });
+            
         }
     });
 });
