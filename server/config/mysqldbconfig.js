@@ -274,6 +274,14 @@ module.exports = {
                     Extra: 'ON UPDATE CURRENT_TIMESTAMP'
                 },
                 {
+                    Field: 'mode',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
                     Field: 'client',
                     Type: 'varchar(255)',
                     Null: 'NULL',

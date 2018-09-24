@@ -3,29 +3,6 @@ import { connect } from 'react-redux';
 import Navigation from '../navigation';
 import Footer from '../footer';
 
-const descriptionStyle = {
-    marginTop: '0',
-    paddingTop: '0'
-}
-
-const paddingTop = {
-    paddingTop: '20px'
-}
-
-const zeroBottomSpacingStyle = {
-    marginBottom: '0',
-    paddingBottom: '0'
-}
-
-const imageStyle = {
-    margin: '0 auto'
-}
-
-const totalCheckout = {
-    marginTop: '0px',
-    marginBottom: '0px'
-}
-
 const checkoutCheckout = {
     marginTop: '0px',
     marginBottom: '25px'
@@ -48,10 +25,21 @@ class Cart extends React.Component {
             cartZip: '',
             cartProducts: []
         }
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
 	onSubmit(e) {
         e.preventDefault();
+
+        let items = ''; let cartTotal = 0; let count = 0;
+        sort(this.props.cart).map(product => {
+            if(count == this.props.cart.length - 1) items += product.id.toString() + "_" + product.quantity.toString();
+            else items += product.id.toString() + "_" + product.quantity.toString() + "&";
+            cartTotal += product.price * product.quantity;
+            count++;
+        });
+
+        console.log(items);
 
         const data = new FormData();
             data.append('name', this.state.cartName.value);
@@ -60,7 +48,8 @@ class Cart extends React.Component {
             data.append('city', this.state.cartCity.value);
             data.append('state', this.state.cartState.value);
             data.append('zip', this.state.cartZip.value);
-            data.append('products', this.props.cart[0].value);
+            data.append('items', items);
+            data.append('total', cartTotal.toFixed(2));
 
 		fetch('http://localhost:4000/api/cart/call-paypal', {
             method: 'POST',
@@ -91,19 +80,19 @@ class Cart extends React.Component {
                             sort(this.props.cart).map( item =>
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24 margin-bottom-20px" key={item.id}>
                                     <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
-                                        <img src={ `/img/products/${ item.image }` } alt={item.name} className="img-responsive" style={imageStyle} />
+                                        <img src={ `/img/products/${item.image}` } alt={item.name} className="img-responsive margin-center" />
                                     </div>
-                                    <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24 text-center" style={paddingTop}>
-                                        <h2 style={zeroBottomSpacingStyle}>{item.name}</h2>
-                                        <p style={descriptionStyle}>{item.description}</p>
+                                    <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24 padding-top-20px text-center">
+                                        <h2 className="zero-space-bottom">{item.name}</h2>
+                                        <p className="zero-space-top">{item.description}</p>
                                     </div>
-                                    <div className="col-lg-3 col-md-3 col-sm-6 col-xs-24 text-center" style={paddingTop}>
-                                        <h2 style={zeroBottomSpacingStyle}>{ item.quantity }</h2>
+                                    <div className="col-lg-3 col-md-3 col-sm-6 col-xs-24 padding-top-20px text-center">
+                                        <h2 className="zero-space-bottom">{item.quantity}</h2>
                                         <button onClick={() => this.props.addToCart(item)} className="btn btn-army">+</button>
                                         <button onClick={() => this.props.removeFromCart(item)} className="btn btn-army margin-left-5px">-</button>
                                     </div>
                                     <div className="col-lg-3 col-md-3 col-sm-6 col-xs-24 text-center">
-                                        <h2 style={zeroBottomSpacingStyle}>${ item.price * item.quantity }</h2>
+                                        <h2 className="zero-space-bottom">${ item.price * item.quantity }</h2>
                                         <p>Grand Total: ${ (total += item.price * item.quantity).toFixed(2) }<br/>Tax included</p>
                                         <button onClick={() => this.props.removeAllFromCart(item)} className="btn btn-army vcenter">Remove All</button>
                                     </div>
@@ -116,7 +105,7 @@ class Cart extends React.Component {
                         <h2 style={checkoutCheckout}>Checkout</h2>
                             {
                                 (this.state.cartError) ? (
-                                    <label>{this.state.cartError}</label>
+                                    <label>{ this.state.cartError }</label>
                                 ) : (null)
                             }
                         <form name="cartForm" onSubmit={this.onSubmit}>
@@ -144,7 +133,7 @@ class Cart extends React.Component {
                         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                             <div className="row margin-bottom-20px">
                                 <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-                                    <h2 style={totalCheckout}>Total: ${total.toFixed(2)}</h2>
+                                    <h2 className="margin-top-bottom-zero">Total: ${total.toFixed(2)}</h2>
                                 </div>
                                 <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24 text-right">
                                     

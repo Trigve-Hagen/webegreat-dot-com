@@ -151,15 +151,35 @@ All Components will house all code included in a component including main compon
 People who have little bits of code in here but do not know it. Hehe. Learned alot from them. Also for help setting up your Paypal account please check out the bottom video from Traversy Media.
 
 `Keith Weaver`<br>
+login system both standard and with github which I used to also do facebook<br>
 https://github.com/keithweaver/MERN-boilerplate<br>
 https://www.youtube.com/channel/UCK4Onn_G6hYTQyo6tC3XY1w
 
 `React-U`<br>
+Redux training and building out the cart. Also some game making training.<br>
 https://github.com/react-u/<br>
 https://www.youtube.com/c/reactuniversity
 
 `Code Realm`<br>
+webpack 4 plus Babel 7<br>
 https://www.youtube.com/channel/UCUDLFXXKG6zSA1d746rbzLQ
 
 `Traversy Media`<br>
+paypal integration<br>
 https://www.youtube.com/watch?v=7k03jobKGXM
+
+`Tutorials Point`<br>
+Express server tutorial<br>
+https://www.tutorialspoint.com/expressjs/expressjs_sessions.htm
+
+`Code refrences`<br>
+https://reactjs.org<br>
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions<br>
+https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/lifecycle_methods_overview.html
+
+`Other interesting stuff`<br>
+I have yet to dive into.<br>
+https://nodeschool.io/<br>
+https://www.youtube.com/watch?v=SuzutbwjUp8<br>
+https://www.youtube.com/watch?v=ubXtOROjILU<br>
+https://egghead.io/lessons/react-redux-the-single-immutable-state-tree<br>

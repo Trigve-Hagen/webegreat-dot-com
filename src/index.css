@@ -44,6 +44,29 @@ a, a:active, a:focus {
   left: 100;
 }
 
+.zero-space-top {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.zero-space-bottom {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.padding-top-20px {
+  padding-top: 20px;
+}
+
+.margin-center {
+  margin: 0 auto;
+}
+
+.margin-top-bottom-zero {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .space-bottom-50px {
   margin-bottom: 50px;
 }

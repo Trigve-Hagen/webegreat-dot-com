@@ -6,6 +6,7 @@ class UpdatePaypal extends React.Component {
         super(props);
         this.state = {
             paypalError: '',
+            paypalMode: '',
             paypalClient: '',
             paypalSecret: ''
         }
@@ -16,6 +17,7 @@ class UpdatePaypal extends React.Component {
 		e.preventDefault();
 
         const data = new FormData();
+            data.append('mode', this.state.paypalMode.value);
             data.append('client', this.state.paypalClient.value);
             data.append('secret', this.state.paypalSecret.value);
             data.append('token', this.props.authentication[0].token);
@@ -53,10 +55,16 @@ class UpdatePaypal extends React.Component {
                         }
                         <form className="paypalCredentials" onSubmit={this.onSubmit}>
                             <div className="form-group">
+                                <select ref={ (ref) => { this.state.paypalMode = ref; }} className="form-element">
+                                    <option value="sandbox">Sandbox</option>
+                                    <option value="live">Live</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
                                 <input ref={(ref) => { this.state.paypalClient = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Client Id" />
                             </div>
                             <div className="form-group">
-                                <input ref={(ref) => { this.state.paypalClient = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Secret" />
+                                <input ref={(ref) => { this.state.paypalSecret = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Secret" />
                             </div>
                             <button type="submit" className="btn btn-army">Update Paypal Credentials</button>
                         </form>

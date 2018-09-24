@@ -128,13 +128,13 @@ app.post('/api/account/signup', (req, res, next) => {
                             id: null
                         });
                     } else {
-                        let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, '', '')";
+                        let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, '', '', '')";
                         let inserts = [
                             config.tables[4].table_name,
                             result.insertId, myDate, myDate,
                         ];
                         insertPaypal = mysql.format(insertPaypal, inserts);
-                        console.log(insertUserIfNonExists);
+                        //console.log(insertUserIfNonExists);
                         connection.query(insertPaypal, function (error, results, fields) {
                             if(error) {
                                 //console.log("Error: in Register Session: " + error);
@@ -1196,6 +1196,7 @@ app.post('/api/profile/update-profile', function(req, res) {
 app.post('/api/profile/update-paypal', function(req, res) {
     const { body } = req;
     const {
+        mode,
         client,
         secret,
         token
@@ -1205,6 +1206,13 @@ app.post('/api/profile/update-paypal', function(req, res) {
         return res.send({
             success: false,
             message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!mode || !config.patterns.names.test(mode)) {
+        return res.send({
+            success: false,
+            message: 'Paypal mode invalid or cannot be left empty.'
         });
     }
 
@@ -1238,12 +1246,14 @@ app.post('/api/profile/update-paypal', function(req, res) {
                 message: 'Server error in get userid update paypal.'
             });
         } else {
-            let updatePaypal = "UPDATE ?? SET ?? = ?, ?? = ?  WHERE ?? = ?";
+            let updatePaypal = "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ?  WHERE ?? = ?";
             let updatePaypalInserts = [
                 config.tables[4].table_name,
                 config.tables[4].table_fields[4].Field,
-                client,
+                mode,
                 config.tables[4].table_fields[5].Field,
+                client,
+                config.tables[4].table_fields[6].Field,
                 secret,
                 config.tables[4].table_fields[1].Field,
                 results[0]['user_id']
@@ -1483,9 +1493,29 @@ app.post('/api/cart/call-paypal', function(req, res) {
         city,
         state,
         zip,
-        products
+        items,
+        total
     } = body;
     let { email } = body;
+
+    let itemIds = [];
+    let productItems = items.split("&");
+    productItems.forEach(item => {
+        let itemParts = item.split("_");
+        if(!itemParts[0] || !config.patterns.numbers.test(itemParts[0])) {
+            return res.send({
+                success: false,
+                message: 'Empty id or Numbers only.'
+            });
+        }
+        if(!itemParts[1] || !config.patterns.numbers.test(itemParts[1])) {
+            return res.send({
+                success: false,
+                message: 'Empty quantity or Numbers only.'
+            });
+        }
+        itemIds.push({ id: itemParts[0], quantity: itemParts[1] });
+    });
 
     if(!name || !config.patterns.names.test(name)) {
         return res.send({
@@ -1522,12 +1552,22 @@ app.post('/api/cart/call-paypal', function(req, res) {
         });
     }
 
+    if(!total || !config.patterns.names.test(total)) {
+        return res.send({
+            success: false,
+            message: 'Invalid address Letters Numbers Spaces _ - and . allowed or total is empty.'
+        });
+    }
+
     if(!email || !config.patterns.emails.test(email)) {
         return res.send({
             success: false,
             message: 'Invalid email or email is empty.'
         });
     }
+
+    console.log(util.inspect(items, {showHidden: false, depth: null}));
+    //console.log("Products: " + products);
 
     var loadCredentials = "SELECT * FROM ?? LIMIT 1";
     var loadCredentialsInserts = [
@@ -1543,57 +1583,80 @@ app.post('/api/cart/call-paypal', function(req, res) {
                 message: 'Server Error in load credentials'
             });
         } else {
+            console.log(results[0]['client'] + ", " + results[0]['secret']);
             paypal.configure({
                 "mode": "sandbox",
                 "client_id": results[0]['client'],
                 "client_secret": results[0]['secret']
             });
-            let items = []; let total = 0;
-            products.map(product => {
-                items.push({
-                    "name": product.name,
-                    "sku": product.id,
-                    "price": product.price,
-                    "currency": "USD",
-                    "quantity": product.quantity,
-                });
-                total += product.price * product.quantity;
-            });
-            let create_payment_json = {
-                "intent": "sale",
-                "payer": {
-                    "payment_method": "paypal"
-                },
-                "redirect_urls": {
-                    "return_url": config.base.return,
-                    "cancel_url": config.base.cancel
-                },
-                "transactions": [
-                    {
-                        "item_list": {
-                            "items": items
-                        },
-                        "amount": {
-                            "currency": "USD",
-                            "total": total.toFixed(2)
-                        },
-                        "description": "This is the payment description."
-                    }
-                ]
-            };
-            paypal.payment.create(create_payment_json, function (error, payment) {
-                if (error) {
-                    throw error;
-                } else {
-                    console.log("Create Payment Response");
-                    console.log(payment);
+
+            var loadProducts = "SELECT * FROM ??";
+            var loadProductsInserts = [
+                config.tables[0].table_name
+            ];
+            loadProducts = mysql.format(loadProducts, loadProductsInserts);
+            //console.log(loadProducts);
+            connection.query(loadProducts, function (error, results, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
                     return res.send({
-                        success: true,
-                        message: 'Success'
+                        success: false,
+                        message: 'Server Error in load products'
+                    });
+                } else {
+                    //console.log(util.inspect(results, {showHidden: false, depth: null}));
+                    let items = [];
+                    itemIds.forEach(itemObj => {
+                        results.forEach(product => {
+                            //console.log(parseInt(id) + ", " + product['productid']);
+                            if(parseInt(itemObj.id) == product['productid']) {
+                                items.push({
+                                    "name": product['name'],
+                                    "sku": product['productid'],
+                                    "price": product['price'],
+                                    "currency": "USD",
+                                    "quantity": itemObj.quantity,
+                                });
+                            }
+                        });
+                    });
+                    console.log(util.inspect(items, {showHidden: false, depth: null}));
+                    let create_payment_json = {
+                        "intent": "sale",
+                        "payer": {
+                            "payment_method": "paypal"
+                        },
+                        "redirect_urls": {
+                            "return_url": config.base.return,
+                            "cancel_url": config.base.cancel
+                        },
+                        "transactions": [
+                            {
+                                "item_list": {
+                                    "items": items
+                                },
+                                "amount": {
+                                    "currency": "USD",
+                                    "total": total
+                                },
+                                "description": "This is the payment description."
+                            }
+                        ]
+                    };
+                    paypal.payment.create(create_payment_json, function (error, payment) {
+                        if (error) {
+                            throw error;
+                        } else {
+                            console.log("Create Payment Response");
+                            console.log(payment);
+                            return res.send({
+                                success: true,
+                                message: 'Success'
+                            });
+                        }
                     });
                 }
             });
-            
         }
     });
 });
