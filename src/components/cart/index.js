@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Navigation from '../navigation';
 import Footer from '../footer';
+import config from '../../config/config';
 
 const checkoutCheckout = {
     marginTop: '0px',
@@ -51,7 +52,7 @@ class Cart extends React.Component {
             data.append('items', items);
             data.append('total', cartTotal.toFixed(2));
 
-		fetch('http://localhost:4000/api/cart/call-paypal', {
+		fetch(config.site_url + '/api/cart/call-paypal', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

@@ -1,10 +1,4 @@
 module.exports = {
-    base: {
-        url: 'http://localhost:3000',
-        prod: 'https://webegreat.com',
-        return: 'http://localhost:3000/return',
-        cancel: 'http://localhost:3000/cancel'
-    },
     patterns: {
         names: /^[\w\s.&$_-]+$/i,
         numbers: /^[0-9]+$/,
@@ -311,6 +305,14 @@ module.exports = {
                     Extra: 'AUTO_INCREMENT'
                 },
                 {
+                    Field: 'user_id',
+                    Type: 'int(11)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
                     Field: 'created_at',
                     Type: 'TIMESTAMP',
                     Null: 'NOT NULL',
@@ -417,7 +419,7 @@ module.exports = {
                     Null: 'NOT NULL',
                     Key: '',
                     Default: 'DEFAULT CURRENT_TIMESTAMP',
-                    Extra: 'ON UPDATE CURRENT_TIMESTAMP'
+                    Extra: ''
                 },
                 {
                     Field: 'name',

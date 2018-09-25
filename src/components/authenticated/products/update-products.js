@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../config/config';
 
 class UpdateProducts extends React.Component {
     constructor(props) {
@@ -30,7 +31,7 @@ class UpdateProducts extends React.Component {
 
         //console.log("Description: "+this.state.proUpdateDescription.value);
 
-		fetch('http://localhost:4000/api/product/update', {
+		fetch(config.site_url + '/api/product/update', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

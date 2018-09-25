@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../config/config';
 
 class UploadProducts extends React.Component {
     constructor(props) {
@@ -27,7 +28,7 @@ class UploadProducts extends React.Component {
             data.append('price', this.state.proUploadPrice.value);
             data.append('token', this.props.authentication[0].token);
 
-		fetch('http://localhost:4000/api/product/upload', {
+		fetch(config.site_url + '/api/product/upload', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

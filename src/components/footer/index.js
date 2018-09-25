@@ -1,4 +1,5 @@
 import React from 'react';
+import config from '../../config/config';
 
 const inputText = {
     color: '#9d9d9d'
@@ -22,7 +23,7 @@ class Footer extends React.Component {
             data.append('name', this.state.newsletterName.value);
             data.append('email', this.state.newsletterEmail.value);
 
-		fetch('http://localhost:4000/api/newsletter/registration', {
+		fetch(config.site_url + '/api/newsletter/registration', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

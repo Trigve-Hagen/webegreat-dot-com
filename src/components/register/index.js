@@ -1,9 +1,9 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import config from '../../config/config';
 import { connect } from 'react-redux';
 import Navigation from '../navigation';
 import Footer from '../footer';
+import config from '../../config/config';
 
 class Register extends React.Component {
     constructor(props) {
@@ -33,7 +33,7 @@ class Register extends React.Component {
 			registerPassword
 		} = this.state;
 
-		fetch('http://localhost:4000/api/account/signup', {
+		fetch(config.site_url + '/api/account/signup', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../../../config/config';
 
 class StoreVisibility extends React.Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class StoreVisibility extends React.Component {
             data.append('visibility', this.state.visibility.value);
             data.append('token', this.props.authentication[0].token);
 
-		fetch('http://localhost:4000/api/profile/update-visibility', {
+		fetch(config.site_url + '/api/profile/update-visibility', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

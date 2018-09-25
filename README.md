@@ -40,9 +40,6 @@ my-app/
   public/
     index.html
     favicon.ico
-  server/
-    config/
-    index.js
   src/
     assets/
       css/
@@ -57,6 +54,9 @@ my-app/
       App.js
       App.test.js
       index.css
+      index.js
+    server/
+      config/
       index.js
     .babelrc
     package-lock.json

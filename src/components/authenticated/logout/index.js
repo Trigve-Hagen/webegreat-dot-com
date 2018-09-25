@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import config from '../../../config/config';
 
 class Logout extends React.Component {
     constructor(props) {
@@ -9,7 +10,7 @@ class Logout extends React.Component {
 
     componentDidMount() {
         this.props.updateAuth({ authenticated: false, token: null });
-        fetch('http://localhost:4000/api/account/logout', {
+        fetch(config.site_url + '/api/account/logout', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

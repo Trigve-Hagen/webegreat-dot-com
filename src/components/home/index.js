@@ -4,6 +4,7 @@ import ProductListing from '../product-listing';
 //import products from '../../data/products';
 import Navigation from '../navigation';
 import Footer from '../footer';
+import config from '../../config/config';
 
 class Home extends React.Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-		fetch('http://localhost:4000/api/product/front', {
+		fetch(config.site_url + '/api/product/front', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

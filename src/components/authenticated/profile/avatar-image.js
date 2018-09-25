@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../config/config';
 
 class AvatarImage extends React.Component {
     constructor(props) {
@@ -12,31 +13,6 @@ class AvatarImage extends React.Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    /*componentDidMount() {
-		fetch('http://localhost:4000/api/avatar/load-avatar', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				token: this.props.authentication[0].token
-			})
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
-                    console.log("Avatar Load Successfull.");
-                    this.props.updateAvatar({ avatar: json.avatar ? json.avatar : 'user-avatar.jpg' });
-					this.setState({
-						avatarError: json.message
-					});
-				} else {
-                    this.setState({
-                        avatarError: json.message
-					});
-                }
-			});
-    }*/
-
 	onSubmit(e) {
         e.preventDefault();
 
@@ -46,7 +22,7 @@ class AvatarImage extends React.Component {
             data.append('token', this.props.authentication[0].token);
             data.append('imagename', this.props.avatar[0].avatar);
 
-		fetch('http://localhost:4000/api/avatar/update-avatar', {
+		fetch(config.site_url + '/api/avatar/update-avatar', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

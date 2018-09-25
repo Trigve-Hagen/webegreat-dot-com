@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../config/config';
 
 class UpdatePaypal extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class UpdatePaypal extends React.Component {
             data.append('secret', this.state.paypalSecret.value);
             data.append('token', this.props.authentication[0].token);
 
-		fetch('http://localhost:4000/api/profile/update-paypal', {
+		fetch(config.site_url + '/api/profile/update-paypal', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

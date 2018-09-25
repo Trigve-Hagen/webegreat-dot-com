@@ -1,9 +1,9 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import config from '../../config/config';
 import { connect } from 'react-redux';
 import Navigation from '../navigation';
 import Footer from '../footer';
+import config from '../../config/config';
 
 class Login extends React.Component {
     constructor(props) {
@@ -29,7 +29,7 @@ class Login extends React.Component {
             loginPassword,
 		} = this.state;
 
-		fetch('http://localhost:4000/api/account/signin', {
+		fetch(config.site_url + '/api/account/signin', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

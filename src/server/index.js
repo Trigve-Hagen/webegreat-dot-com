@@ -9,8 +9,13 @@ const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
 const app = express();
+/*app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});*/
 
-let reqPath = path.join(__dirname, '../');
+//let reqPath = path.join(__dirname, '../');
 const config = require('./config/mysqldbconfig');
 
 let currentTimestamp = moment().unix();
@@ -19,6 +24,8 @@ let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
+
+//app.use(express.static(path.join(__dirname, 'src/dist')));
 
 const connection = mysql.createConnection({
     host: config.connection.host,
@@ -411,8 +418,8 @@ app.post('/api/product/delete-product', function(req, res) {
                         message: 'Server Error in get product by id to delete.'
                     });
                 } else {
-                    if(urlExists(`${reqPath}src/assets/img/products/${results[0]['image']}`)) {
-                        fs.unlink(`${reqPath}src/assets/img/products/${results[0]['image']}`, (err) => {
+                    if(urlExists(__dirname + `/assets/img/products/${results[0]['image']}`)) {
+                        fs.unlink(__dirname + `/assets/img/products/${results[0]['image']}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -622,8 +629,7 @@ app.post('/api/product/upload', function(req, res) {
             let imageFile = req.files['file'];
             let image = req.body.filename + ext;
 
-            imageFile.mv(
-                `${reqPath}src/assets/img/products/${req.body.filename}${ext}`,
+            imageFile.mv(__dirname + `/assets/img/products/${req.body.filename}${ext}`,
                 function(err) {
                     if (err) {
                         return res.send({
@@ -764,8 +770,8 @@ app.post('/api/product/update', function(req, res) {
                 });
             } else {
                 if(config.patterns.names.test(imagename)) {
-                    if(urlExists(`${reqPath}src/assets/img/products/${imagename}`)) {
-                        fs.unlink(`${reqPath}src/assets/img/products/${imagename}`, (err) => {
+                    if(urlExists(__dirname + `/assets/img/products/${imagename}`)) {
+                        fs.unlink(__dirname + `/assets/img/products/${imagename}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -788,8 +794,7 @@ app.post('/api/product/update', function(req, res) {
                                 });
 
                                 let imageFile = req.files['file'];
-                                imageFile.mv(
-                                    `${reqPath}src/assets/img/products/${req.body.filename}${ext}`,
+                                imageFile.mv(__dirname + `/assets/img/products/${req.body.filename}${ext}`,
                                     function(err) {
                                         if (err) {
                                             return res.send({
@@ -1024,8 +1029,8 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                 message: 'Server Error in get userid update avatar.'
             });
         } else {
-            if(urlExists(`${reqPath}src/assets/img/avatar/${imagename}`)) {
-                fs.unlink(`${reqPath}src/assets/img/avatar/${imagename}`, (err) => {
+            if(urlExists(__dirname + `/assets/img/avatar/${imagename}`)) {
+                fs.unlink(__dirname + `/assets/img/avatar/${imagename}`, (err) => {
                     if (err) {
                         return res.send({
                             success: false,
@@ -1043,8 +1048,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                         
                         let image = req.body.filename + ext;
                         let imageFile = req.files['file'];
-                        imageFile.mv(
-                            `${reqPath}src/assets/img/avatar/${req.body.filename}${ext}`,
+                        imageFile.mv(__dirname + `/assets/img/avatar/${req.body.filename}${ext}`,
                             function(err) {
                                 if (err) {
                                     return res.send({
@@ -1566,7 +1570,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
         });
     }
 
-    console.log(util.inspect(items, {showHidden: false, depth: null}));
+    //console.log(util.inspect(items, {showHidden: false, depth: null}));
     //console.log("Products: " + products);
 
     var loadCredentials = "SELECT * FROM ?? LIMIT 1";
@@ -1583,9 +1587,9 @@ app.post('/api/cart/call-paypal', function(req, res) {
                 message: 'Server Error in load credentials'
             });
         } else {
-            console.log(results[0]['client'] + ", " + results[0]['secret']);
+            //console.log(results[0]['client'] + ", " + results[0]['secret']);
             paypal.configure({
-                "mode": "sandbox",
+                "mode": results[0]['mode'],
                 "client_id": results[0]['client'],
                 "client_secret": results[0]['secret']
             });
@@ -1620,7 +1624,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             }
                         });
                     });
-                    console.log(util.inspect(items, {showHidden: false, depth: null}));
+                    //console.log(util.inspect(items, {showHidden: false, depth: null}));
                     let create_payment_json = {
                         "intent": "sale",
                         "payer": {
@@ -1645,14 +1649,22 @@ app.post('/api/cart/call-paypal', function(req, res) {
                     };
                     paypal.payment.create(create_payment_json, function (error, payment) {
                         if (error) {
-                            throw error;
-                        } else {
-                            console.log("Create Payment Response");
-                            console.log(payment);
                             return res.send({
+                                success: false,
+                                message: 'Error: You most likely forgot to upload your Paypal client id and secret.'
+                            });
+                        } else {
+                            for(let i=0; i<payment.links.length; i++) {
+                                if(payment.links[i].rel === 'approval_url') {
+                                    //res.header("Access-Control-Allow-Origin", req.headers.origin);
+                                    //res.setHeader( "Access-Control-Allow-Origin", req.headers.origin );
+                                    res.redirect(payment.links[i].href);
+                                }
+                            }
+                            /*return res.send({
                                 success: true,
                                 message: 'Success'
-                            });
+                            });*/
                         }
                     });
                 }

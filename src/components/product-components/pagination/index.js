@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../config/config';
 
 class Pagination extends React.Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class Pagination extends React.Component {
     }
 
     componentDidMount() {
-		fetch('http://localhost:4000/api/product/pagination', {
+		fetch(config.site_url + '/api/product/pagination', {
             method: 'POST',
             headers: {
 				'Content-Type': 'application/json'

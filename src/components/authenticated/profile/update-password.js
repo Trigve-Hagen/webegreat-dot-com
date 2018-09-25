@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../config/config';
 
 class UpdatePassword extends React.Component {
     constructor(props) {
@@ -20,7 +21,7 @@ class UpdatePassword extends React.Component {
             data.append('repassword', this.state.rePassword.value);
             data.append('token', this.props.authentication[0].token);
 
-		fetch('http://localhost:4000/api/profile/update-password', {
+		fetch(config.site_url + '/api/profile/update-password', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())

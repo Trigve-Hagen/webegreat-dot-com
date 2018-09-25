@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from '../../../../config/config';
 
 class ToggleOnStore extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class ToggleOnStore extends React.Component {
 			onSelect
 		} = this.state;
 
-		fetch('http://localhost:4000/api/account/upload-image', {
+		fetch(config.site_url + '/api/account/upload-image', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
