@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import AvatarImage from './avatar-image';
@@ -14,26 +15,28 @@ class Profile extends React.Component {
     }
 
     render() {
-        return (
-            <div>
-                <Navigation path="/profile" authenticated={this.props.authentication[0].authenticated}/>
-                <div className="container">
-                    <div className="row space-bottom-50px">
-                        <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
-                            <h1>Profile Page</h1>
-                            <AvatarImage />
-                            <StoreControls />
-                        </div>
-                        <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
-                            <UpdateProfile />
-                            <UpdatePaypal />
-                            <UpdatePassword />
+        if(this.props.authentication[0].authenticated) {
+            return (
+                <div>
+                    <Navigation path="/profile" authenticated={this.props.authentication[0].authenticated}/>
+                    <div className="container">
+                        <div className="row space-bottom-50px">
+                            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
+                                <h1>Profile Page</h1>
+                                <AvatarImage />
+                                <StoreControls />
+                            </div>
+                            <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+                                <UpdateProfile />
+                                <UpdatePaypal />
+                                <UpdatePassword />
+                            </div>
                         </div>
                     </div>
+                    <Footer />
                 </div>
-                <Footer />
-            </div>
-        )
+            )
+        } else return <Redirect to='/' />;
     }
 }
 

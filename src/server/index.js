@@ -9,13 +9,26 @@ const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
 const app = express();
+const environment = app.get('env');
 /*app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });*/
 
-//let reqPath = path.join(__dirname, '../');
+let reqPath = path.join(__dirname, '../'); let imagePath = '';
+if(environment == 'development') {
+    imagePath = reqPath + '/assets';
+} else {
+    imagePath = reqPath + 'dist';
+    app.use(express.static(path.join(reqPath, '/dist')));
+    app.get('*', function(req, res) {
+        res.sendFile(path.join(reqPath, 'dist', 'index.html'));
+    });
+}
+
+console.log(imagePath);
+
 const config = require('./config/mysqldbconfig');
 
 let currentTimestamp = moment().unix();
@@ -24,8 +37,6 @@ let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
-
-//app.use(express.static(path.join(__dirname, 'src/dist')));
 
 const connection = mysql.createConnection({
     host: config.connection.host,
@@ -418,8 +429,8 @@ app.post('/api/product/delete-product', function(req, res) {
                         message: 'Server Error in get product by id to delete.'
                     });
                 } else {
-                    if(urlExists(__dirname + `/assets/img/products/${results[0]['image']}`)) {
-                        fs.unlink(__dirname + `/assets/img/products/${results[0]['image']}`, (err) => {
+                    if(urlExists(imagePath + `/img/products/${results[0]['image']}`)) {
+                        fs.unlink(imagePath + `/img/products/${results[0]['image']}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -629,7 +640,7 @@ app.post('/api/product/upload', function(req, res) {
             let imageFile = req.files['file'];
             let image = req.body.filename + ext;
 
-            imageFile.mv(__dirname + `/assets/img/products/${req.body.filename}${ext}`,
+            imageFile.mv(imagePath + `/img/products/${req.body.filename}${ext}`,
                 function(err) {
                     if (err) {
                         return res.send({
@@ -770,8 +781,8 @@ app.post('/api/product/update', function(req, res) {
                 });
             } else {
                 if(config.patterns.names.test(imagename)) {
-                    if(urlExists(__dirname + `/assets/img/products/${imagename}`)) {
-                        fs.unlink(__dirname + `/assets/img/products/${imagename}`, (err) => {
+                    if(urlExists(imagePath + `/img/products/${imagename}`)) {
+                        fs.unlink(imagePath + `/img/products/${imagename}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -794,7 +805,7 @@ app.post('/api/product/update', function(req, res) {
                                 });
 
                                 let imageFile = req.files['file'];
-                                imageFile.mv(__dirname + `/assets/img/products/${req.body.filename}${ext}`,
+                                imageFile.mv(imagePath + `/img/products/${req.body.filename}${ext}`,
                                     function(err) {
                                         if (err) {
                                             return res.send({
@@ -1029,8 +1040,9 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                 message: 'Server Error in get userid update avatar.'
             });
         } else {
-            if(urlExists(__dirname + `/assets/img/avatar/${imagename}`)) {
-                fs.unlink(__dirname + `/assets/img/avatar/${imagename}`, (err) => {
+            console.log(imagePath + `/img/avatar/${imagename}`);
+            if(urlExists(imagePath + `/img/avatar/${imagename}`)) {
+                fs.unlink(imagePath + `/img/avatar/${imagename}`, (err) => {
                     if (err) {
                         return res.send({
                             success: false,
@@ -1048,7 +1060,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                         
                         let image = req.body.filename + ext;
                         let imageFile = req.files['file'];
-                        imageFile.mv(__dirname + `/assets/img/avatar/${req.body.filename}${ext}`,
+                        imageFile.mv(imagePath + `/img/avatar/${req.body.filename}${ext}`,
                             function(err) {
                                 if (err) {
                                     return res.send({
