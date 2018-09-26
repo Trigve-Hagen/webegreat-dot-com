@@ -4,9 +4,9 @@ What I intend to create is a CMS style e-commerce store that can use components 
 
 Below you will find some information on how to perform common tasks and folder stucture of webegreat-dot-com. I haven't got much done yet so I haven't uploaded it to webegreat.com yet. It will use Twitter Bootstrap but you can change it to Material Ui, or Semantic UI or some other framework you like working with. I will work hard to keep each component in the tradition of a fully self contained component that is as loosly coupled to the rest of the application as possible.<br>
 
-To start with download the zip file and save it where ever you like. Once downloaded unzip the ziped file then cd into the unzipped folder by typing - `cd webegreat-dot-com` open a cmd cd inside the folder you extracted the ziped file to then type `npm install`. You might have to delete the package-lock.json to run npm install. If nothing gets downloaded erase it and try again. Once all the files have downloaded you can either type `npm start` to see the continuing saga of the front end or type `cd server && node index.js` to see how the back end is comming along. I just also added `npm run server-start` to start them both. Run this one from webegreat.com. Its still in development so code away if you like or keep coming back for new developments. The front and back end url is http://localhost:4000.<br>
+Download the zip file and save it where ever you like. Once downloaded unzip and cd into the root folder by typing - `cd webegreat-dot-com` Then download all node_modules by typing `npm install`. The other way to download it is to type `git clone https://github.com/Trigve-Hagen/webegreat-dot-com.git` cd into webegreat-dot-com and run `npm-install`. You might have to delete the package-lock.json to run npm install. If no node_modules gets downloaded erase package-lock.json and type `npm-install` again. Once all the files have downloaded you can either type `npm run server-start` or if you are on the server type `npm run build` and a dist folder will be made with all the static files express needs to work. Its still in development so code away if you like or keep coming back for new developments.<br>
 
-For now only install and run in `npm run server-start`. I haven't configured webpack to load up the server yet. <br>
+I've uploaded server configuration now but its in testing stage. Made a production set up in the server/index.js that redirects and uses the dist folder for static assets. Going to test at webegreat.com. Works great in development. Ment for nginx on ubuntu 16.04. You might be able to use it on Digital Ocean too. Neat plans. You need to proxy nginx to http://localhost:4000 and express will server both react and the server files together. Check out the Digital Ocean link for details.
 
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
@@ -167,6 +167,11 @@ https://www.youtube.com/channel/UCUDLFXXKG6zSA1d746rbzLQ
 `Traversy Media`<br>
 paypal integration<br>
 https://www.youtube.com/watch?v=7k03jobKGXM
+
+`Digital Ocean`<br>
+by Brennen Bearnes<br>
+Server configurations for nginx on Ubuntu 16.04 using React as a front end.<br>
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04
 
 `Tutorials Point`<br>
 Express server tutorial<br>
