@@ -9,25 +9,22 @@ const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
 const app = express();
-const environment = app.get('env');
+//const environment = app.get('env');
 /*app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });*/
-
 let reqPath = path.join(__dirname, '../'); let imagePath = '';
-if(environment == 'development') {
+if(/localhost/.test(reqPath)) {
     imagePath = reqPath + '/assets';
 } else {
-    imagePath = reqPath + 'dist';
+    imagePath = reqPath + '/dist';
     app.use(express.static(path.join(reqPath, '/dist')));
     app.get('*', function(req, res) {
         res.sendFile(path.join(reqPath, 'dist', 'index.html'));
     });
 }
-
-console.log(imagePath);
 
 const config = require('./config/mysqldbconfig');
 
