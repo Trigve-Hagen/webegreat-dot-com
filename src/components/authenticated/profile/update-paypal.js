@@ -55,17 +55,19 @@ class UpdatePaypal extends React.Component {
                             ) : (null)
                         }
                         <form className="paypalCredentials" onSubmit={this.onSubmit}>
-                            <div className="form-group">
-                                <select ref={ (ref) => { this.state.paypalMode = ref; }} className="form-element">
-                                    <option value="sandbox">Sandbox</option>
-                                    <option value="live">Live</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.paypalClient = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Client Id" />
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.paypalSecret = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Secret" />
+                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                                <div className="form-group">
+                                    <select ref={ (ref) => { this.state.paypalMode = ref; }} className="form-element">
+                                        <option value="sandbox">Sandbox</option>
+                                        <option value="live">Live</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.paypalClient = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Client Id" />
+                                </div>
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.paypalSecret = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Secret" />
+                                </div>
                             </div>
                             <button type="submit" className="btn btn-army">Update Paypal Credentials</button>
                         </form>

@@ -24,7 +24,9 @@ class Cart extends React.Component {
             cartCity: '',
             cartState: '',
             cartZip: '',
-            cartProducts: []
+            cartProducts: [],
+            cartRedirect: false,
+            paypaRedirect: ''
         }
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -60,7 +62,9 @@ class Cart extends React.Component {
 				if(json.success) {
                     console.log("Call paypal successfull.");
 					this.setState({
-                        cartError: json.message
+                        cartError: "Redirecting to: " + json.url,
+                        cartRedirect: true,
+                        paypaRedirect: json.url
                     });
 				} else {
                     this.setState({
@@ -72,6 +76,7 @@ class Cart extends React.Component {
 
     render() {
         let total = 0;
+        if(this.state.cartRedirect) window.location.href = this.state.paypaRedirect;
         return (
             <div>
                 <Navigation path="/cart" authenticated={this.props.authentication[0].authenticated}/>
@@ -110,24 +115,30 @@ class Cart extends React.Component {
                                 ) : (null)
                             }
                         <form name="cartForm" onSubmit={this.onSubmit}>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.cartName = ref; }} type="text" className="form-element" id="cartName" placeholder="Full Name" />
+                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.cartName = ref; }} type="text" className="form-element" id="cartName" placeholder="Full Name" />
+                                </div>
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.cartEmail = ref; }} type="email" className="form-element" id="cartEmail" placeholder="Email Address" />
+                                </div>
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.cartAddress = ref; }} type="text" className="form-element" id="cartAddress" placeholder="Address" />
+                                </div>
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.cartCity = ref; }} type="text" className="form-element" id="cartCity" placeholder="City" />
+                                </div>
+                            </div> 
+                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.cartState = ref; }} type="text" className="form-element" id="cartState" placeholder="State" />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.cartEmail = ref; }} type="email" className="form-element" id="cartEmail" placeholder="Email Address" />
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.cartAddress = ref; }} type="text" className="form-element" id="cartAddress" placeholder="Address" />
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.cartCity = ref; }} type="text" className="form-element" id="cartCity" placeholder="City" />
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.cartState = ref; }} type="text" className="form-element" id="cartState" placeholder="State" />
-                            </div>
-                            <div className="form-group">
-                                <input ref={(ref) => { this.state.cartZip = ref; }} type="number" className="form-element" id="cartZip" placeholder="Zip" />
-                            </div>
+                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                                <div className="form-group">
+                                    <input ref={(ref) => { this.state.cartZip = ref; }} type="text" className="form-element" id="cartZip" placeholder="Zip" />
+                                </div>
+                            </div>    
                             <button type="submit" className="btn btn-army">Checkout</button>
                         </form>
                         </div>

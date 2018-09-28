@@ -73,18 +73,20 @@ class UploadProducts extends React.Component {
                             <fieldset className="form-group">
                                 <input ref={(ref) => { this.state.uploadInput = ref; }} type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
-                            <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
-                            </fieldset>
-                            <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.proUploadName = ref; }} type="text" className="form-element" placeholder="Name"/>
-                            </fieldset>
-                            <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.proUploadPrice = ref; }} type="text" className="form-element" placeholder="0.00"/>
-                            </fieldset>
-                            <fieldset className="form-group">
-                                <textarea ref={(ref) => { this.state.proUploadDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
-                            </fieldset>
+                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUploadName = ref; }} type="text" className="form-element" placeholder="Name"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUploadPrice = ref; }} type="text" className="form-element" placeholder="0.00"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <textarea ref={(ref) => { this.state.proUploadDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
+                                </fieldset>
+                            </div>
                             <button type="submit" className="btn btn-army">Product Upload</button>
                         </form>
                     </div>

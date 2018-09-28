@@ -8,15 +8,16 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
+const urlConfig = require('../config/config');
 const app = express();
-//const environment = app.get('env');
+const isDev = process.env.NODE_ENV !== 'production';
 /*app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });*/
 let reqPath = path.join(__dirname, '../'); let imagePath = '';
-if(/localhost/.test(reqPath)) {
+if(isDev) {
     imagePath = reqPath + '/assets';
 } else {
     imagePath = reqPath + '/dist';
@@ -126,7 +127,7 @@ app.post('/api/account/signup', (req, res, next) => {
                 //currentTimestamp = moment().unix();//in seconds
                 //let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
 
-                var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0)";
+                var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0, '', '', '', '')";
                 var inserts = [
                     config.tables[2].table_name,
                     myDate, myDate, name, email, generateHash(password)
@@ -928,63 +929,6 @@ app.post('/api/product/update', function(req, res) {
  ***********************************************************************
  */
 
-/*app.post('/api/avatar/load-avatar', function(req, res) {
-    const { body } = req;
-    const {
-        token
-    } = body;
-
-    if(!token || !config.patterns.numbers.test(token)) {
-        return res.send({
-            success: false,
-            message: 'Invalid token.'
-        });
-    }
-
-    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-    let userIdInserts = [
-        config.tables[3].table_fields[1].Field,
-        config.tables[3].table_name,
-        config.tables[3].table_fields[0].Field,
-        token
-    ];
-    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
-    connection.query(getUserIdSession, function (error, results, fields) {
-        if(error) {
-            return res.send({
-                success: false,
-                message: 'Server Error in get userid load avatar.'
-            });
-        } else {
-            var loadAvatar = "SELECT ?? FROM ?? WHERE ?? = ?";
-            var loadAvatarInserts = [
-                config.tables[2].table_fields[7].Field,
-                config.tables[2].table_name,
-                config.tables[2].table_fields[0].Field,
-                results[0]['user_id']
-            ];
-            loadAvatar = mysql.format(loadAvatar, loadAvatarInserts);
-            //console.log(loadAvatar);
-            connection.query(loadAvatar, function (error, results, fields) {
-                if(error) {
-                    //console.log("Error: in Register New User: " + err);
-                    return res.send({
-                        success: false,
-                        message: 'Server Error in load avatar'
-                    });
-                } else {
-                    return res.send({
-                        success: true,
-                        message: 'Success',
-                        avatar: results[0]['avatar']
-                    });
-                }
-            });
-        }
-    });
-});*/
-
 app.post('/api/avatar/update-avatar', function(req, res) {
     const { body } = req;
     const {
@@ -1109,6 +1053,10 @@ app.post('/api/profile/update-profile', function(req, res) {
     const { body } = req;
     const {
         name,
+        address,
+        city,
+        state,
+        zip,
         token
     } = body;
     let { email } = body;
@@ -1148,6 +1096,62 @@ app.post('/api/profile/update-profile', function(req, res) {
             return res.send({
                 success: false,
                 message: 'Invalid email.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(address)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[9].Field,
+            content: address
+        });
+    } else {
+        if(address != '') {
+            return res.send({
+                success: false,
+                message: 'Invalid address.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(city)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[10].Field,
+            content: city
+        });
+    } else {
+        if(city != '') {
+            return res.send({
+                success: false,
+                message: 'Invalid city.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(state)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[11].Field,
+            content: state
+        });
+    } else {
+        if(state != '') {
+            return res.send({
+                success: false,
+                message: 'Invalid state.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(zip)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[12].Field,
+            content: zip
+        });
+    } else {
+        if(zip != '') {
+            return res.send({
+                success: false,
+                message: 'Invalid zip.'
             });
         }
     }
@@ -1198,7 +1202,11 @@ app.post('/api/profile/update-profile', function(req, res) {
                         success: true,
                         message: 'Your profile has been successfully updated.',
                         name: name,
-                        email: email
+                        email: email,
+                        address: address,
+                        city: city,
+                        state: state,
+                        zip: zip
                     });
                 }
             });
@@ -1625,23 +1633,25 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             if(parseInt(itemObj.id) == product['productid']) {
                                 items.push({
                                     "name": product['name'],
-                                    "sku": product['productid'],
+                                    "sku": product['productid'].toString(),
                                     "price": product['price'],
                                     "currency": "USD",
-                                    "quantity": itemObj.quantity,
+                                    "quantity": parseInt(itemObj.quantity),
                                 });
                             }
                         });
                     });
                     //console.log(util.inspect(items, {showHidden: false, depth: null}));
+                    let cancelUrl = urlConfig.site_url + config.base.cancel;
+                    let returnUrl = urlConfig.site_url + config.base.return;
                     let create_payment_json = {
                         "intent": "sale",
                         "payer": {
                             "payment_method": "paypal"
                         },
                         "redirect_urls": {
-                            "return_url": config.base.return,
-                            "cancel_url": config.base.cancel
+                            "return_url": returnUrl,
+                            "cancel_url": cancelUrl
                         },
                         "transactions": [
                             {
@@ -1656,24 +1666,43 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             }
                         ]
                     };
+                    //console.log(util.inspect(create_payment_json, {showHidden: false, depth: null}));
                     paypal.payment.create(create_payment_json, function (error, payment) {
                         if (error) {
                             return res.send({
                                 success: false,
-                                message: 'Error: You most likely forgot to upload your Paypal client id and secret.'
+                                message: 'Error: You most likely forgot to upload your Paypal client id and secret or: ' + error
                             });
                         } else {
-                            for(let i=0; i<payment.links.length; i++) {
-                                if(payment.links[i].rel === 'approval_url') {
-                                    //res.header("Access-Control-Allow-Origin", req.headers.origin);
-                                    //res.setHeader( "Access-Control-Allow-Origin", req.headers.origin );
-                                    res.redirect(payment.links[i].href);
+                            
+                            var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+                            var insertProductInserts = [
+                                config.tables[5].table_name,
+                                myDate, myDate, results[0]['user_id'], name,
+                                description, image, price
+                            ];
+                            insertProduct = mysql.format(insertProduct, insertProductInserts);
+                            //console.log(insertProduct);
+                            connection.query(insertProduct, function (error, result, fields) {
+                                if(error) {
+                                    //console.log("Error: in Register New User: " + err);
+                                    return res.send({
+                                        success: false,
+                                        message: 'Server Error in product upload'
+                                    });
+                                } else {
+                                    console.log(payment.id);
+                                    for(let i=0; i<payment.links.length; i++) {
+                                        if(payment.links[i].rel === 'approval_url') {
+                                            // insert order into database with a token or key from paypal to identify the transaction in /success.
+                                            /*return res.send({
+                                                success: true,
+                                                url: payment.links[i].href
+                                            });*/
+                                        }
+                                    }
                                 }
-                            }
-                            /*return res.send({
-                                success: true,
-                                message: 'Success'
-                            });*/
+                            });
                         }
                     });
                 }
@@ -1681,6 +1710,36 @@ app.post('/api/cart/call-paypal', function(req, res) {
         }
     });
 });
+
+app.get('/success', function(req, res) {
+    const payerId = req.query.PayerId;
+    const paymentId = req.query.paymentId;
+
+    // query order in database with a token or key from paypal to identify the transaction in /success.
+    // and get the total.
+
+    var execute_payment_json = {
+        "payer_id": payerId,
+        "transactions": [{
+            "amount": {
+                "currency": "USD",
+                "total": "1.00"
+            }
+        }]
+    };
+
+    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+        if (error) {
+            console.log(error.response);
+            throw error;
+        } else {
+            console.log("Get Payment Response");
+            console.log(JSON.stringify(payment));
+        }
+    });
+});
+
+app.get('/cancel', () => res.send('Cancelled'));
 
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');

@@ -88,7 +88,7 @@ module.exports = function(database, config, connection) {
                     }
                     count++;
                 });
-                //console.log(queryString);
+                console.log(queryString);
                 connection.query(queryString, (error, results) => {
                     if(error) {
                         console.log(error);

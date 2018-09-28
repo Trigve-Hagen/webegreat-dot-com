@@ -167,6 +167,9 @@ https://www.youtube.com/channel/UCUDLFXXKG6zSA1d746rbzLQ
 `Traversy Media`<br>
 paypal integration<br>
 https://www.youtube.com/watch?v=7k03jobKGXM
+https://github.com/paypal/PayPal-node-SDK
+https://github.com/paypal/PayPal-node-SDK/blob/master/samples/payment/execute.js
+https://github.com/paypal/PayPal-node-SDK/issues/79
 
 `Digital Ocean`<br>
 by Brennen Bearnes<br>

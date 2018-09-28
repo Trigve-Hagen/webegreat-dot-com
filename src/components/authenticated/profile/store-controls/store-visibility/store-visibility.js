@@ -57,11 +57,13 @@ class StoreVisibility extends React.Component {
                             ) : (null)
                         }
                         <form className="storeVisibility" onSubmit={this.onSubmit}>
-                            <div className="form-group">
-                                <select ref={ (ref) => { this.state.visibility = ref; }} value={this.selectedId} onChange={this.dropdownChanged.bind(this)} className="form-element">
-                                    <option value="0">Store is not visiblity in front.</option>
-                                    <option value="1">Store is visible in front.</option>
-                                </select>
+                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                                <div className="form-group">
+                                    <select ref={ (ref) => { this.state.visibility = ref; }} value={this.selectedId} onChange={this.dropdownChanged.bind(this)} className="form-element">
+                                        <option value="0">Store is not visiblity in front.</option>
+                                        <option value="1">Store is visible in front.</option>
+                                    </select>
+                                </div>
                             </div>
                             <button type="submit" className="btn btn-army">Update Visibility</button>
                         </form>

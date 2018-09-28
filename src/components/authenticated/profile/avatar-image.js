@@ -64,9 +64,11 @@ class AvatarImage extends React.Component {
                             <fieldset className="form-group">
                                 <input ref={(ref) => { this.state.avatarUploadInput = ref; }} type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
-                            <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.avatarFileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
-                            </fieldset>
+                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.avatarFileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
+                                </fieldset>
+                            </div>
                             <button type="submit" className="btn btn-army">Update Avatar</button>
                         </form>
                     </div>

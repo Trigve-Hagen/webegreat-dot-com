@@ -1,4 +1,8 @@
 module.exports = {
+    base: {
+        return: '/return',
+        cancel: '/cancel',
+    },
     patterns: {
         names: /^[\w\s.&$_-]+$/i,
         numbers: /^[0-9]+$/,
@@ -184,6 +188,38 @@ module.exports = {
                     Key: '',
                     Default: 'DEFAULT 0',
                     Extra: ''
+                },
+                {
+                    Field: 'shipping_address',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'shipping_city',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'shipping_state',
+                    Type: 'varchar(2)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'shipping_zip',
+                    Type: 'varchar(25)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
                 }
             ]
         },
@@ -331,23 +367,7 @@ module.exports = {
                 {
                     Field: 'name',
                     Type: 'varchar(255)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'address',
-                    Type: 'varchar(255)',
-                    Null: 'NOT NULL',
-                    Key: '',
-                    Default: null,
-                    Extra: ''
-                },
-                {
-                    Field: 'city_state_zip',
-                    Type: 'varchar(255)',
-                    Null: 'NOT NULL',
+                    Null: 'NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -355,7 +375,39 @@ module.exports = {
                 {
                     Field: 'email',
                     Type: 'varchar(255)',
-                    Null: 'NOT NULL',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'shipping_address',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'shipping_city',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'shipping_state',
+                    Type: 'varchar(2)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'shipping_zip',
+                    Type: 'varchar(25)',
+                    Null: 'NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -385,7 +437,23 @@ module.exports = {
                     Extra: ''
                 },
                 {
-                    Field: 'paypal_paykey',
+                    Field: 'paypal_paymentid',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'if_payment_complete',
+                    Type: 'int(1)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'customer_survey',
                     Type: 'varchar(255)',
                     Null: 'NULL',
                     Key: '',
