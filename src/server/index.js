@@ -10,14 +10,13 @@ const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
 const urlConfig = require('../config/config');
 const app = express();
-const isDev = process.env.NODE_ENV !== 'prod';
 /*app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });*/
 let reqPath = path.join(__dirname, '../'); let imagePath = '';
-if(isDev) {
+if(!reqPath.split(path.sep).indexOf("html")) {
     imagePath = reqPath + '/assets';
 } else {
     imagePath = reqPath + '/dist';
@@ -67,6 +66,13 @@ function validatePassword(password, dbPassword) {
     return bcrypt.compareSync(password, dbPassword);
 };
 
+function testErrorsOnServer(content) {
+    fs.writeFile("/tmp/webegreat", content, function(err) {
+        if(err) console.log(err);
+        else console.log("The file was saved!");
+    });
+};
+
 /*
  ************************ Registration && Signup ***********************
  ***********************************************************************
@@ -107,10 +113,10 @@ app.post('/api/account/signup', (req, res, next) => {
     //console.log(testForExistingUser);
     connection.query(testForExistingUser, function (error, results, fields) {
         if(error) {
-            //console.log("Error: in SignIn: " + error);
+            testErrorsOnServer(testForExistingUser + ", " + error);
             return res.send({
                 success: false,
-                message: 'Server Error in Check User Exsists',
+                message: 'Server Error in check user exsists signup.',
                 token: null,
                 id: null
             });
@@ -124,9 +130,6 @@ app.post('/api/account/signup', (req, res, next) => {
                     id: null
                 });
             } else {
-                //currentTimestamp = moment().unix();//in seconds
-                //let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-
                 var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0, '', '', '', '')";
                 var inserts = [
                     config.tables[2].table_name,
@@ -218,10 +221,10 @@ app.post('/api/account/signin', (req, res, next) => {
     //console.log(testForExistingUser);
     connection.query(testForExistingUser, function (error, results, fields) {
         if(error) {
-            //console.log("Error: in SignIn: " + error);
+            testErrorsOnServer(testForExistingUser + ", "  + error);
             return res.send({
                 success: false,
-                message: 'Server Error in Check User Exsists',
+                message: 'Server Error in check user exsists signin.',
                 token: null,
                 id: null
             });
@@ -306,10 +309,10 @@ app.get('/api/account/verify', (req, res, next) => {
     //console.log(testForExistingUser);
     connection.query(testForExistingSession, function (error, results, fields) {
         if(error) {
-            //console.log("Error: in SignIn: " + error);
+            testErrorsOnServer(testForExistingSession + ", " + error);
             return res.send({
                 success: false,
-                message: 'Server Error in Check User Exsists',
+                message: 'Server Error in check user exsists verify.',
                 token: null,
                 id: null
             });
