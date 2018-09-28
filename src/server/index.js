@@ -566,6 +566,7 @@ app.post('/api/product/upload', function(req, res) {
     const { body } = req;
     const {
         filename,
+        menu,
         name,
         description,
         price,
@@ -583,6 +584,13 @@ app.post('/api/product/upload', function(req, res) {
         return res.send({
             success: false,
             message: 'Image name invalid or cannot be left empty.'
+        });
+    }
+
+    if(!menu || !config.patterns.names.test(menu)) {
+        return res.send({
+            success: false,
+            message: 'Product menu invalid or cannot be left empty.'
         });
     }
 
@@ -613,6 +621,8 @@ app.post('/api/product/upload', function(req, res) {
             message: 'Invalid token.'
         });
     }
+
+    let metta = name + " " + menu + " " + price + " " + description;
 
     let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
     let userIdInserts = [
@@ -649,15 +659,11 @@ app.post('/api/product/upload', function(req, res) {
                             message: 'Server error uploading image.'
                         });
                     } else {
-                        console.log( + ", UserId");
-                        //currentTimestamp = moment().unix();//in seconds
-                        //let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-
-                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         var insertProductInserts = [
                             config.tables[0].table_name,
                             myDate, myDate, results[0]['user_id'], name,
-                            description, image, price
+                            description, image, price, menu, metta
                         ];
                         insertProduct = mysql.format(insertProduct, insertProductInserts);
                         //console.log(insertProduct);
@@ -673,6 +679,7 @@ app.post('/api/product/upload', function(req, res) {
                                     success: true,
                                     message: 'Your Product has been successfully uploaded.',
                                     id: result.insertId,
+                                    menu: menu,
                                     name: name,
                                     description: description,
                                     price: price,
@@ -691,6 +698,7 @@ app.post('/api/product/update', function(req, res) {
     const {
         proid,
         filename,
+        menu,
         name,
         description,
         price,
@@ -714,6 +722,20 @@ app.post('/api/product/update', function(req, res) {
     }
 
     //console.log(token + ", " + proid);
+
+    if(config.patterns.names.test(menu)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[8].Field,
+            content: menu
+        });
+    } else {
+        if(menu != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
 
     if(config.patterns.names.test(name)) {
         updateObj.push({
@@ -845,6 +867,7 @@ app.post('/api/product/update', function(req, res) {
                                                         success: true,
                                                         message: 'Your Product has been successfully updated.',
                                                         id: result.insertId,
+                                                        menu: menu,
                                                         name: name,
                                                         description: description,
                                                         price: price,
@@ -915,6 +938,7 @@ app.post('/api/product/update', function(req, res) {
                             success: true,
                             message: 'Your Product has been successfully updated.',
                             id: proid,
+                            menu: menu,
                             name: name,
                             description: description,
                             price: price,

@@ -45,6 +45,7 @@ class AvatarImage extends React.Component {
     }
 
     render() {
+        //this.props.resetAvatar();
         return (
             <div>
                 <div className="row">
@@ -89,6 +90,9 @@ function mapDispatchToProps(dispatch) {
     return {
         updateAvatar: (value) => {
             dispatch( { type: 'UPDATE_AVATAR', payload: value} )
+        },
+        resetAvatar: (value) => {
+            dispatch( { type: 'RESET_AVATAR', payload: value} )
         }
     }
 }

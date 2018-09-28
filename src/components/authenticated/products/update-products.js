@@ -6,7 +6,8 @@ class UpdateProducts extends React.Component {
     constructor(props) {
 		super(props);
 		this.state = {
-			proUpdateError: '',
+            proUpdateError: '',
+            proUpdateMenu: '',
             proUpdateName: '',
             proUpdatePrice: '',
             proUpdateDescription: '',
@@ -24,6 +25,7 @@ class UpdateProducts extends React.Component {
             data.append('filename', this.state.fileName.value);
             data.append('proid', this.props.product[0].id);
             data.append('imagename', this.props.product[0].image);
+            data.append('menu', this.state.proUpdateMenu.value);
             data.append('name', this.state.proUpdateName.value);
 			data.append('description', this.state.proUpdateDescription.value);
             data.append('price', this.state.proUpdatePrice.value);
@@ -41,6 +43,8 @@ class UpdateProducts extends React.Component {
                     let obj = {}
                     obj['id'] = this.props.product[0].id;
                     if(json.name != '') obj['name']=json.name;
+                    obj['menu'] = this.props.product[0].menu;
+                    if(json.menu != '') obj['menu']=json.menu;
                     else obj['name'] = this.props.product[0].name;
                     if(json.price != '') obj['price']=json.price;
                     else obj['price'] = this.props.product[0].price;
@@ -52,7 +56,8 @@ class UpdateProducts extends React.Component {
                     this.props.updateProduct(obj);
                     let imagename = obj.image.split(".");
 					this.setState({
-						proUpdateError: json.message,
+                        proUpdateError: json.message,
+                        proUpdateName: json.menu != '' ? json.menu : this.props.product[0].menu,
                         proUpdateName: json.name != '' ? json.name : this.props.product[0].name,
                         proUpdatePrice: json.price != '' ? json.price : this.props.product[0].price,
                         proUpdateDescription: json.description != '' ? json.description : this.props.product[0].description,
@@ -94,6 +99,9 @@ class UpdateProducts extends React.Component {
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUpdateMenu = ref; }} type="text" className="form-element" placeholder="Menu Place"/>
                                 </fieldset>
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.proUpdateName = ref; }} type="text" className="form-element" placeholder="Name"/>

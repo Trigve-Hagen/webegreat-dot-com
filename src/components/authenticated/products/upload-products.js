@@ -6,7 +6,8 @@ class UploadProducts extends React.Component {
     constructor(props) {
 		super(props);
 		this.state = {
-			proUploadError: '',
+            proUploadError: '',
+            proUploadMenu: '',
             proUploadName: '',
             proUploadPrice: '',
             proUploadDescription: '',
@@ -23,6 +24,7 @@ class UploadProducts extends React.Component {
         const data = new FormData();
             data.append('file', this.state.uploadInput.files[0]);
             data.append('filename', this.state.fileName.value);
+            data.append('menu', this.state.proUploadMenu.value);
             data.append('name', this.state.proUploadName.value);
 			data.append('description', this.state.proUploadDescription.value);
             data.append('price', this.state.proUploadPrice.value);
@@ -37,13 +39,15 @@ class UploadProducts extends React.Component {
 					console.log("Product upload successfull.");
 					this.props.updateProduct({
                         id: json.id,
+                        menu : json.menu,
                         name: json.name,
                         price: json.price,
                         description: json.description,
                         image: json.image
                     });
 					this.setState({
-						proUploadError: json.message,
+                        proUploadError: json.message,
+                        proUploadMenu: '',
                         proUploadName: '',
                         proUploadPrice: '',
                         proUploadDescription: '',
@@ -76,6 +80,9 @@ class UploadProducts extends React.Component {
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUploadMenu = ref; }} type="text" className="form-element" placeholder="Menu Place"/>
                                 </fieldset>
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.proUploadName = ref; }} type="text" className="form-element" placeholder="Name"/>

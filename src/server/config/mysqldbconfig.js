@@ -82,6 +82,22 @@ module.exports = {
                     Key: '',
                     Default: null,
                     Extra: ''
+                },
+                {
+                    Field: 'menu_location',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'metta',
+                    Type: 'text',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
                 }
             ]
         },

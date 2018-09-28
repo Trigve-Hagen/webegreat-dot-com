@@ -1,5 +1,6 @@
 const initialState = {
     id: 1,
+    menu: "products",
     image: "airborne-shirt.png",
     name: "Army Airborne T-Shirt",
     price: '39.99',

@@ -64,7 +64,7 @@ class Footer extends React.Component {
                                 <li className="footer-list-text"><a href="http://arcsvcs.com" target="_blank" className="footer-link-text">Laravel - arcsvcs.com</a></li>
                                 <li className="footer-list-text"><a href="http://docrx.online" target="_blank" className="footer-link-text">Magento 2 - docrx.online</a></li>
                                 <li className="footer-list-text"><a href="https://webegreat.com" target="_blank" className="footer-link-text">React - webegreat.com</a></li>
-                                <li className="footer-list-text"><a href="https://bestspot2shop.com" target="_blank" className="footer-link-text">Custom Php - besspot2shop.com</a></li>
+                                <li className="footer-list-text"><a href="https://bestspot2shop.com" target="_blank" className="footer-link-text">Custom Php - bestspot2shop.com</a></li>
                                 <li className="footer-list-text"><a href="https://github.com/Trigve-Hagen/webegreat-dot-com" target="_blank" className="footer-link-text">Github Repo - webegreat.com</a></li>
                                 <li className="footer-list-text"><a href="https://github.com/Trigve-Hagen" target="_blank" className="footer-link-text">GitHub</a></li>
                             </ul>

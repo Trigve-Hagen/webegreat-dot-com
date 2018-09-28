@@ -13,7 +13,7 @@ class UserRoles extends React.Component {
         if(this.props.authentication[0].authenticated) {
             return (
                 <div>
-                    <Navigation path="/menu" authenticated={this.props.authentication[0].authenticated}/>
+                    <Navigation path="/roles" authenticated={this.props.authentication[0].authenticated}/>
                     <div className="container">
                         <div className="row space-bottom-50px">
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">

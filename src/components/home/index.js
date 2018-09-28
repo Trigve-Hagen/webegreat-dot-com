@@ -5,6 +5,8 @@ import ProductListing from '../product-listing';
 import Navigation from '../navigation';
 import Footer from '../footer';
 import config from '../../config/config';
+import ProductMenu from '../../components/product-menu';
+import SearchBar from '../../components/search-bar';
 
 class Home extends React.Component {
     constructor(props) {
@@ -60,12 +62,27 @@ class Home extends React.Component {
             <div>
                 <Navigation path="/" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
-                    {
-                        this.props.visibility[0].visibility
-                            ? <ProductListing products={this.state.products}/>
-                            : <h3>No products yet.</h3>
-                    }
-                    
+                    <div className="row">
+                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="row">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                                    <SearchBar />
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
+                                    <ProductMenu />
+                                </div>
+                                <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+                                    {
+                                        this.props.visibility[0].visibility
+                                            ? <ProductListing products={this.state.products}/>
+                                            : <h3>No products yet.</h3>
+                                    } 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <Footer />
             </div>
