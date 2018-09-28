@@ -55,12 +55,17 @@ class Home extends React.Component {
 
     render() {
         //this.props.resetProduct();
-        console.log(this.state.products);
+        //console.log(this.state.products);
         return (
             <div>
                 <Navigation path="/" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
-                    <ProductListing products={this.state.products}/>
+                    {
+                        this.props.visibility[0].visibility
+                            ? <ProductListing products={this.state.products}/>
+                            : <h3>No products yet.</h3>
+                    }
+                    
                 </div>
                 <Footer />
             </div>
@@ -71,6 +76,7 @@ class Home extends React.Component {
 function mapStateToProps(state) {
     return {
         product: state.product,
+        visibility: state.visibility,
         authentication: state.authentication
     }
 }

@@ -31,6 +31,8 @@ import Orders from './components/authenticated/orders';
 import Logout from './components/authenticated/logout';
 import Profile from './components/authenticated/profile';
 import Products from './components/authenticated/products';
+import Menu from './components/authenticated/menu';
+import Roles from './components/authenticated/roles';
 
 import( /* webpackChunkName: 'application' */ './App')
     .then(({ default: App }) =>
@@ -49,6 +51,8 @@ import( /* webpackChunkName: 'application' */ './App')
                             <Route exact path="/profile" component={Profile}/>
                             <Route exact path="/orders" component={Orders}/>
                             <Route exact path="/products" component={Products}/>
+                            <Route exact path="/menu" component={Menu}/>
+                            <Route exact path="/roles" component={Roles}/>
                             <Route component={NotFound}/>
                         </Switch>
                     </App>

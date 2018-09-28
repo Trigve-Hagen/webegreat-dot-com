@@ -1,6 +1,6 @@
 module.exports = {
     base: {
-        return: '/return',
+        success: '/success',
         cancel: '/cancel',
     },
     patterns: {

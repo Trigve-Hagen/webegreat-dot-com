@@ -100,7 +100,7 @@ class Cart extends React.Component {
                                     <div className="col-lg-3 col-md-3 col-sm-6 col-xs-24 text-center">
                                         <h2 className="zero-space-bottom">${ item.price * item.quantity }</h2>
                                         <p>Grand Total: ${ (total += item.price * item.quantity).toFixed(2) }<br/>Tax included</p>
-                                        <button onClick={() => this.props.removeAllFromCart(item)} className="btn btn-army vcenter">Remove All</button>
+                                        <button onClick={() => this.props.removeAllFromCart(item)} className="btn btn-army vcenter">X</button>
                                     </div>
                                 </div>
                             )
@@ -131,7 +131,9 @@ class Cart extends React.Component {
                             </div> 
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.cartState = ref; }} type="text" className="form-element" id="cartState" placeholder="State" />
+                                    <select ref={ (ref) => { this.state.cartState = ref; }} className="form-element custom">
+                                        {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                    </select>
                                 </div>
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">

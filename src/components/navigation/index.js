@@ -64,6 +64,16 @@ class Navigation extends React.Component {
                                     : <li><NavLink to='/orders'>Orders</NavLink></li>
                             }
                             {
+                                path === '/menu'
+                                    ? <li className="active"><NavLink to='/menu'>Menu</NavLink></li>
+                                    : <li><NavLink to='/menu'>Menu</NavLink></li>
+                            }
+                            {
+                                path === '/roles'
+                                    ? <li className="active"><NavLink to='/roles'>Roles</NavLink></li>
+                                    : <li><NavLink to='/roles'>Roles</NavLink></li>
+                            }
+                            {
                                 path === '/profile'
                                     ? <li className="active"><NavLink to='/profile'>Profile</NavLink></li>
                                     : <li><NavLink to='/profile'>Profile</NavLink></li>

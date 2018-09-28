@@ -29,8 +29,8 @@
   },
   "scripts": {
     "start": "webpack-dev-server --port 3000 --compress --mode development",
-    "server-start": "node src/server/index.js & npm start",
-    "build": "webpack --mode production --progress"
+    "server-start": "set NODE_ENV=dev && node src/server/index.js & npm start",
+    "build": "set NODE_ENV=prod && webpack --mode production --progress"
   },
   "devDependencies": {
     "@babel/core": "^7.0.1",

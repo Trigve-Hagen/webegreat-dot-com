@@ -6,19 +6,18 @@ Below you will find some information on how to perform common tasks and folder s
 
 Download the zip file and save it where ever you like. Once downloaded unzip and cd into the root folder by typing - `cd webegreat-dot-com` Then download all node_modules by typing `npm install`. The other way to download it is to type `git clone https://github.com/Trigve-Hagen/webegreat-dot-com.git` cd into webegreat-dot-com and run `npm-install`. You might have to delete the package-lock.json to run npm install. If no node_modules gets downloaded erase package-lock.json and type `npm-install` again. Once all the files have downloaded you can either type `npm run server-start` or if you are on the server type `npm run build` and a dist folder will be made with all the static files express needs to work. Its still in development so code away if you like or keep coming back for new developments.<br>
 
-I've uploaded server configuration now but its in testing stage. Made a production set up in the server/index.js that redirects and uses the dist folder for static assets. Going to test at webegreat.com. Works great in development. Ment for nginx on ubuntu 16.04. You might be able to use it on Digital Ocean too. Neat plans. You need to proxy nginx to http://localhost:4000 and express will server both react and the server files together. Check out the Digital Ocean link for details.
+I've uploaded server configuration now but its in testing stage. Made a production set up in the server/index.js that redirects and uses the dist folder for static assets. Going to test at webegreat.com. Works great in development. Ment for nginx on ubuntu 16.04. After running npm install in production you will have to change the site_url in config/config.js to the domain of your website. You will also have to go to server/index.js and make sure you are serving files in production. Im testing that section right now but its almost working. You might be able to use it on Digital Ocean too. You need to proxy nginx to http://localhost:4000 and express will server both react and the server files together. Check out the Digital Ocean link for details.
 
 You can find the most recent version of create-react-app guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
 ## Table of Contents
 
-- [Folder Structure](#folder-structure)
 - [Input Sanitization](#input-sanitization)
+- [Folder Structure](#folder-structure)
 - [Available Scripts](#available-scripts)
   - [npm start](#npm-start)
-  - [npm test](#npm-test)
-  - [npm build](#npm-run-build)
   - [npm run server-start](#npm-run-server-start)
+  - [npm run build](#npm-run-build) 
 - [Arm Class](#arm-class)
 - [Architecture Plans](#architecture-plans)
 - [Credits](#credits)
@@ -36,7 +35,6 @@ After creation, your project should look like this:
 
 ```
 my-app/
-  node_modules/
   public/
     index.html
     favicon.ico
@@ -86,32 +84,26 @@ They will not be included in the production build so you can use them for things
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run server-start`
 
 Runs the app in the development mode.<br>
-Open [http://localhost:4000](http://localhost:4000) to view it in the browser.
+Sets the mode for dev calls start and starts the server.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](#running-tests) for more information.
+You will need to restart to se changes on the server. You can customize it with nodemon.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.<br>
+Builds the app for production to the `dist` folder.<br>
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
 See the section about [deployment](#deployment) for more information.
-
-### `npm run server-start`
-
-run from root to start both the front end and server.
 
 ## Arm Class
 

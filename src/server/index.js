@@ -10,7 +10,7 @@ const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
 const urlConfig = require('../config/config');
 const app = express();
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = process.env.NODE_ENV !== 'prod';
 /*app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -21,7 +21,7 @@ if(isDev) {
     imagePath = reqPath + '/assets';
 } else {
     imagePath = reqPath + '/dist';
-    app.use(express.static(path.join(reqPath, '/dist')));
+    app.use(express.static(path.join(reqPath, 'dist')));
     app.get('*', function(req, res) {
         res.sendFile(path.join(reqPath, 'dist', 'index.html'));
     });

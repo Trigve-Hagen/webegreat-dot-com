@@ -81,7 +81,9 @@ class UpdateProfile extends React.Component {
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.profileState = ref; }} type="text" className="form-element" id="profileState" placeholder="State" />
+                                    <select ref={ (ref) => { this.state.profileState = ref; }} className="form-element custom">
+                                        {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                    </select>
                                 </div>
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">

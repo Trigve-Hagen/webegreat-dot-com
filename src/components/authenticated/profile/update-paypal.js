@@ -57,7 +57,7 @@ class UpdatePaypal extends React.Component {
                         <form className="paypalCredentials" onSubmit={this.onSubmit}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.paypalMode = ref; }} className="form-element">
+                                    <select ref={ (ref) => { this.state.paypalMode = ref; }} className="form-element custom">
                                         <option value="sandbox">Sandbox</option>
                                         <option value="live">Live</option>
                                     </select>
