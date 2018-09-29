@@ -8,7 +8,7 @@ class SearchBar extends React.Component {
 
     render() {
         return (
-            <div className="row space-top-20px space-bottom-50px">
+            <div className="row space-top-20px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">

@@ -7,6 +7,7 @@ import MenuList from './menu-list';
 import UpdateMenu from './update-menu';
 import UploadMenu from './upload-menu/upload-menu';
 import MenuDisplay from './menu-display';
+import MenuItem from './menu-item';
 
 class MenuMaker extends React.Component {
     constructor(props) {
@@ -27,6 +28,7 @@ class MenuMaker extends React.Component {
                             </div>
                             <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
                                 <MenuDisplay />
+                                <MenuItem />
                                 <UpdateMenu />
                             </div>
                         </div>

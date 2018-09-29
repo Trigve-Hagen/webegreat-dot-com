@@ -1,6 +1,7 @@
 const initialState = {
     id: 1,
     name: "products",
+    description: "Base level menu.",
     level: 1,
     parent: "base",
     ifproduct: 1

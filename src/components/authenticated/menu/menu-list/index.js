@@ -34,7 +34,7 @@ class MenuList extends React.Component {
                             level: value['level'],
                             parent: value['parent'],
                             description: value['description'],
-                            ifproduct: value['ifproduct']
+                            ifproduct: value['if_product']
                         });
                     }
                     //console.log(arrayArgs);
@@ -50,7 +50,7 @@ class MenuList extends React.Component {
 			});
     }
 
-    getProductObject(menuId) {
+    getMenuObject(menuId) {
         let obj={};
         this.state.loadMenuItems.map(item => {
             if(item.id == menuId) {
@@ -66,12 +66,12 @@ class MenuList extends React.Component {
     }
 
     onView(menuId) {
-        this.props.updateMenu(this.getProductObject(menuId));
+        this.props.updateMenu(this.getMenuObject(menuId));
     }
 
-    onDelete(productId) {
+    onDelete(menuId) {
         console.log(menuId);
-        let menuObject = this.getProductObject(menuId);
+        let menuObject = this.getMenuObject(menuId);
         if (confirm(`Are you sure you want to delete ${menuObject.name}?`)) {
             fetch(config.site_url + '/api/menu/delete-menu-item', {
 			method: 'POST',
@@ -121,7 +121,7 @@ class MenuList extends React.Component {
     }
 
     render() {
-        //this.props.resetProduct();
+        //this.props.resetMenu();
         console.log(this.state.loadMenuItems);
         return (
             <div>

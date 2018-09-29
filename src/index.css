@@ -253,6 +253,35 @@ textarea.form-element {
   height: auto;
 }
 
+/* ----- Menu Styles ----- */
+
+.menu-item ul {
+  font-size: 16px;
+  line-height: 30px;
+  list-style-type: none;
+  overflow: hidden;
+  padding: 0px;
+}
+ 
+.menu-item ul a {
+  margin-left: 20px;
+  color: #333333;
+  text-decoration: none;
+  display: block;
+  width: 200px;
+  text-decoration: blink;
+}
+ 
+/*li Styles
+.menu-item li {
+  border-bottom: 1px solid #eee;
+}*/
+ 
+.menu-item li a:hover {
+  color: #ffffff;
+  text-shadow: 1px 3px 6px #777777;
+}
+
 /* ----- About Animations ----- */
 
 @media (min-width: 768px) {
