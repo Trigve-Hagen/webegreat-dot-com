@@ -583,6 +583,14 @@ module.exports = {
                     Extra: ''
                 },
                 {
+                    Field: 'description',
+                    Type: 'varchar(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
                     Field: 'if_product',
                     Type: 'int(1)',
                     Null: 'NOT NULL',

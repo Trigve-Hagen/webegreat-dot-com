@@ -11,6 +11,7 @@ class UploadMenu extends React.Component {
             menuUploadParent: '',
             menuUploadLevel: '',
             menuUploadIfProduct: '',
+            menuUploadDescription: ''
 		}
 
 		this.onSubmit = this.onSubmit.bind(this);
@@ -22,7 +23,8 @@ class UploadMenu extends React.Component {
         const data = new FormData();
             data.append('name', this.state.menuUploadName.value);
             data.append('parent', this.state.menuUploadParent.value);
-			data.append('level', this.state.menuUploadLevel.value);
+            data.append('level', this.state.menuUploadLevel.value);
+            data.append('description', this.state.menuUploadDescription.value);
             data.append('ifproduct', this.state.menuUploadIfProduct.value);
             data.append('token', this.props.authentication[0].token);
 
@@ -38,6 +40,7 @@ class UploadMenu extends React.Component {
                         name: json.name,
                         parent: json.parent,
                         level: json.level,
+                        description: json.description,
                         ifproduct: json.ifproduct
                     });
 					this.setState({
@@ -45,7 +48,8 @@ class UploadMenu extends React.Component {
                         menuUploadName: '',
                         menuUploadParent: '',
                         menuUploadLevel: '',
-                        menuUploadIfProduct: ''
+                        menuUploadIfProduct: '',
+                        menuUploadDescription: ''
                     });
 				} else {
                     this.setState({
@@ -92,6 +96,9 @@ class UploadMenu extends React.Component {
                                         <option value="0">Catelog Level</option>
                                         <option value="1">Product Level</option>
                                     </select>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <textarea ref={(ref) => { this.state.menuUploadDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
                                 </fieldset>
                             </div>
                             <button type="submit" className="btn btn-army">Menu Upload</button>

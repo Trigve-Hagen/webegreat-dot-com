@@ -44,7 +44,7 @@ const connection = mysql.createConnection({
 connection.connect(err => { if(err) console.log(err); });
 
 const mysqlBuildTables = require('./config/mysqldbhelpers')(
-    config.connection.name, config, connection
+    config.connection.name, config, connection, moment
 );
 mysqlBuildTables.buildTables();
 
@@ -339,57 +339,26 @@ app.get('/api/account/verify', (req, res, next) => {
  */
 
 app.post('/api/menu/front', function(req, res) {
-    const { body } = req;
-    const {
-        token
-    } = body;
-
-    if(!token || !config.patterns.names.test(token)) {
-        return res.send({
-            success: false,
-            message: 'Invalid token.'
-        });
-    }
-    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-    let userIdInserts = [
-        config.tables[3].table_fields[1].Field,
-        config.tables[3].table_name,
-        config.tables[3].table_fields[0].Field,
-        token
+    let getFrontMenu = "SELECT * FROM ??";
+    let getFrontMenuInserts = [
+        config.tables[7].table_name
     ];
-    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
-    connection.query(getUserIdSession, function (error, results, fields) {
-        if(error) {
+    getFrontMenu = mysql.format(getFrontMenu, getFrontMenuInserts);
+    //console.log(getFrontMenu);
+    connection.query(getFrontMenu, function (err, result, fields) {
+        if(err) {
+            console.log("Error: in load all menu: " + err);
             return res.send({
                 success: false,
-                message: 'Server Error in get userid.'
+                message: 'Server Error in load all menu.'
             });
         } else {
-            let getFrontMenu = "SELECT * FROM ?? WHERE ?? = ?";
-            let getFrontMenuInserts = [
-                config.tables[7].table_name,
-                config.tables[7].table_fields[1].Field,
-                results[0]['user_id']
-            ];
-            getFrontMenu = mysql.format(getFrontMenu, getFrontMenuInserts);
-            //console.log(getFrontMenu);
-            connection.query(getFrontMenu, function (err, result, fields) {
-                if(err) {
-                    console.log("Error: in load all menu: " + err);
-                    return res.send({
-                        success: false,
-                        message: 'Server Error in load all menu.'
-                    });
-                } else {
-                    //console.log(result.length);
-                    //console.log(util.inspect(result.length, {showHidden: false, depth: null}));
-                    return res.send({
-                        success: true,
-                        message: "Success",
-                        menuItems: result
-                    });
-                }
+            //console.log(result.length);
+            //console.log(util.inspect(result.length, {showHidden: false, depth: null}));
+            return res.send({
+                success: true,
+                message: "Success",
+                menuItems: result
             });
         }
     });
@@ -401,6 +370,7 @@ app.post('/api/menu/upload', function(req, res) {
         name,
         level,
         parent,
+        description,
         ifproduct,
         token
     } = body;
@@ -423,6 +393,13 @@ app.post('/api/menu/upload', function(req, res) {
         return res.send({
             success: false,
             message: 'Parent invalid or cannot be left empty.'
+        });
+    }
+
+    if(!description || !config.patterns.names.test(description)) {
+        return res.send({
+            success: false,
+            message: 'Description invalid or cannot be left empty.'
         });
     }
 
@@ -456,11 +433,11 @@ app.post('/api/menu/upload', function(req, res) {
                 message: 'Server Error in get userid upload menu.'
             });
         } else {
-            var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+            var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?)";
             var insertProductInserts = [
                 config.tables[7].table_name,
                 results[0]['user_id'], myDate, myDate, name,
-                level, parent, ifproduct
+                level, parent, description, ifproduct
             ];
             insertProduct = mysql.format(insertProduct, insertProductInserts);
             //console.log(insertProduct);
@@ -479,6 +456,7 @@ app.post('/api/menu/upload', function(req, res) {
                         name: name,
                         level: level,
                         parent: parent,
+                        description: description,
                         ifproduct: ifproduct
                     });
                 }

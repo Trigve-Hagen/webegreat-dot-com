@@ -12,6 +12,7 @@ class UpdateMenu extends React.Component {
             menuUploadParent: '',
             menuUploadLevel: '',
             menuUploadIfProduct: '',
+            menuUploadDescription: ''
 		}
 
 		this.onSubmit = this.onSubmit.bind(this);
@@ -25,6 +26,7 @@ class UpdateMenu extends React.Component {
             data.append('parent', this.state.menuUploadParent.value);
             data.append('level', this.state.menuUploadLevel.value);
             data.append('ifproduct', this.state.menuUploadIfProduct.value);
+            data.append('description', this.state.menuUploadDescription.value);
             data.append('id', this.state.menuUploadId);
             data.append('token', this.props.authentication[0].token);
 
@@ -75,6 +77,7 @@ class UpdateMenu extends React.Component {
 	}
 
     render() {
+        //this.props.resetMenu();
         return (
 			<div>
                 <h3>Menu Update</h3>
@@ -98,6 +101,9 @@ class UpdateMenu extends React.Component {
                                 </fieldset>
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.menuUploadIfProduct = ref; }} type="text" className="form-element" placeholder="If Product or Category"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <textarea ref={(ref) => { this.state.menuUploadDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
                                 </fieldset>
                             </div>
                             <button type="submit" className="btn btn-army">Menu Upload</button>

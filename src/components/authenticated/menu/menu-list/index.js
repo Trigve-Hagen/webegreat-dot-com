@@ -33,6 +33,7 @@ class MenuList extends React.Component {
                             name: value['name'],
                             level: value['level'],
                             parent: value['parent'],
+                            description: value['description'],
                             ifproduct: value['ifproduct']
                         });
                     }
@@ -54,10 +55,11 @@ class MenuList extends React.Component {
         this.state.loadMenuItems.map(item => {
             if(item.id == menuId) {
                 obj.id = item.id;
-                obj.image = item.image;
                 obj.name = item.name;
-                obj.price = item.price;
+                obj.level = item.level;
+                obj.parent = item.parent;
                 obj.description = item.description;
+                obj.ifproduct = item.ifproduct;
             }
         });
         return obj;
@@ -91,6 +93,7 @@ class MenuList extends React.Component {
                                 name: item.name,
                                 level: item.level,
                                 parent: item.parent,
+                                description: item.description,
                                 ifproduct: item.ifproduct
                             });
                         }
@@ -99,11 +102,12 @@ class MenuList extends React.Component {
                         loadProductError: json.message,
                         loadMenuItems: arrayArgs
                     });
-                    this.props.updateProduct({
+                    this.props.updateMenu({
                         id: arrayArgs[0].id,
                         name: arrayArgs[0].name,
                         level: arrayArgs[0].level,
                         parent: arrayArgs[0].parent,
+                        description: arrayArgs[0].description,
                         ifproduct: arrayArgs[0].ifproduct
                     });
                     //location.reload();

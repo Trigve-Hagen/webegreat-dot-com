@@ -53,7 +53,7 @@ const products = [
     },
     {
       "id": 5,
-      "name": "Swiss Army Watch",
+      "name": "Swiss Army Watch and Knife Combo",
       "description": "Swiss Army quality service watch with knife combo for keeping time out in the field.",
       "keywords": [
         "america", "army", "airborne", "guardians of the free world"
