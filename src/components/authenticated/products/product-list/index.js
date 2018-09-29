@@ -73,7 +73,7 @@ class ProductList extends React.Component {
         console.log(productId);
         let productObject = this.getProductObject(productId);
         if (confirm(`Are you sure you want to delete ${productObject.name}?`)) {
-            fetch('http://localhost:4000/api/product/delete-product', {
+            fetch(config.site_url + '/api/product/delete-product', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

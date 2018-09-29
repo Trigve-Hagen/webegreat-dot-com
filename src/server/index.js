@@ -334,6 +334,160 @@ app.get('/api/account/verify', (req, res, next) => {
 });
 
 /*
+ ********************** Menu Upload && Update ***********************
+ ***********************************************************************
+ */
+
+app.post('/api/menu/front', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !config.patterns.names.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Invalid token.'
+        });
+    }
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid.'
+            });
+        } else {
+            let getFrontMenu = "SELECT * FROM ?? WHERE ?? = ?";
+            let getFrontMenuInserts = [
+                config.tables[7].table_name,
+                config.tables[7].table_fields[1].Field,
+                results[0]['user_id']
+            ];
+            getFrontMenu = mysql.format(getFrontMenu, getFrontMenuInserts);
+            //console.log(getFrontMenu);
+            connection.query(getFrontMenu, function (err, result, fields) {
+                if(err) {
+                    console.log("Error: in load all menu: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in load all menu.'
+                    });
+                } else {
+                    //console.log(result.length);
+                    //console.log(util.inspect(result.length, {showHidden: false, depth: null}));
+                    return res.send({
+                        success: true,
+                        message: "Success",
+                        menuItems: result
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/menu/upload', function(req, res) {
+    const { body } = req;
+    const {
+        name,
+        level,
+        parent,
+        ifproduct,
+        token
+    } = body;
+
+    if(!name || !config.patterns.names.test(name)) {
+        return res.send({
+            success: false,
+            message: 'Product name invalid or cannot be left empty.'
+        });
+    }
+
+    if(!level || !config.patterns.numbers.test(level)) {
+        return res.send({
+            success: false,
+            message: 'Level invalid or cannot be left empty.'
+        });
+    }
+
+    if(!parent || !config.patterns.names.test(parent)) {
+        return res.send({
+            success: false,
+            message: 'Parent invalid or cannot be left empty.'
+        });
+    }
+
+    if(!ifproduct || !config.patterns.names.test(ifproduct)) {
+        return res.send({
+            success: false,
+            message: 'Ifproduct invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.names.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Invalid token.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid upload menu.'
+            });
+        } else {
+            var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
+            var insertProductInserts = [
+                config.tables[7].table_name,
+                results[0]['user_id'], myDate, myDate, name,
+                level, parent, ifproduct
+            ];
+            insertProduct = mysql.format(insertProduct, insertProductInserts);
+            //console.log(insertProduct);
+            connection.query(insertProduct, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in upload menu'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Your menu item has been successfully uploaded.',
+                        id: result.insertId,
+                        name: name,
+                        level: level,
+                        parent: parent,
+                        ifproduct: ifproduct
+                    });
+                }
+            });
+        }
+    });
+});
+
+/*
  ********************** Product Upload && Update ***********************
  ***********************************************************************
  */

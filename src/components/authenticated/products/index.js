@@ -20,7 +20,7 @@ class Products extends React.Component {
                     <Navigation path="/products" authenticated={this.props.authentication[0].authenticated}/>
                     <div className="container">
                         <div className="row space-top-20px space-bottom-50px">
-                            <h1>Product Upload Page</h1>
+                            <h2>Create Product</h2>
                             <div className="col-lg-4 col-md-4 col-sm-12 col xs-24">
                                 <ProductList />
                                 <UploadProducts />
