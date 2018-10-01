@@ -115,6 +115,8 @@ module.exports = function(database, config, connection, moment) {
 
     // what if they want to update the names for tighter security
     function addInitialRows(configObject) {
+        let currentTimestamp = moment().unix();
+        let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
         configObject.forEach(element => {
             if(element.table_name == 'b_userroles') {
                 // basic, unlimited, admin
@@ -130,22 +132,24 @@ module.exports = function(database, config, connection, moment) {
                 });
             }
             if(element.table_name == 'c_users') {
-                let currentTimestamp = moment().unix();
-                let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
                 const ADMIN_USER = `INSERT INTO ${element.table_name} VALUES(321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '$2a$08$gfXxjtPIkYSSP9tNQMF0qeeUB7cJ.RPHVo3Kg.3.zj4IoSTB/irw6', 3, '', 0, '', '', '', '');`;
                 connection.query(ADMIN_USER, (error, results) => {
                     if(error) console.log(error);
                 });
             }
+            if(element.table_name == 'e_paypal') {
+                const PAYPAL_USER = `INSERT INTO ${element.table_name} VALUES(301, 321, '${myDate}', '${myDate}', '', '', '');`;
+                connection.query(PAYPAL_USER, (error, results) => {
+                    if(error) console.log(error);
+                });
+            }
             if(element.table_name == 'a_products') {
-                let currentTimestamp = moment().unix();
-                let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
                 const products = [
-                    `INSERT INTO ${element.table_name} VALUES(1, '${myDate}', '${myDate}', 321, 'Army Airborne T-Shirt', 'Grey t-shirt with Airborne image on front and American flag on sleeve.', 'airborne-shirt.png', '39.99', 'Army Clothing-Shirts-Tshirts', 'Army Airborne T-Shirt Grey t-shirt with Airborne image on front and American flag on sleeve. 39.99');`,
-                    `INSERT INTO ${element.table_name} VALUES(2, '${myDate}', '${myDate}', 321, 'Dont Tread on Me', 'American flag colored bearded skull on front of a black t-shirt with american flag on one sleeve and cross guns on the other.', 'black-shirt.png', '39.99', 'Army Clothing-Shirts-Tshirts', 'Dont Tread on Me American flag colored bearded skull on front of a black t-shirt with american flag on one sleeve and cross guns on the other. 39.99');`,
-                    `INSERT INTO ${element.table_name} VALUES(3, '${myDate}', '${myDate}', 321, 'Army Cologne', 'Smell and feel like a true warrior with the best cologne in the west.', 'cologne.png', '69.99', 'Army Hygiene-Cologne', 'Army Cologne Smell and feel like a true warrior with the best cologne in the west. 69.99');`,
-                    `INSERT INTO ${element.table_name} VALUES(4, '${myDate}', '${myDate}', 321, 'Army Baseball Caps', 'Assortment of Army baseball caps for $12.99 each tax included.', 'hats.png', '12.99', 'Army Clothing-Hats', 'Army Baseball Caps Assortment of Army baseball caps for $12.99 each tax included. 12.99');`,
-                    `INSERT INTO ${element.table_name} VALUES(5, '${myDate}', '${myDate}', 321, 'Swiss Army Watch and Knife Combo', 'Swiss Army quality service watch with knife combo for keeping time out in the field.', 'watch.png', '89.99', 'Army Gear-Watches', 'Swiss Army Watch and Knife Combo Swiss Army quality service watch with knife combo for keeping time out in the field. 89.99');`,
+                    `INSERT INTO ${element.table_name} VALUES(1, '${myDate}', '${myDate}', 321, 'Army Airborne T-Shirt', 'Grey t-shirt with Airborne image on front and American flag on sleeve.', 'airborne-shirt.png', '39.99', 'Tshirts', 100, 0, 'WBG-TS1', 'Army Airborne T-Shirt WBG-TS1 Grey t-shirt with Airborne image on front and American flag on sleeve. 39.99');`,
+                    `INSERT INTO ${element.table_name} VALUES(2, '${myDate}', '${myDate}', 321, 'Dont Tread on Me', 'American flag colored bearded skull on front of a black t-shirt with american flag on one sleeve and cross guns on the other.', 'black-shirt.png', '39.99', 'Tshirts', 100, 0, 'WBG-TS2', 'Dont Tread on Me WBG-TS2 American flag colored bearded skull on front of a black t-shirt with american flag on one sleeve and cross guns on the other. 39.99');`,
+                    `INSERT INTO ${element.table_name} VALUES(3, '${myDate}', '${myDate}', 321, 'Army Cologne', 'Smell and feel like a true warrior with the best cologne in the west.', 'cologne.png', '69.99', 'Cologne', 100, 0, 'WBG-C1', 'Army Cologne WBG-C1 Smell and feel like a true warrior with the best cologne in the west. 69.99');`,
+                    `INSERT INTO ${element.table_name} VALUES(4, '${myDate}', '${myDate}', 321, 'Army Baseball Caps', 'Assortment of Army baseball caps for $12.99 each tax included.', 'hats.png', '12.99', 'Hats', 100, 0, 'WBG-H1', 'Army Baseball Caps WBG-H1 Assortment of Army baseball caps for $12.99 each tax included. 12.99');`,
+                    `INSERT INTO ${element.table_name} VALUES(5, '${myDate}', '${myDate}', 321, 'Swiss Army Watch and Knife Combo', 'Swiss Army quality service watch with knife combo for keeping time out in the field.', 'watch.png', '89.99', 'Watches', 100, 0, 'WBG-W1', 'Swiss Army Watch and Knife Combo WBG-W1 Swiss Army quality service watch with knife combo for keeping time out in the field. 89.99');`,
                 ];
                 products.forEach(insert => {
                     connection.query(insert, (error, results) => {
@@ -154,8 +158,6 @@ module.exports = function(database, config, connection, moment) {
                 });
             }
             if(element.table_name == 'h_frontmenu') {
-                let currentTimestamp = moment().unix();
-                let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
                 const products = [
                     `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Army Clothing', 1, 'Base', 'Army airborne clothing and clothing accessories department.', 0);`,
                     `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Army Hygiene', 1, 'Base', 'Army airborne hygiene and hygiene accessories department.', 0);`,

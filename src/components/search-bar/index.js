@@ -4,7 +4,16 @@ import { connect } from 'react-redux';
 class SearchBar extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+			searchError: '',
+			searchString: ''
+		}
+        this.onChange = this.onChange.bind(this);
     }
+
+    onChange(e) {
+		this.setState({ [e.target.name]: e.target.value });
+	}
 
     render() {
         return (
@@ -12,12 +21,19 @@ class SearchBar extends React.Component {
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                            <div className="input-group">
-                            <input type="text" className="form-element" placeholder="Search for..." />
-                            <span className="input-group-btn">
-                                <button className="btn btn-army" type="button">Go!</button>
-                            </span>
-                            </div>
+                            {
+                                (this.state.searchError) ? (
+                                    <label>{this.state.searchError}</label>
+                                ) : (null)
+                            }
+                            <form name="search" onSubmit={this.props.setSearchParam}>
+                                <div className="input-group">
+                                    <input type="text" value={this.state.searchString} onChange={this.onChange} className="form-element" placeholder="Search for..." />
+                                    <span className="input-group-btn">
+                                        <button className="btn btn-army" type="button">Go!</button>
+                                    </span>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -28,8 +44,17 @@ class SearchBar extends React.Component {
 
 function mapStateToProps(state) {
     return {
+        search: state.search,
         authentication: state.authentication
     }
 }
 
-export default connect(mapStateToProps)(SearchBar)
+function mapDispatchToProps(dispatch) {
+    return {
+        updateSearch: (value) => {
+            dispatch( { type: 'UPDATE_SEARCH', payload: value} )
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBar)

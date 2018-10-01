@@ -5,6 +5,7 @@ import productReducer from '../components/authenticated/products/reducer';
 import paginationReducer from '../components/product-components/pagination/reducer';
 import avatarReducer from '../components/authenticated/profile/reducer';
 import menuReducer from '../components/authenticated/menu/reducer';
+import searchReducer from '../components/search-bar/reducer';
 import visibilityReducer from '../components/authenticated/profile/store-controls/store-visibility/reducer';
 
 function saveToLocalStorage(state) {
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
     avatar: avatarReducer,
     product: productReducer,
     menu: menuReducer,
+    search: searchReducer,
     pagination: paginationReducer,
     visibility: visibilityReducer,
     authentication: authenticationReducer

@@ -700,8 +700,11 @@ app.post('/api/product/upload', function(req, res) {
         filename,
         menu,
         name,
-        description,
+        sku,
         price,
+        stock,
+        ifmanaged,
+        description,
         token
     } = body;
     
@@ -740,10 +743,31 @@ app.post('/api/product/upload', function(req, res) {
         });
     }
 
+    if(!stock || !config.patterns.numbers.test(stock)) {
+        return res.send({
+            success: false,
+            message: 'Stock invalid or cannot be left empty.'
+        });
+    }
+
+    if(!ifmanaged || !config.patterns.numbers.test(ifmanaged)) {
+        return res.send({
+            success: false,
+            message: 'Price invalid or cannot be left empty.'
+        });
+    }
+
     if(!price || !config.patterns.names.test(price)) {
         return res.send({
             success: false,
             message: 'Price invalid or cannot be left empty.'
+        });
+    }
+
+    if(!sku || !config.patterns.names.test(sku)) {
+        return res.send({
+            success: false,
+            message: 'Sku invalid or cannot be left empty.'
         });
     }
 
@@ -754,7 +778,7 @@ app.post('/api/product/upload', function(req, res) {
         });
     }
 
-    let metta = name + " " + menu + " " + price + " " + description;
+    let metta = name + " " + menu + " " + price + " " + sku + " " + description;
 
     let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
     let userIdInserts = [
@@ -791,7 +815,7 @@ app.post('/api/product/upload', function(req, res) {
                             message: 'Server error uploading image.'
                         });
                     } else {
-                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         var insertProductInserts = [
                             config.tables[0].table_name,
                             myDate, myDate, results[0]['user_id'], name,
@@ -815,6 +839,9 @@ app.post('/api/product/upload', function(req, res) {
                                     name: name,
                                     description: description,
                                     price: price,
+                                    stock: stock,
+                                    ifmanaged: ifmanaged,
+                                    sku: sku,
                                     image: image
                                 });
                             }
@@ -832,8 +859,11 @@ app.post('/api/product/update', function(req, res) {
         filename,
         menu,
         name,
+        sku,
         description,
         price,
+        stock,
+        ifmanaged,
         imagename,
         token
     } = body;
@@ -855,20 +885,6 @@ app.post('/api/product/update', function(req, res) {
 
     //console.log(token + ", " + proid);
 
-    if(config.patterns.names.test(menu)) {
-        updateObj.push({
-            name: config.tables[0].table_fields[8].Field,
-            content: menu
-        });
-    } else {
-        if(menu != '') {
-            return res.send({
-                success: false,
-                message: 'Letters Numbers Spaces _ - and . allowed.'
-            });
-        }
-    }
-
     if(config.patterns.names.test(name)) {
         updateObj.push({
             name: config.tables[0].table_fields[4].Field,
@@ -876,6 +892,20 @@ app.post('/api/product/update', function(req, res) {
         });
     } else {
         if(name != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(description)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[5].Field,
+            content: description
+        });
+    } else {
+        if(description != '') {
             return res.send({
                 success: false,
                 message: 'Letters Numbers Spaces _ - and . allowed.'
@@ -896,14 +926,56 @@ app.post('/api/product/update', function(req, res) {
             });
         }
     }
-    
-    if(config.patterns.names.test(description)) {
+
+    if(config.patterns.names.test(menu)) {
         updateObj.push({
-            name: config.tables[0].table_fields[5].Field,
-            content: description
+            name: config.tables[0].table_fields[8].Field,
+            content: menu
         });
     } else {
-        if(description != '') {
+        if(menu != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(stock)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[9].Field,
+            content: stock
+        });
+    } else {
+        if(stock != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(ifmanaged)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[10].Field,
+            content: ifmanaged
+        });
+    } else {
+        if(ifmanaged != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(sku)) {
+        updateObj.push({
+            name: config.tables[0].table_fields[11].Field,
+            content: sku
+        });
+    } else {
+        if(sku != '') {
             return res.send({
                 success: false,
                 message: 'Letters Numbers Spaces _ - and . allowed.'
@@ -1003,6 +1075,9 @@ app.post('/api/product/update', function(req, res) {
                                                         name: name,
                                                         description: description,
                                                         price: price,
+                                                        stock: stock,
+                                                        ifmanaged: ifmanaged,
+                                                        sku: sku,
                                                         image: image
                                                     });
                                                 }
@@ -1074,6 +1149,9 @@ app.post('/api/product/update', function(req, res) {
                             name: name,
                             description: description,
                             price: price,
+                            stock: stock,
+                            ifmanaged: ifmanaged,
+                            sku: sku,
                             image: image
                         });
                     }
@@ -1673,6 +1751,9 @@ app.post('/api/cart/call-paypal', function(req, res) {
         city,
         state,
         zip,
+        proids,
+        numofs,
+        prices,
         items,
         total
     } = body;
@@ -1696,6 +1777,27 @@ app.post('/api/cart/call-paypal', function(req, res) {
         }
         itemIds.push({ id: itemParts[0], quantity: itemParts[1] });
     });
+
+    if(!proids || !config.patterns.names.test(proids)) {
+        return res.send({
+            success: false,
+            message: 'Invalid proids Letters Numbers Spaces _ - and . allowed or proids is empty.'
+        });
+    }
+
+    if(!numofs || !config.patterns.names.test(numofs)) {
+        return res.send({
+            success: false,
+            message: 'Invalid quantiy Letters Numbers Spaces _ - and . allowed or quantiy is empty.'
+        });
+    }
+
+    if(!prices || !config.patterns.names.test(prices)) {
+        return res.send({
+            success: false,
+            message: 'Invalid prices Letters Numbers Spaces _ - and . allowed or prices is empty.'
+        });
+    }
 
     if(!name || !config.patterns.names.test(name)) {
         return res.send({
@@ -1749,8 +1851,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
     //console.log(util.inspect(items, {showHidden: false, depth: null}));
     //console.log("Products: " + products);
 
-    var loadCredentials = "SELECT * FROM ?? LIMIT 1";
-    var loadCredentialsInserts = [
+    let loadCredentials = "SELECT * FROM ?? LIMIT 1";
+    let loadCredentialsInserts = [
         config.tables[4].table_name
     ];
     loadCredentials = mysql.format(loadCredentials, loadCredentialsInserts);
@@ -1760,7 +1862,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
             //console.log("Error: in Register New User: " + err);
             return res.send({
                 success: false,
-                message: 'Server Error in load credentials'
+                message: 'Server Error in load credentials call paypal.'
             });
         } else {
             //console.log(results[0]['client'] + ", " + results[0]['secret']);
@@ -1770,8 +1872,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
                 "client_secret": results[0]['secret']
             });
 
-            var loadProducts = "SELECT * FROM ??";
-            var loadProductsInserts = [
+            let loadProducts = "SELECT * FROM ??";
+            let loadProductsInserts = [
                 config.tables[0].table_name
             ];
             loadProducts = mysql.format(loadProducts, loadProductsInserts);
@@ -1781,7 +1883,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
                     //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
-                        message: 'Server Error in load products'
+                        message: 'Server Error in load products call paypal.'
                     });
                 } else {
                     //console.log(util.inspect(results, {showHidden: false, depth: null}));
@@ -1802,14 +1904,14 @@ app.post('/api/cart/call-paypal', function(req, res) {
                     });
                     //console.log(util.inspect(items, {showHidden: false, depth: null}));
                     let cancelUrl = urlConfig.site_url + config.base.cancel;
-                    let returnUrl = urlConfig.site_url + config.base.return;
+                    let successUrl = urlConfig.site_url + config.base.success;
                     let create_payment_json = {
                         "intent": "sale",
                         "payer": {
                             "payment_method": "paypal"
                         },
                         "redirect_urls": {
-                            "return_url": returnUrl,
+                            "return_url": successUrl,
                             "cancel_url": cancelUrl
                         },
                         "transactions": [
@@ -1834,30 +1936,29 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             });
                         } else {
                             
-                            var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?)";
-                            var insertProductInserts = [
-                                config.tables[5].table_name,
-                                myDate, myDate, results[0]['user_id'], name,
-                                description, image, price
+                            let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '')";
+                            let insertOrderInserts = [
+                                config.tables[5].table_name, results[0]['user_id'],
+                                myDate, myDate, name, email, address, city, state, zip,
+                                proids, numofs, prices, payment.id
                             ];
-                            insertProduct = mysql.format(insertProduct, insertProductInserts);
-                            //console.log(insertProduct);
-                            connection.query(insertProduct, function (error, result, fields) {
+                            insertOrder = mysql.format(insertOrder, insertOrderInserts);
+                            //console.log(insertOrder);
+                            connection.query(insertOrder, function (error, result, fields) {
                                 if(error) {
                                     //console.log("Error: in Register New User: " + err);
                                     return res.send({
                                         success: false,
-                                        message: 'Server Error in product upload'
+                                        message: 'Server Error in insert order call paypal.'
                                     });
                                 } else {
                                     console.log(payment.id);
                                     for(let i=0; i<payment.links.length; i++) {
                                         if(payment.links[i].rel === 'approval_url') {
-                                            // insert order into database with a token or key from paypal to identify the transaction in /success.
-                                            /*return res.send({
+                                            return res.send({
                                                 success: true,
                                                 url: payment.links[i].href
-                                            });*/
+                                            });
                                         }
                                     }
                                 }
@@ -1874,26 +1975,66 @@ app.get('/success', function(req, res) {
     const payerId = req.query.PayerId;
     const paymentId = req.query.paymentId;
 
-    // query order in database with a token or key from paypal to identify the transaction in /success.
-    // and get the total.
-
-    var execute_payment_json = {
-        "payer_id": payerId,
-        "transactions": [{
-            "amount": {
-                "currency": "USD",
-                "total": "1.00"
-            }
-        }]
-    };
-
-    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
-        if (error) {
-            console.log(error.response);
-            throw error;
+    let loadOrder = "SELECT * FROM ?? WHERE ?? = ?";
+    let loadOrderInserts = [
+        config.tables[5].table_name,
+        config.tables[5].table_fields[13].Field,
+        paymentId
+    ];
+    loadOrder = mysql.format(loadOrder, loadOrderInserts);
+    //console.log(loadOrder);
+    connection.query(loadOrder, function (error, results, fields) {
+        if(error) {
+            //console.log("Error: in Register New User: " + err);
+            return res.send({
+                success: false,
+                message: 'Server Error in Paypal /success loadOrder'
+            });
         } else {
-            console.log("Get Payment Response");
-            console.log(JSON.stringify(payment));
+            let numofs = results[0]['number_ofs'].split("_");
+            let price = results[0]['prices'].split("_");
+            let total = 0;
+            for(let i=0; i<price.length; i++) {
+                total += numofs[i] * price[i];
+            }
+
+            var execute_payment_json = {
+                "payer_id": payerId,
+                "transactions": [{
+                    "amount": {
+                        "currency": "USD",
+                        "total": total.toFixed(2)
+                    }
+                }]
+            };
+
+            paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+                if (error) {
+                    console.log(error.response);
+                    throw error;
+                } else {
+                    let updateOrder = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
+                    let updateOrderInserts = [
+                        config.tables[5].table_name,
+                        config.tables[5].table_fields[14].Field,
+                        config.tables[5].table_fields[13].Field,
+                        paymentId
+                    ];
+                    updateOrder = mysql.format(updateOrder, updateOrderInserts);
+                    //console.log(updateOrder);
+                    connection.query(updateOrder, function (error, results, fields) {
+                        if(error) {
+                            console.log("Error: in Paypal /success updateOrder: " + err);
+                            return res.send({
+                                success: false,
+                                message: 'Server Error in Paypal /success updateOrder'
+                            });
+                        } else {
+                            return res.send("Success: " + JSON.stringify(payment));
+                        }
+                    });
+                }
+            });
         }
     });
 });

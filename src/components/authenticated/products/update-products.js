@@ -9,7 +9,10 @@ class UpdateProducts extends React.Component {
             proUpdateError: '',
             proUpdateMenu: '',
             proUpdateName: '',
+            proUpdateSku: '',
             proUpdatePrice: '',
+            proUpdateStock: '',
+            proUpdateIfManaged: '',
             proUpdateDescription: '',
             updateInput: '',
             fileName: ''
@@ -27,8 +30,11 @@ class UpdateProducts extends React.Component {
             data.append('imagename', this.props.product[0].image);
             data.append('menu', this.state.proUpdateMenu.value);
             data.append('name', this.state.proUpdateName.value);
+            data.append('sku', this.state.proUpdateSku.value);
 			data.append('description', this.state.proUpdateDescription.value);
             data.append('price', this.state.proUpdatePrice.value);
+            data.append('stock', this.state.proUpdateStock.value);
+            data.append('ifmanaged', this.state.proUpdateIfManaged.value);
             data.append('token', this.props.authentication[0].token);
 
         //console.log("Description: "+this.state.proUpdateDescription.value);
@@ -42,12 +48,18 @@ class UpdateProducts extends React.Component {
                     console.log("Successfull Product Update.");
                     let obj = {}
                     obj['id'] = this.props.product[0].id;
-                    if(json.name != '') obj['name']=json.name;
-                    obj['menu'] = this.props.product[0].menu;
                     if(json.menu != '') obj['menu']=json.menu;
+                    else obj['menu'] = this.props.product[0].menu;
+                    if(json.name != '') obj['name']=json.name;
                     else obj['name'] = this.props.product[0].name;
+                    if(json.sku != '') obj['sku']=json.sku;
+                    else obj['sku'] = this.props.product[0].sku;
                     if(json.price != '') obj['price']=json.price;
                     else obj['price'] = this.props.product[0].price;
+                    if(json.stock != '') obj['stock']=json.stock;
+                    else obj['stock'] = this.props.product[0].stock;
+                    if(json.ifmanaged != '') obj['ifmanaged']=json.ifmanaged;
+                    else obj['ifmanaged'] = this.props.product[0].ifmanaged;
                     if(json.description != '') obj['description']=json.description;
                     else obj['description'] = this.props.product[0].description;
                     if(json.image != '') obj['image']=json.image;
@@ -57,9 +69,12 @@ class UpdateProducts extends React.Component {
                     let imagename = obj.image.split(".");
 					this.setState({
                         proUpdateError: json.message,
-                        proUpdateName: json.menu != '' ? json.menu : this.props.product[0].menu,
+                        proUpdateMenu: json.menu != '' ? json.menu : this.props.product[0].menu,
                         proUpdateName: json.name != '' ? json.name : this.props.product[0].name,
+                        proUpdateSku: json.sku != '' ? json.sku : this.props.product[0].sku,
                         proUpdatePrice: json.price != '' ? json.price : this.props.product[0].price,
+                        proUpdateStock: json.stock != '' ? json.stock : this.props.product[0].stock,
+                        proUpdateIfManaged: json.ifmanaged != '' ? json.ifmanaged : this.props.product[0].ifmanaged,
                         proUpdateDescription: json.description != '' ? json.description : this.props.product[0].description,
                         updateInput: '',
                         fileName: imagename[0]
@@ -76,12 +91,6 @@ class UpdateProducts extends React.Component {
 
     render() {
         //this.props.resetProduct();
-        const valueObj = {
-            filename: this.props.product[0].image.split(".")[0],
-            proUpdateName: this.props.product[0].name,
-            proUpdatePrice: this.props.product[0].price,
-            proUpdateDescription: this.props.product[0].description,
-        }
         return (
 			<div>
                 <h3>Product Update</h3>
@@ -107,7 +116,16 @@ class UpdateProducts extends React.Component {
                                     <input ref={(ref) => { this.state.proUpdateName = ref; }} type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUpdateSku = ref; }} type="text" className="form-element" placeholder="Sku"/>
+                                </fieldset>
+                                <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.proUpdatePrice = ref; }} type="text" className="form-element" placeholder="0.00"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUpdateStock = ref; }} type="text" className="form-element" placeholder="Number in Stock"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUpdateIfManaged = ref; }} type="text" className="form-element" placeholder="If Managed Stock"/>
                                 </fieldset>
                                 <fieldset className="form-group">
                                     <textarea ref={(ref) => { this.state.proUpdateDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>

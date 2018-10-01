@@ -5,7 +5,7 @@ import Navigation from '../../navigation';
 import Footer from '../../footer';
 import MenuList from './menu-list';
 import UpdateMenu from './update-menu';
-import UploadMenu from './upload-menu/upload-menu';
+import UploadMenu from './upload-menu';
 import MenuDisplay from './menu-display';
 import MenuItem from './menu-item';
 

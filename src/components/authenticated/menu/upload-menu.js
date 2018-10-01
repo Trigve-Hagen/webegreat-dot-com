@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import config from '../../../../config/config';
+import config from '../../../config/config';
 
 class UploadMenu extends React.Component {
     constructor(props) {

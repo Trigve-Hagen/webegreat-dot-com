@@ -92,8 +92,32 @@ module.exports = {
                     Extra: ''
                 },
                 {
+                    Field: 'stock',
+                    Type: 'int(255)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'managed_stock',
+                    Type: 'int(1)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT 0',
+                    Extra: ''
+                },
+                {
+                    Field: 'sku',
+                    Type: 'varchar(255)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
                     Field: 'metta',
-                    Type: 'text',
+                    Type: 'TEXT',
                     Null: 'NOT NULL',
                     Key: '',
                     Default: null,
@@ -322,7 +346,7 @@ module.exports = {
                 {
                     Field: 'mode',
                     Type: 'varchar(255)',
-                    Null: 'NULL',
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -330,7 +354,7 @@ module.exports = {
                 {
                     Field: 'client',
                     Type: 'varchar(255)',
-                    Null: 'NULL',
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''
@@ -338,7 +362,7 @@ module.exports = {
                 {
                     Field: 'secret',
                     Type: 'varchar(255)',
-                    Null: 'NULL',
+                    Null: 'NOT NULL',
                     Key: '',
                     Default: null,
                     Extra: ''

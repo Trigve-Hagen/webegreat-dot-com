@@ -34,10 +34,19 @@ class Cart extends React.Component {
 	onSubmit(e) {
         e.preventDefault();
 
-        let items = ''; let cartTotal = 0; let count = 0;
+        let items = ''; let proids = ''; let numofs = ''; let prices = ''; let cartTotal = 0; let count = 0;
         sort(this.props.cart).map(product => {
-            if(count == this.props.cart.length - 1) items += product.id.toString() + "_" + product.quantity.toString();
-            else items += product.id.toString() + "_" + product.quantity.toString() + "&";
+            if(count == this.props.cart.length - 1) {
+                items += product.id.toString() + "_" + product.quantity.toString();
+                proids += product.id.toString();
+                numofs += product.quantity.toString();
+                prices += product.price.toString();
+            } else {
+                items += product.id.toString() + "_" + product.quantity.toString() + "&";
+                proids += product.id.toString() + "_";
+                numofs += product.quantity.toString() + "_";
+                prices += product.price.toString() + "_";
+            }
             cartTotal += product.price * product.quantity;
             count++;
         });
@@ -52,6 +61,9 @@ class Cart extends React.Component {
             data.append('state', this.state.cartState.value);
             data.append('zip', this.state.cartZip.value);
             data.append('items', items);
+            data.append('proids', proids);
+            data.append('numofs', numofs);
+            data.append('prices', prices);
             data.append('total', cartTotal.toFixed(2));
 
 		fetch(config.site_url + '/api/cart/call-paypal', {
@@ -62,7 +74,7 @@ class Cart extends React.Component {
 				if(json.success) {
                     console.log("Call paypal successfull.");
 					this.setState({
-                        cartError: "Redirecting to: " + json.url,
+                        cartError: "Redirecting to Paypal...",
                         cartRedirect: true,
                         paypaRedirect: json.url
                     });

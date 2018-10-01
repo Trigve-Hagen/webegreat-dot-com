@@ -16,8 +16,14 @@ class Home extends React.Component {
             perPage: 15,
             currentPage: 1,
             loadProductError: '',
+            searchString: '',
             products: []
         }
+    }
+
+    setSearchParam(searchString) {
+        this.setState({ searchString: searchString });
+        this.updateSearch({ searchString: searchString });
     }
 
     componentDidMount() {
@@ -29,6 +35,7 @@ class Home extends React.Component {
 			body: JSON.stringify({
 				currentPage: this.state.currentPage,
                 perPage: this.state.perPage,
+                searchString: this.state.searchString
 			})
 		}).then(res => res.json())
 			.then(json => {
@@ -58,7 +65,6 @@ class Home extends React.Component {
 
     render() {
         //this.props.resetProduct();
-        //console.log(this.state.products);
         return (
             <div>
                 <Navigation path="/" authenticated={this.props.authentication[0].authenticated}/>
@@ -66,7 +72,7 @@ class Home extends React.Component {
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                                <SearchBar />
+                                <SearchBar onSubmit={this.setSearchParam}/>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
                                 <MenuDisplay />
@@ -89,6 +95,7 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
     return {
+        search: state.search,
         product: state.product,
         visibility: state.visibility,
         authentication: state.authentication
@@ -97,14 +104,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateProduct: (value) => {
-            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
-        },
-        addProducts: (value) => {
-            dispatch({ type: 'ADD_PRODUCTS', payload: value})
-        },
-        resetProduct: () => {
-            dispatch({ type: 'RESET_APP'})
+        updateSearch: (value) => {
+            dispatch({ type: 'UPDATE_SEARCH', payload: value})
         }
     }
 }

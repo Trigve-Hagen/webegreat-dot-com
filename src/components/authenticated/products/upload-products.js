@@ -9,7 +9,10 @@ class UploadProducts extends React.Component {
             proUploadError: '',
             proUploadMenu: '',
             proUploadName: '',
+            proUploadSku: '',
             proUploadPrice: '',
+            proUploadStock: '',
+            proUploadIfManaged: '',
             proUploadDescription: '',
             uploadInput: '',
             fileName: ''
@@ -26,8 +29,11 @@ class UploadProducts extends React.Component {
             data.append('filename', this.state.fileName.value);
             data.append('menu', this.state.proUploadMenu.value);
             data.append('name', this.state.proUploadName.value);
+            data.append('sku', this.state.proUploadSku.value);
 			data.append('description', this.state.proUploadDescription.value);
             data.append('price', this.state.proUploadPrice.value);
+            data.append('stock', this.state.proUploadStock.value);
+            data.append('ifmanaged', this.state.proUploadIfManaged.value);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/product/upload', {
@@ -41,7 +47,10 @@ class UploadProducts extends React.Component {
                         id: json.id,
                         menu : json.menu,
                         name: json.name,
+                        sku: json.sku,
                         price: json.price,
+                        stock: json.stock,
+                        ifmanaged: json.ifmanaged,
                         description: json.description,
                         image: json.image
                     });
@@ -49,7 +58,10 @@ class UploadProducts extends React.Component {
                         proUploadError: json.message,
                         proUploadMenu: '',
                         proUploadName: '',
+                        proUploadSku: '',
                         proUploadPrice: '',
+                        proUploadStock: '',
+                        proUploadIfManaged: '',
                         proUploadDescription: '',
                         uploadInput: '',
                         fileName: ''
@@ -88,7 +100,16 @@ class UploadProducts extends React.Component {
                                     <input ref={(ref) => { this.state.proUploadName = ref; }} type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUploadSku = ref; }} type="text" className="form-element" placeholder="Sku"/>
+                                </fieldset>
+                                <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.proUploadPrice = ref; }} type="text" className="form-element" placeholder="0.00"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUploadStock = ref; }} type="text" className="form-element" placeholder="Number in Stock"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.proUploadIfManaged = ref; }} type="text" className="form-element" placeholder="If Managed Stock"/>
                                 </fieldset>
                                 <fieldset className="form-group">
                                     <textarea ref={(ref) => { this.state.proUploadDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>

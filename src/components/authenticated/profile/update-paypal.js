@@ -32,6 +32,7 @@ class UpdatePaypal extends React.Component {
 					console.log("Paypal update successfull.");
 					this.setState({
                         paypalError: json.message,
+                        paypalMode: '',
                         paypalClient: '',
                         paypalSecret: ''
                     });
