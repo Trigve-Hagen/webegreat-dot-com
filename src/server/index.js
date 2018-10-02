@@ -1902,7 +1902,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             }
                         });
                     });
-                    //console.log(util.inspect(items, {showHidden: false, depth: null}));  "http://localhost:3000"
+                    //console.log(util.inspect(items, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
                     let cancelUrl = urlConfig.site_url + config.base.cancel;
                     let successUrl = urlConfig.site_url + config.base.success;
                     let create_payment_json = {

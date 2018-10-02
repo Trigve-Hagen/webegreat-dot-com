@@ -3,6 +3,10 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import Footer from '../../footer';
+import UploadUser from './upload-user';
+import UpdateUser from './update-user';
+import UserList from './user-list';
+import UserItem from './user-item';
 
 class UserRoles extends React.Component {
     constructor(props) {
@@ -18,8 +22,12 @@ class UserRoles extends React.Component {
                         <div className="row space-bottom-50px">
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
                                 <h1>User Roles Page</h1>
+                                <UserList />
+                                <UploadUser />
                             </div>
                             <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+                                <UserItem user={this.props.role}/>
+                                <UpdateUser />
                             </div>
                         </div>
                     </div>
@@ -32,6 +40,7 @@ class UserRoles extends React.Component {
 
 function mapStateToProps(state) {
     return {
+        role: state.role,
         authentication: state.authentication
     }
 }
