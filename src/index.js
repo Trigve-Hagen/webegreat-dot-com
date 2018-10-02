@@ -34,6 +34,9 @@ import Products from './components/authenticated/products';
 import Menu from './components/authenticated/menu';
 import Roles from './components/authenticated/roles';
 
+import Success from './components/paypal/success';
+import Cancel from  './components/paypal/cancel';
+
 import( /* webpackChunkName: 'application' */ './App')
     .then(({ default: App }) =>
         render(
@@ -51,6 +54,8 @@ import( /* webpackChunkName: 'application' */ './App')
                             <Route exact path="/profile" component={Profile}/>
                             <Route exact path="/orders" component={Orders}/>
                             <Route exact path="/products" component={Products}/>
+                            <Route exact path="/success" component={Success}/>
+                            <Route exact path="/cancel" component={Cancel}/>
                             <Route exact path="/menu" component={Menu}/>
                             <Route exact path="/roles" component={Roles}/>
                             <Route component={NotFound}/>

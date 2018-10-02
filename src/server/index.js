@@ -1902,7 +1902,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             }
                         });
                     });
-                    //console.log(util.inspect(items, {showHidden: false, depth: null}));
+                    //console.log(util.inspect(items, {showHidden: false, depth: null}));  "http://localhost:3000"
                     let cancelUrl = urlConfig.site_url + config.base.cancel;
                     let successUrl = urlConfig.site_url + config.base.success;
                     let create_payment_json = {
@@ -1952,7 +1952,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
                                         message: 'Server Error in insert order call paypal.'
                                     });
                                 } else {
-                                    console.log(payment.id);
+                                    //console.log(payment.id);
                                     for(let i=0; i<payment.links.length; i++) {
                                         if(payment.links[i].rel === 'approval_url') {
                                             return res.send({
@@ -1971,9 +1971,26 @@ app.post('/api/cart/call-paypal', function(req, res) {
     });
 });
 
-app.get('/success', function(req, res) {
-    const payerId = req.query.PayerId;
-    const paymentId = req.query.paymentId;
+app.post('/api/paypal/success', function(req, res) {
+    const { body } = req;
+    const {
+        payerId,
+        paymentId
+    } = body;
+
+    if(!payerId || !config.patterns.names.test(payerId)) {
+        return res.send({
+            success: false,
+            message: 'Invalid payerId or payerId is empty.'
+        });
+    }
+
+    if(!paymentId || !config.patterns.names.test(paymentId)) {
+        return res.send({
+            success: false,
+            message: 'Invalid paymentId or paymentId is empty.'
+        });
+    }
 
     let loadOrder = "SELECT * FROM ?? WHERE ?? = ?";
     let loadOrderInserts = [
@@ -1982,7 +1999,7 @@ app.get('/success', function(req, res) {
         paymentId
     ];
     loadOrder = mysql.format(loadOrder, loadOrderInserts);
-    //console.log(loadOrder);
+    console.log(loadOrder);
     connection.query(loadOrder, function (error, results, fields) {
         if(error) {
             //console.log("Error: in Register New User: " + err);
@@ -2021,7 +2038,7 @@ app.get('/success', function(req, res) {
                         paymentId
                     ];
                     updateOrder = mysql.format(updateOrder, updateOrderInserts);
-                    //console.log(updateOrder);
+                    console.log(payment.payer.payer_info.shipping_address.recipient_name);
                     connection.query(updateOrder, function (error, results, fields) {
                         if(error) {
                             console.log("Error: in Paypal /success updateOrder: " + err);
@@ -2030,7 +2047,12 @@ app.get('/success', function(req, res) {
                                 message: 'Server Error in Paypal /success updateOrder'
                             });
                         } else {
-                            return res.send("Success: " + JSON.stringify(payment));
+                            return res.send({
+                                success: true,
+                                message: "Success",
+                                name: payment.payer.payer_info.shipping_address.recipient_name
+                            });
+                            //return res.send("Success: " + JSON.stringify(payment));
                         }
                     });
                 }
@@ -2039,7 +2061,36 @@ app.get('/success', function(req, res) {
     });
 });
 
-app.get('/cancel', () => res.send('Cancelled'));
+app.get('/api/paypal/cancel', function(req, res) {
+    const { body } = req;
+    const {
+        paymentId
+    } = body;
+
+    let updateOrder = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
+    let updateOrderInserts = [
+        config.tables[5].table_name,
+        config.tables[5].table_fields[14].Field,
+        config.tables[5].table_fields[13].Field,
+        paymentId
+    ];
+    updateOrder = mysql.format(updateOrder, updateOrderInserts);
+    //console.log(updateOrder);
+    connection.query(updateOrder, function (error, results, fields) {
+        if(error) {
+            //console.log("Error: in Register New User: " + err);
+            return res.send({
+                success: false,
+                message: 'Server Error in Paypal /success loadOrder'
+            });
+        } else {
+            return res.send({
+                success: true,
+                message: 'Server Error in Paypal /success loadOrder'
+            });
+        }
+    });
+});
 
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');

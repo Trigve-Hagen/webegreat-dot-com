@@ -1,5 +1,5 @@
 import React from 'react';
-import StoreVisibility from './store-visibility/store-visibility';
+import StoreVisibility from './store-visibility';
 import CheckPaypal from './check-paypal';
 
 class StoreControls extends React.Component {
