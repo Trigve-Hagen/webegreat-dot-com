@@ -16,7 +16,7 @@ class UserList extends React.Component {
     }
 
     componentDidMount() {
-		fetch(config.site_url + '/api/roles/front', {
+		fetch(config.site_url + '/api/roles/users', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -24,11 +24,13 @@ class UserList extends React.Component {
 			body: JSON.stringify({
 				currentPage: this.props.pagination[0].currentPage,
                 perPage: this.state.perPage,
+                token: this.props.authentication[0].token
 			})
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
                     let arrayArgs = [];
+                    console.log(json.users);
                     for (let value of Object.values(json.users)) {
                         arrayArgs.push({
                             id: value['userid'],
@@ -39,8 +41,7 @@ class UserList extends React.Component {
                             address: value['address'],
                             city: value['city'],
                             state: value['state'],
-                            zip: value['zip'],
-                            password: this.props.role[0].password,
+                            zip: value['zip']
                         });
                     }
                     //console.log(arrayArgs);
@@ -61,7 +62,7 @@ class UserList extends React.Component {
         this.state.users.map(user => {
             if(user.id == userId) {
                 obj.id = user.id;
-                obj.image = user.image;
+                obj.image = user.image != undefined ? user.image : 'user-avatar.jpg';
                 obj.role = user.role;
                 obj.name = user.name;
                 obj.email = user.email;
@@ -69,7 +70,6 @@ class UserList extends React.Component {
                 obj.city = user.city;
                 obj.state = user.state;
                 obj.zip = user.zip;
-                obj.password = user.password;
             }
         });
         return obj;
@@ -100,15 +100,14 @@ class UserList extends React.Component {
                         if(userId != user.id) {
                             arrayArgs.push({
                                 id: user.id,
-                                image: user.image,
+                                image: user.image != undefined ? user.image : 'user-avatar.jpg',
                                 role: user.role,
                                 name: user.name,
                                 email: user.email,
                                 address: user.address,
                                 city: user.city,
                                 state: user.state,
-                                zip: user.zip,
-                                password: user.password
+                                zip: user.zip
                             });
                         }
                     });
@@ -125,8 +124,7 @@ class UserList extends React.Component {
                         adderss: arrayArgs[0].adderss,
                         city: arrayArgs[0].city,
                         state: arrayArgs[0].state,
-                        zip: arrayArgs[0].zip,
-                        password: arrayArgs[0].password
+                        zip: arrayArgs[0].zip
                     });
                     //location.reload();
 				} else {

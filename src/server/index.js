@@ -251,7 +251,8 @@ app.post('/api/account/signin', (req, res, next) => {
                             return res.send({
                                 success: true,
                                 message: 'Successfull SignIn',
-                                token: result.insertId
+                                token: result.insertId,
+                                role: results[0]['role']
                             });
                         }
                     });
@@ -2087,6 +2088,198 @@ app.get('/api/paypal/cancel', function(req, res) {
             return res.send({
                 success: true,
                 message: 'Server Error in Paypal /success loadOrder'
+            });
+        }
+    });
+});
+
+/*
+ *************************** User Roles  *******************************
+ ***********************************************************************
+ */
+
+
+app.post('/api/roles/delete-user', function(req, res) {
+    const { body } = req;
+    const {
+        id,
+        token
+    } = body;
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Id invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in check userid delete user.'
+            });
+        } else {
+            let getUserToDeleteById = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
+            let getUserToDeleteByIdInserts = [
+                config.tables[0].table_name,
+                config.tables[0].table_fields[0].Field,
+                id,
+                config.tables[0].table_fields[3].Field,
+                results[0]['user_id'],
+            ];
+            getUserToDeleteById = mysql.format(getUserToDeleteById, getUserToDeleteByIdInserts);
+            console.log(getUserToDeleteById);
+            connection.query(getUserToDeleteById, function (error, results, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in get user by id to delete.'
+                    });
+                } else {
+                    if(urlExists(imagePath + `/img/avatar/${results[0]['image']}`)) {
+                        fs.unlink(imagePath + `/img/avatar/${results[0]['image']}`, (err) => {
+                            if (err) {
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in delete user image.'
+                                });
+                            } else {
+                                let deleteUser = "DELETE FROM ?? WHERE ?? = ?";
+                                let deleteUserInserts = [
+                                    config.tables[2].table_name,
+                                    config.tables[2].table_fields[0].Field,
+                                    id
+                                ];
+                                deleteUser = mysql.format(deleteUser, deleteUserInserts);
+                                //console.log(deleteUser);
+                                connection.query(deleteUser, function (error, result, fields) {
+                                    if(error) {
+                                        return res.send({
+                                            success: false,
+                                            message: 'Server Error in delete user row.'
+                                        });
+                                    } else {
+                                        return res.send({
+                                            success: true,
+                                            message: 'User has been Successfully deleted.'
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        let deleteUser = "DELETE FROM ?? WHERE ?? = ?";
+                        let deleteUserInserts = [
+                            config.tables[2].table_name,
+                            config.tables[2].table_fields[0].Field,
+                            id
+                        ];
+                        deleteUser = mysql.format(deleteUser, deleteUserInserts);
+                        //console.log(deleteProduct);
+                        connection.query(deleteUser, function (error, result, fields) {
+                            if(error) {
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in delete product row.'
+                                });
+                            } else {
+                                return res.send({
+                                    success: true,
+                                    message: 'User has been Successfully deleted.'
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/roles/users', function(req, res) {
+    const { body } = req;
+    const {
+        currentPage,
+        perPage,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!currentPage || !config.patterns.numbers.test(currentPage)) {
+        return res.send({
+            success: false,
+            message: 'Current page invalid or cannot be left empty.'
+        });
+    }
+
+    if(!perPage || !config.patterns.numbers.test(perPage)) {
+        return res.send({
+            success: false,
+            message: 'Per page invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid user list roles.'
+            });
+        } else {
+            let userList = "SELECT * FROM ?? WHERE ?? = ?";
+            let userListInserts = [
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                results[0]['user_id']
+            ];
+            userList = mysql.format(userList, userListInserts);
+            connection.query(userList, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in update profile'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        users: result
+                    });
+                }
             });
         }
     });

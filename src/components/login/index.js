@@ -41,7 +41,7 @@ class Login extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-					this.props.updateAuth({ authenticated: true, token: json.token });
+					this.props.updateAuth({ authenticated: true, token: json.token, role: json.role });
 					this.setState({
                         loginError: json.message,
                         loginRedirect: true

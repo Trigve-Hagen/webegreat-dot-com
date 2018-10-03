@@ -15,10 +15,10 @@ class MenuMaker extends React.Component {
     }
 
     render() {
-        if(this.props.authentication[0].authenticated) {
+        if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 3) {
             return (
                 <div>
-                    <Navigation path="/menu" authenticated={this.props.authentication[0].authenticated}/>
+                    <Navigation path="/menu" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
                     <div className="container">
                         <div className="row space-top-20px space-bottom-50px">
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">

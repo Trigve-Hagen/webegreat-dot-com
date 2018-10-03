@@ -9,7 +9,7 @@ class Logout extends React.Component {
     }
 
     componentDidMount() {
-        this.props.updateAuth({ authenticated: false, token: null });
+        this.props.updateAuth({ authenticated: false, token: null, role: null });
         fetch(config.site_url + '/api/account/logout', {
 			method: 'POST',
 			headers: {

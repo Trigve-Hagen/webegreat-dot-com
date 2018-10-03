@@ -5,7 +5,7 @@ import Navigation from '../../navigation';
 import Footer from '../../footer';
 import UploadProducts from '../products/upload-products';
 import UpdateProducts from '../products/update-products';
-import EditItem from './edit-item';
+import ProductItem from './product-item';
 import ProductList from './product-list';
 
 class Products extends React.Component {
@@ -14,10 +14,10 @@ class Products extends React.Component {
     }
 
     render() {
-        if(this.props.authentication[0].authenticated) {
+        if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 3) {
             return (
                 <div>
-                    <Navigation path="/products" authenticated={this.props.authentication[0].authenticated}/>
+                    <Navigation path="/products" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
                     <div className="container">
                         <div className="row space-top-20px space-bottom-50px">
                             <h2>Create Product</h2>
@@ -26,7 +26,7 @@ class Products extends React.Component {
                                 <UploadProducts />
                             </div>
                             <div className="col-lg-8 col-md-8 col-sm-12 col xs-24">
-                                <EditItem />
+                                <ProductItem product={this.props.product}/>
                                 <UpdateProducts />
                             </div>
                         </div>
@@ -40,6 +40,7 @@ class Products extends React.Component {
 
 function mapStateToProps(state) {
     return {
+        product: state.product,
         authentication: state.authentication
     }
 }

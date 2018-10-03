@@ -47,7 +47,7 @@ class Register extends React.Component {
 			.then(json => {
 				if(json.success) {
 					console.log("Successfull Registration.");
-					this.props.updateAuth({ authenticated: true, token: json.token });
+					this.props.updateAuth({ authenticated: true, token: json.token, role: 1 });
 					this.setState({
 						redirect: true,
 						registerError: json.message,

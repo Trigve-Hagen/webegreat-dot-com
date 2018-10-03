@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Pagination from '../../../product-components/pagination';
-import config from '../../../../config/config';
+import Pagination from '../../product-components/pagination';
+import config from '../../../config/config';
 
 class MenuList extends React.Component {
     constructor(props) {

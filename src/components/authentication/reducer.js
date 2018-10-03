@@ -1,6 +1,7 @@
 const initialState = {
     authenticated: false,
-    token: null
+    token: null,
+    role: null
 }
 
 const authenticationReducer = (state=[initialState], action) => {

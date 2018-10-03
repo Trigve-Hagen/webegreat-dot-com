@@ -6,15 +6,15 @@ class UpdateUser extends React.Component {
     constructor(props) {
 		super(props);
 		this.state = {
-            userUploadError: '',
-            userUploadRole: '',
-            userUploadName: '',
-            userUploademail: '',
-            userUploadAddress: '',
-            userUploadCity: '',
-            userUploadState: '',
-            userUploadZip: '',
-            userUploadPassword: '',
+            userUpdateError: '',
+            userUpdateRole: '',
+            userUpdateName: '',
+            userUpdateemail: '',
+            userUpdateAddress: '',
+            userUpdateCity: '',
+            userUpdateState: '',
+            userUpdateZip: '',
+            userUpdatePassword: '',
             uploadInput: '',
             fileName: ''
 		}
@@ -28,23 +28,23 @@ class UpdateUser extends React.Component {
         const data = new FormData();
             data.append('file', this.state.uploadInput.files[0]);
             data.append('filename', this.state.fileName.value);
-            data.append('role', this.state.userUploadRole.value);
-            data.append('name', this.state.userUploadName.value);
-            data.append('email', this.state.userUploademail.value);
-            data.append('address', this.state.userUploadAddress.value);
-			data.append('city', this.state.userUploadCity.value);
-            data.append('state', this.state.userUploadState.value);
-            data.append('zip', this.state.userUploadZip.value);
-            data.append('password', this.state.userUploadPassword.value);
+            data.append('role', this.state.userUpdateRole.value);
+            data.append('name', this.state.userUpdateName.value);
+            data.append('email', this.state.userUpdateemail.value);
+            data.append('address', this.state.userUpdateAddress.value);
+			data.append('city', this.state.userUpdateCity.value);
+            data.append('state', this.state.userUpdateState.value);
+            data.append('zip', this.state.userUpdateZip.value);
+            data.append('password', this.state.userUpdatePassword.value);
             data.append('token', this.props.authentication[0].token);
 
-		fetch(config.site_url + '/api/roles/upload', {
+		fetch(config.site_url + '/api/roles/user-update', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-					console.log("User upload successfull.");
+					console.log("User update successfull.");
 					this.props.updateRole({
                         id: json.id,
                         role : json.role,
@@ -58,21 +58,21 @@ class UpdateUser extends React.Component {
                         password: json.password
                     });
 					this.setState({
-                        userUploadError: json.message,
-                        userUploadRole: '',
-                        userUploadName: '',
-                        userUploademail: '',
-                        userUploadAddress: '',
-                        userUploadCity: '',
-                        userUploadState: '',
-                        userUploadZip: '',
-                        userUploadPassword: '',
+                        userUpdateError: json.message,
+                        userUpdateRole: '',
+                        userUpdateName: '',
+                        userUpdateemail: '',
+                        userUpdateAddress: '',
+                        userUpdateCity: '',
+                        userUpdateState: '',
+                        userUpdateZip: '',
+                        userUpdatePassword: '',
                         uploadInput: '',
                         fileName: ''
                     });
 				} else {
                     this.setState({
-						userUploadError: json.message
+						userUpdateError: json.message
 					});
                 }
 			});
@@ -81,15 +81,15 @@ class UpdateUser extends React.Component {
     render() {
         return (
 			<div>
-                <h3>User Upload</h3>
+                <h3>User Update</h3>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         {
-                            (this.state.userUploadError) ? (
-                                <label>{this.state.userUploadError}</label>
+                            (this.state.userUpdateError) ? (
+                                <label>{this.state.userUpdateError}</label>
                             ) : (null)
                         }
-                        <form name="proUpload" onSubmit={this.onSubmit}>
+                        <form name="userUpdate" onSubmit={this.onSubmit}>
                             <fieldset className="form-group">
                                 <input ref={(ref) => { this.state.uploadInput = ref; }} type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
@@ -98,31 +98,31 @@ class UpdateUser extends React.Component {
                                     <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploadRole = ref; }} type="text" className="form-element" placeholder="User Role"/>
+                                    <input ref={(ref) => { this.state.userUpdateRole = ref; }} type="text" className="form-element" placeholder="User Role"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploadName = ref; }} type="text" className="form-element" placeholder="Name"/>
+                                    <input ref={(ref) => { this.state.userUpdateName = ref; }} type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploademail = ref; }} type="email" className="form-element" placeholder="Email"/>
+                                    <input ref={(ref) => { this.state.userUpdateemail = ref; }} type="email" className="form-element" placeholder="Email"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploadAddress = ref; }} type="text" className="form-element" placeholder="Address"/>
+                                    <input ref={(ref) => { this.state.userUpdateAddress = ref; }} type="text" className="form-element" placeholder="Address"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploadCity = ref; }} type="text" className="form-element" placeholder="City"/>
+                                    <input ref={(ref) => { this.state.userUpdateCity = ref; }} type="text" className="form-element" placeholder="City"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploadState = ref; }} type="text" className="form-element" placeholder="State"/>
+                                    <input ref={(ref) => { this.state.userUpdateState = ref; }} type="text" className="form-element" placeholder="State"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploadZip = ref; }} type="text" className="form-element" placeholder="Zip"/>
+                                    <input ref={(ref) => { this.state.userUpdateZip = ref; }} type="text" className="form-element" placeholder="Zip"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUploadPassword = ref; }} type="password" className="form-element" placeholder="Password"/>
+                                    <input ref={(ref) => { this.state.userUpdatePassword = ref; }} type="password" className="form-element" placeholder="Password"/>
                                 </fieldset>
                             </div>
-                            <button type="submit" className="btn btn-army">User Upload</button>
+                            <button type="submit" className="btn btn-army">User Update</button>
                         </form>
                     </div>
                 </div>
