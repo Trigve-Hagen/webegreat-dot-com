@@ -16,8 +16,9 @@ const app = express();
     next();
 });*/
 let reqPath = path.join(__dirname, '../'); let imagePath = '';
-if(!reqPath.split(path.sep).indexOf("html")) {
-    imagePath = reqPath + '/assets';
+console.log(reqPath.split(path.sep).indexOf("html"));
+if(reqPath.split(path.sep).indexOf("html") == -1) {
+    imagePath = reqPath + 'assets';
 } else {
     imagePath = reqPath + '/dist';
     app.use(express.static(path.join(reqPath, 'dist')));
@@ -25,7 +26,7 @@ if(!reqPath.split(path.sep).indexOf("html")) {
         res.sendFile(path.join(reqPath, 'dist', 'index.html'));
     });
 }
-
+console.log(imagePath);
 const config = require('./config/mysqldbconfig');
 
 let currentTimestamp = moment().unix();
@@ -1285,9 +1286,9 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                 message: 'Server Error in get userid update avatar.'
             });
         } else {
-            console.log(imagePath + `/img/avatar/${imagename}`);
-            if(urlExists(imagePath + `/img/avatar/${imagename}`)) {
-                fs.unlink(imagePath + `/img/avatar/${imagename}`, (err) => {
+            console.log(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`);
+            if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`)) {
+                fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`, (err) => {
                     if (err) {
                         return res.send({
                             success: false,
@@ -1305,7 +1306,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                         
                         let image = req.body.filename + ext;
                         let imageFile = req.files['file'];
-                        imageFile.mv(imagePath + `/img/avatar/${req.body.filename}${ext}`,
+                        imageFile.mv(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${req.body.filename}${ext}`,
                             function(err) {
                                 if (err) {
                                     return res.send({
@@ -2213,15 +2214,15 @@ app.post('/api/roles/delete-user', function(req, res) {
             ];
             getUserToDeleteById = mysql.format(getUserToDeleteById, getUserToDeleteByIdInserts);
             console.log(getUserToDeleteById);
-            connection.query(getUserToDeleteById, function (error, results, fields) {
+            connection.query(getUserToDeleteById, function (error, result, fields) {
                 if(error) {
                     return res.send({
                         success: false,
                         message: 'Server Error in get user by id to delete.'
                     });
                 } else {
-                    if(urlExists(imagePath + `/img/avatar/${results[0]['image']}`)) {
-                        fs.unlink(imagePath + `/img/avatar/${results[0]['image']}`, (err) => {
+                    if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${result[0]['image']}`)) {
+                        fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${result[0]['image']}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -2463,28 +2464,71 @@ app.post('/api/roles/upload-users', (req, res, next) => {
                             id: null
                         });
                     } else {
-                        //console.log(result.insertId);
-                        var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                        var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
-                        insertUserSession = mysql.format(insertUserSession, inserts);
-                        connection.query(insertUserSession, function (error, results, fields) {
-                            if(error) {
-                                //console.log("Error: in Register Session: " + error);
-                                return res.send({
-                                    success: false,
-                                    message: 'Server error in register session insert',
-                                    token: null,
-                                    id: null
-                                });
-                            } else {
-                                //console.log("Results: in SignIn: " + results);
-                                return res.send({
-                                    success: true,
-                                    message: 'Successfull registration',
-                                    token: results.insertId
-                                });
-                            }
-                        });
+                        signUpDir = reqPath + '/assets/img/avatar/' + uniqueId(result.insertId);
+                        if (fs.existsSync(signUpDir)) {
+                            return res.send({
+                                success: false,
+                                message: 'User avatar folder exist on server.',
+                                token: null,
+                                id: null
+                            });
+                        } else {
+                            fs.mkdir(signUpDir, function(err, data) {
+                                if(err) {
+                                    return res.send({
+                                        success: false,
+                                        message: 'Could not make folder.',
+                                        token: null,
+                                        id: null
+                                    });
+                                } else {
+                                    fs.readFile(reqPath + '/assets/img/user-avatar.jpg', function (err, imageData) {
+                                        if (err) {
+                                            return res.send({
+                                                success: false,
+                                                message: 'Could not read image.',
+                                                token: null,
+                                                id: null
+                                            });
+                                        } else {
+                                            fs.writeFile(reqPath + '/assets/img/avatar/' + uniqueId(result.insertId) + '/user-avatar.jpg', imageData, function (err) {
+                                                if (err) {
+                                                    return res.send({
+                                                        success: false,
+                                                        message: 'Could not write image.',
+                                                        token: null,
+                                                        id: null
+                                                    });
+                                                } else {
+                                                    //console.log(result.insertId);
+                                                    var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                                                    var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
+                                                    insertUserSession = mysql.format(insertUserSession, inserts);
+                                                    connection.query(insertUserSession, function (error, results, fields) {
+                                                        if(error) {
+                                                            //console.log("Error: in Register Session: " + error);
+                                                            return res.send({
+                                                                success: false,
+                                                                message: 'Server error in register session insert',
+                                                                token: null,
+                                                                id: null
+                                                            });
+                                                        } else {
+                                                            //console.log("Results: in SignIn: " + results);
+                                                            return res.send({
+                                                                success: true,
+                                                                message: 'Successfull registration',
+                                                                token: results.insertId
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             }
@@ -2672,12 +2716,12 @@ app.post('/api/roles/update-users', function(req, res) {
             if(error) {
                 return res.send({
                     success: false,
-                    message: 'Server Error in get userid.'
+                    message: 'Server Error in get userid roles update user.'
                 });
             } else {
                 if(config.patterns.names.test(imagename)) {
-                    if(urlExists(imagePath + `/img/products/${imagename}`)) {
-                        fs.unlink(imagePath + `/img/products/${imagename}`, (err) => {
+                    if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`)) {
+                        fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -2700,7 +2744,7 @@ app.post('/api/roles/update-users', function(req, res) {
                                 });
 
                                 let imageFile = req.files['file'];
-                                imageFile.mv(imagePath + `/img/products/${req.body.filename}${ext}`,
+                                imageFile.mv(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${req.body.filename}${ext}`,
                                     function(err) {
                                         if (err) {
                                             return res.send({

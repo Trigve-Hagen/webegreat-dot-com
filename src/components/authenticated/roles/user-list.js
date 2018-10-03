@@ -34,7 +34,7 @@ class UserList extends React.Component {
                     for (let value of Object.values(json.users)) {
                         arrayArgs.push({
                             id: value['userid'],
-                            image: value['image'],
+                            image: value['avatar'],
                             role: value['role'],
                             name: value['name'],
                             email: value['email'],
@@ -63,7 +63,7 @@ class UserList extends React.Component {
         this.state.users.map(user => {
             if(user.id == userId) {
                 obj.id = user.id;
-                obj.image = user.image != undefined ? user.image : 'user-avatar.jpg';
+                obj.image = user.image ? user.image : 'user-avatar.jpg';
                 obj.role = user.role;
                 obj.name = user.name;
                 obj.email = user.email;
