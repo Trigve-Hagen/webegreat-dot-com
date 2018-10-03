@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import Footer from '../../footer';
 
-class Orders extends React.Component {
+class MerchantOrders extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -48,4 +48,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(Orders)
+export default connect(mapStateToProps)(MerchantOrders)

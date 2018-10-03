@@ -2258,11 +2258,9 @@ app.post('/api/roles/users', function(req, res) {
                 message: 'Server error in get userid user list roles.'
             });
         } else {
-            let userList = "SELECT * FROM ?? WHERE ?? = ?";
+            let userList = "SELECT * FROM ??";
             let userListInserts = [
-                config.tables[2].table_name,
-                config.tables[2].table_fields[0].Field,
-                results[0]['user_id']
+                config.tables[2].table_name
             ];
             userList = mysql.format(userList, userListInserts);
             connection.query(userList, function (error, result, fields) {

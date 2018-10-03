@@ -21,7 +21,7 @@ class Register extends React.Component {
 	}
 
 	onChange(e) {
-		this.setState({ [e.target.name]: e.target.value});
+		this.setState({ [e.target.name]: e.target.value });
 	}
 
 	onSubmit(e) {
@@ -62,16 +62,7 @@ class Register extends React.Component {
 	}
 
     render() {
-		const {
-			path,
-			redirect,
-			registerEmail,
-			registerError,
-			registerName,
-			registerPassword,
-			authenticated
-		} = this.state;
-		if(redirect) return <Redirect to='/profile' />
+		if(this.state.redirect) return <Redirect to='/profile' />
         return (
 			<div>
 				<Navigation path="/register" authenticated={this.props.authentication[0].authenticated} />
@@ -84,19 +75,19 @@ class Register extends React.Component {
 								</div>
 								<div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
 									{
-										(registerError) ? (
-											<label>{registerError}</label>
+										(this.state.registerError) ? (
+											<label>{this.state.registerError}</label>
 										) : (null)
 									}
 									<form name="register" onSubmit={this.onSubmit}>
 										<fieldset className="form-group">
-											<input value={registerName} onChange={this.onChange} type="text" name="registerName" className="form-element" id="registerName" placeholder="Full Name"/>
+											<input value={this.state.registerName} onChange={this.onChange} type="text" name="registerName" className="form-element" id="registerName" placeholder="Full Name"/>
 										</fieldset>
 										<fieldset className="form-group">
-											<input value={registerEmail} onChange={this.onChange} type="email" name="registerEmail" className="form-element" id="registerEmail" placeholder="someone@somewhere.com"/>
+											<input value={this.state.registerEmail} onChange={this.onChange} type="email" name="registerEmail" className="form-element" id="registerEmail" placeholder="someone@somewhere.com"/>
 										</fieldset>
 										<fieldset className="form-group">
-											<input value={registerPassword} onChange={this.onChange} type="password" name="registerPassword" className="form-element" id="registerPassword" placeholder="Password"/>
+											<input value={this.state.registerPassword} onChange={this.onChange} type="password" name="registerPassword" className="form-element" id="registerPassword" placeholder="Password"/>
 										</fieldset>
 										<button type="submit" className="btn btn-army">Register</button>
 									</form>

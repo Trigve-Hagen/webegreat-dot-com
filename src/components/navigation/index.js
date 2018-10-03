@@ -55,9 +55,9 @@ class Navigation extends React.Component {
                         </ul>
                         <ul className="nav navbar-nav navbar-right">
                             {
-                                path === '/orders'
-                                    ? <li className="active"><NavLink to='/orders'>Orders</NavLink></li>
-                                    : <li><NavLink to='/orders'>Orders</NavLink></li>
+                                path === '/customer-orders'
+                                    ? <li className="active"><NavLink to='/customer-orders'>Customer Orders</NavLink></li>
+                                    : <li><NavLink to='/customer-orders'>My Orders</NavLink></li>
                             }
                             {
                                 path === '/profile'
@@ -115,9 +115,14 @@ class Navigation extends React.Component {
                                     : <li><NavLink to='/products'>Products</NavLink></li>
                             }
                             {
-                                path === '/orders'
-                                    ? <li className="active"><NavLink to='/orders'>Orders</NavLink></li>
-                                    : <li><NavLink to='/orders'>Orders</NavLink></li>
+                                path === '/customer-orders'
+                                    ? <li className="active"><NavLink to='/customer-orders'>Customer Orders</NavLink></li>
+                                    : <li><NavLink to='/customer-orders'>My Orders</NavLink></li>
+                            }
+                            {
+                                path === '/merchant-orders'
+                                    ? <li className="active"><NavLink to='/merchant-orders'>Merchant Orders</NavLink></li>
+                                    : <li><NavLink to='/merchant-orders'>Merchant Orders</NavLink></li>
                             }
                             {
                                 path === '/menu'

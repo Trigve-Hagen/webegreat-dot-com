@@ -28,7 +28,7 @@ class SearchBar extends React.Component {
                             }
                             <form name="search" onSubmit={this.props.setSearchParam}>
                                 <div className="input-group">
-                                    <input type="text" value={this.state.searchString} onChange={this.onChange} className="form-element" placeholder="Search for..." />
+                                    <input value={this.state.searchString} onChange={this.onChange} type="text" name="searchString" className="form-element" placeholder="Search for..." />
                                     <span className="input-group-btn">
                                         <button className="btn btn-army" type="button">Go!</button>
                                     </span>

@@ -55,8 +55,7 @@ class Login extends React.Component {
     }
 
     render() {
-        const { loginError, loginEmail, loginPassword, loginRedirect } = this.state;
-        if(loginRedirect) return <Redirect to='/profile' />;
+        if(this.state.loginRedirect) return <Redirect to='/profile' />;
         return (
             <div>
                 <Navigation path="/login" authenticated={this.props.authentication[0].authenticated}/>
@@ -70,15 +69,15 @@ class Login extends React.Component {
                                 <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
                                     <form name="login" onSubmit={this.onSubmit}>
                                         {
-                                            (loginError) ? (
-                                                <label>{loginError}</label>
+                                            (this.state.loginError) ? (
+                                                <label>{this.state.loginError}</label>
                                             ) : (null)
                                         }
                                         <fieldset className="form-group">
-                                            <input type="text" value={loginEmail} onChange={this.onChange} name="loginEmail" className="form-element" id="loginEmail" placeholder="Email"/>
+                                            <input type="text" value={this.state.loginEmail} onChange={this.onChange} name="loginEmail" className="form-element" id="loginEmail" placeholder="Email"/>
                                         </fieldset>
                                         <fieldset className="form-group">
-                                            <input type="password" value={loginPassword} onChange={this.onChange} name="loginPassword" className="form-element" id="loginPassword" placeholder="Password"/>
+                                            <input type="password" value={this.state.loginPassword} onChange={this.onChange} name="loginPassword" className="form-element" id="loginPassword" placeholder="Password"/>
                                         </fieldset>
                                         <button type="submit" className="btn btn-army" >Login</button>
                                     </form>

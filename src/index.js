@@ -27,7 +27,8 @@ import Register from './components/register';
 import Login from './components/login';
 import Cart from './components/cart';
 
-import Orders from './components/authenticated/orders';
+import CustomerOrders from './components/authenticated/customer-orders';
+import MerchantOrders from './components/authenticated/merchant-orders';
 import Logout from './components/authenticated/logout';
 import Profile from './components/authenticated/profile';
 import Products from './components/authenticated/products';
@@ -52,7 +53,8 @@ import( /* webpackChunkName: 'application' */ './App')
                             <Route exact path="/cart" component={Cart}/>
                             <Route exact path="/logout" component={Logout}/>
                             <Route exact path="/profile" component={Profile}/>
-                            <Route exact path="/orders" component={Orders}/>
+                            <Route exact path="/customer-orders" component={CustomerOrders}/>
+                            <Route exact path="/merchant-orders" component={MerchantOrders}/>
                             <Route exact path="/products" component={Products}/>
                             <Route exact path="/success" component={Success}/>
                             <Route exact path="/cancel" component={Cancel}/>
