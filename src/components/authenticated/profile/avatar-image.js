@@ -2,15 +2,44 @@ import React from 'react';
 import { connect } from 'react-redux';
 import config from '../../../config/config';
 
+function uniqueId(id) {
+    return parseInt(id) - 50 * 2;
+}
+
 class AvatarImage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             avatarError: '',
+            avatarId: '',
             avatarUploadInput: '',
             avatarFileName: ''
         }
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentDidMount() {
+		fetch(config.site_url + '/api/avatar/get-avatar', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+					this.setState({
+                        avatarError: json.message,
+                        avatarId: json.folderid
+                    });
+				} else {
+                    this.setState({
+						avatarError: json.message
+					});
+                }
+			});
     }
 
 	onSubmit(e) {
@@ -32,6 +61,7 @@ class AvatarImage extends React.Component {
                     this.props.updateAvatar({ avatar: json.avatar });
 					this.setState({
                         avatarError: json.message,
+                        avatarId: jason.folderid,
                         avatar: json.avatar,
                         avatarUploadInput: '',
                         avatarFileName: ''
@@ -46,11 +76,12 @@ class AvatarImage extends React.Component {
 
     render() {
         //this.props.resetAvatar();
+        let avatarUrl = uniqueId(this.state.avatarId);
         return (
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <img src={ `/img/avatar/${ this.props.avatar[0].avatar }` } alt="Army Strong" className="img-responsive"/>
+                        <img src={ `/img/avatar/${avatarUrl}/${this.props.avatar[0].avatar}` } alt="Army Strong" className="img-responsive"/>
                     </div>
                 </div>
                 <div className="row">

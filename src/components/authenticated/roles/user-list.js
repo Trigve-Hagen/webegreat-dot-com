@@ -38,10 +38,11 @@ class UserList extends React.Component {
                             role: value['role'],
                             name: value['name'],
                             email: value['email'],
-                            address: value['address'],
-                            city: value['city'],
-                            state: value['state'],
-                            zip: value['zip']
+                            address: value['shipping_address'],
+                            city: value['shipping_city'],
+                            state: value['shipping_state'],
+                            zip: value['shipping_zip'],
+                            ifactive: value['store_visible']
                         });
                     }
                     //console.log(arrayArgs);
@@ -70,6 +71,7 @@ class UserList extends React.Component {
                 obj.city = user.city;
                 obj.state = user.state;
                 obj.zip = user.zip;
+                obj.ifactive = user.ifactive;
             }
         });
         return obj;
@@ -107,7 +109,8 @@ class UserList extends React.Component {
                                 address: user.address,
                                 city: user.city,
                                 state: user.state,
-                                zip: user.zip
+                                zip: user.zip,
+                                ifactive: user.ifactive
                             });
                         }
                     });
@@ -124,7 +127,8 @@ class UserList extends React.Component {
                         adderss: arrayArgs[0].adderss,
                         city: arrayArgs[0].city,
                         state: arrayArgs[0].state,
-                        zip: arrayArgs[0].zip
+                        zip: arrayArgs[0].zip,
+                        ifactive: arrayArgs[0].ifactive
                     });
                     //location.reload();
 				} else {

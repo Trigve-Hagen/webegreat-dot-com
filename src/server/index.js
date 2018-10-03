@@ -44,7 +44,7 @@ const connection = mysql.createConnection({
 connection.connect(err => { if(err) console.log(err); });
 
 const mysqlBuildTables = require('./config/mysqldbhelpers')(
-    config.connection.name, config, connection, moment
+    config.connection.name, config, connection, moment, fs, reqPath
 );
 mysqlBuildTables.buildTables();
 
@@ -66,6 +66,10 @@ function validatePassword(password, dbPassword) {
     return bcrypt.compareSync(password, dbPassword);
 };
 
+function uniqueId(id) {
+    return parseInt(id) - 50 * 2;
+}
+
 function testErrorsOnServer(content) {
     fs.writeFile("/tmp/webegreat", content, function(err) {
         if(err) console.log(err);
@@ -86,22 +90,22 @@ app.post('/api/account/signup', (req, res, next) => {
     } = body;
     let { email } = body;
 
-    if(!name) {
+    if(!name || !config.patterns.names.test(name)) {
         return res.send({
         success: false,
-        message: 'Error: Name cannot be blank'
+        message: 'Error: Name cannot be blank or invalid'
         });
     }
-    if(!email) {
+    if(!email || !config.patterns.emails.test(email)) {
         return res.send({
         success: false,
-        message: 'Error: Email name cannot be blank'
+        message: 'Error: Email name cannot be blank or invalid'
         });
     }
-    if(!password) {
+    if(!password || !config.patterns.passwords.test(password)) {
         return res.send({
         success: false,
-        message: 'Error: Password name cannot be blank'
+        message: 'Error: Password name cannot be blank or invalid'
         });
     }
 
@@ -116,7 +120,7 @@ app.post('/api/account/signup', (req, res, next) => {
             testErrorsOnServer(testForExistingUser + ", " + error);
             return res.send({
                 success: false,
-                message: 'Server Error in check user exsists signup.',
+                message: 'Server Error in check user exsists signup',
                 token: null,
                 id: null
             });
@@ -147,47 +151,71 @@ app.post('/api/account/signup', (req, res, next) => {
                             id: null
                         });
                     } else {
-                        let insertPaypal = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, '', '', '')";
-                        let inserts = [
-                            config.tables[4].table_name,
-                            result.insertId, myDate, myDate,
-                        ];
-                        insertPaypal = mysql.format(insertPaypal, inserts);
-                        //console.log(insertUserIfNonExists);
-                        connection.query(insertPaypal, function (error, results, fields) {
-                            if(error) {
-                                //console.log("Error: in Register Session: " + error);
-                                return res.send({
-                                    success: false,
-                                    message: 'Server error in register paypal insert',
-                                    token: null,
-                                    id: null
-                                });
-                            } else {
-                                //console.log(result.insertId);
-                                var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                                var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
-                                insertUserSession = mysql.format(insertUserSession, inserts);
-                                connection.query(insertUserSession, function (error, results, fields) {
-                                    if(error) {
-                                        //console.log("Error: in Register Session: " + error);
-                                        return res.send({
-                                            success: false,
-                                            message: 'Server error in register session insert',
-                                            token: null,
-                                            id: null
-                                        });
-                                    } else {
-                                        //console.log("Results: in SignIn: " + results);
-                                        return res.send({
-                                            success: true,
-                                            message: 'Successfull registration',
-                                            token: results.insertId
-                                        });
-                                    }
-                                });
-                            }
-                        });
+                        signUpDir = reqPath + '/assets/img/avatar/' + uniqueId(result.insertId);
+                        if (fs.existsSync(signUpDir)) {
+                            return res.send({
+                                success: false,
+                                message: 'User avatar folder exist on server.',
+                                token: null,
+                                id: null
+                            });
+                        } else {
+                            fs.mkdir(signUpDir, function(err, data) {
+                                if(err) {
+                                    return res.send({
+                                        success: false,
+                                        message: 'Could not make folder.',
+                                        token: null,
+                                        id: null
+                                    });
+                                } else {
+                                    fs.readFile(reqPath + '/assets/img/user-avatar.jpg', function (err, imageData) {
+                                        if (err) {
+                                            return res.send({
+                                                success: false,
+                                                message: 'Could not read image.',
+                                                token: null,
+                                                id: null
+                                            });
+                                        } else {
+                                            fs.writeFile(reqPath + '/assets/img/avatar/' + uniqueId(result.insertId) + '/user-avatar.jpg', imageData, function (err) {
+                                                if (err) {
+                                                    return res.send({
+                                                        success: false,
+                                                        message: 'Could not write image.',
+                                                        token: null,
+                                                        id: null
+                                                    });
+                                                } else {
+                                                    //console.log(result.insertId);
+                                                    var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                                                    var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
+                                                    insertUserSession = mysql.format(insertUserSession, inserts);
+                                                    connection.query(insertUserSession, function (error, results, fields) {
+                                                        if(error) {
+                                                            //console.log("Error: in Register Session: " + error);
+                                                            return res.send({
+                                                                success: false,
+                                                                message: 'Server error in register session insert',
+                                                                token: null,
+                                                                id: null
+                                                            });
+                                                        } else {
+                                                            //console.log("Results: in SignIn: " + results);
+                                                            return res.send({
+                                                                success: true,
+                                                                message: 'Successfull registration',
+                                                                token: results.insertId
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             }
@@ -200,17 +228,17 @@ app.post('/api/account/signin', (req, res, next) => {
     const { password } = body;
     let { email } = body;
 
-    if(!email) {
-      return res.send({
+    if(!email || !config.patterns.emails.test(email)) {
+        return res.send({
         success: false,
-        message: 'Error: Email name cannot be blank'
-      });
+        message: 'Error: Email name cannot be blank or invalid'
+        });
     }
-    if(!password) {
-      return res.send({
+    if(!password || !config.patterns.passwords.test(password)) {
+        return res.send({
         success: false,
-        message: 'Error: Password name cannot be blank'
-      });
+        message: 'Error: Password name cannot be blank or invalid'
+        });
     }
 
     email = email.toLowerCase();
@@ -224,7 +252,7 @@ app.post('/api/account/signin', (req, res, next) => {
             testErrorsOnServer(testForExistingUser + ", "  + error);
             return res.send({
                 success: false,
-                message: 'Server Error in check user exsists signin.',
+                message: 'Server Error in check user exsists signin',
                 token: null,
                 id: null
             });
@@ -1167,6 +1195,44 @@ app.post('/api/product/update', function(req, res) {
  ***********************************************************************
  */
 
+app.post('/api/avatar/get-avatar', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Invalid token.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid update avatar.'
+            });
+        } else {
+            return res.send({
+                success: true,
+                message: 'Success',
+                folderid: results[0]['user_id']
+            });
+        }
+    });
+});
+
 app.post('/api/avatar/update-avatar', function(req, res) {
     const { body } = req;
     const {
@@ -1269,7 +1335,8 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                                             return res.send({
                                                 success: true,
                                                 message: 'Your Avatar has been successfully updated.',
-                                                avatar: image
+                                                avatar: image,
+                                                userid: results[0]['user_id']
                                             });
                                         }
                                     });    
@@ -2281,6 +2348,485 @@ app.post('/api/roles/users', function(req, res) {
             });
         }
     });
+});
+
+app.post('/api/roles/upload-users', (req, res, next) => {
+    const { body } = req;
+    const {
+        role,
+        name,
+        password,
+        address,
+        city,
+        state,
+        zip,
+        ifactive
+    } = body;
+    let { email } = body;
+
+    if(!role || !config.patterns.numbers.test(role)) {
+        return res.send({
+        success: false,
+        message: 'Error: Role cannot be blank'
+        });
+    }
+    if(!ifactive || !config.patterns.numbers.test(ifactive)) {
+        return res.send({
+        success: false,
+        message: 'Error: Ifactive cannot be blank'
+        });
+    }
+    if(!name || !config.patterns.names.test(name)) {
+        return res.send({
+        success: false,
+        message: 'Error: Name cannot be blank'
+        });
+    }
+    if(!email || !config.patterns.emails.test(email)) {
+        return res.send({
+        success: false,
+        message: 'Error: Email name cannot be blank'
+        });
+    }
+    if(!password || !config.patterns.passwords.test(password)) {
+        return res.send({
+        success: false,
+        message: 'Error: Password name cannot be blank'
+        });
+    }
+    if(!address || !config.patterns.names.test(address)) {
+        return res.send({
+        success: false,
+        message: 'Error: Address name cannot be blank'
+        });
+    }
+    if(!city || !config.patterns.nammes.test(city)) {
+        return res.send({
+        success: false,
+        message: 'Error: City name cannot be blank'
+        });
+    }
+    if(!state || !config.patterns.names.test(state)) {
+        return res.send({
+        success: false,
+        message: 'Error: State name cannot be blank'
+        });
+    }
+    if(!zip || !config.patterns.numbers.test(zip)) {
+        return res.send({
+        success: false,
+        message: 'Error: State name cannot be blank'
+        });
+    }
+
+    email = email.toLowerCase();
+
+    let testForExistingUser = "SELECT * FROM ?? WHERE ?? = ?";
+    let inserts = [config.tables[2].table_name, config.tables[2].table_fields[4].Field, email];
+    testForExistingUser = mysql.format(testForExistingUser, inserts);
+    //console.log(testForExistingUser);
+    connection.query(testForExistingUser, function (error, results, fields) {
+        if(error) {
+            testErrorsOnServer(testForExistingUser + ", " + error);
+            return res.send({
+                success: false,
+                message: 'Server Error in check user exsists signup.',
+                token: null,
+                id: null
+            });
+        } else {
+            if(results.length > 0) {
+                //console.log("Results: in SignIn: User Exists");
+                return res.send({
+                    success: false,
+                    message: 'User Exists',
+                    token: null,
+                    id: null
+                });
+            } else {
+                var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                var inserts = [
+                    config.tables[2].table_name,
+                    myDate, myDate, name, email, generateHash(password),
+                    role, 'user-avatar.jpg', ifactive, address, city,
+                    state, zip 
+                ];
+                insertUserIfNonExists = mysql.format(insertUserIfNonExists, inserts);
+                //console.log(insertUserIfNonExists);
+                connection.query(insertUserIfNonExists, function (err, result, fields) {
+                    if(err) {
+                        //console.log("Error: in Register New User: " + err);
+                        return res.send({
+                            success: false,
+                            message: 'Server error in register users insert',
+                            token: null,
+                            id: null
+                        });
+                    } else {
+                        //console.log(result.insertId);
+                        var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
+                        var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
+                        insertUserSession = mysql.format(insertUserSession, inserts);
+                        connection.query(insertUserSession, function (error, results, fields) {
+                            if(error) {
+                                //console.log("Error: in Register Session: " + error);
+                                return res.send({
+                                    success: false,
+                                    message: 'Server error in register session insert',
+                                    token: null,
+                                    id: null
+                                });
+                            } else {
+                                //console.log("Results: in SignIn: " + results);
+                                return res.send({
+                                    success: true,
+                                    message: 'Successfull registration',
+                                    token: results.insertId
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
+app.post('/api/roles/update-users', function(req, res) {
+    const { body } = req;
+    const {
+        userid,
+        filename,
+        role,
+        name,
+        password,
+        address,
+        city,
+        state,
+        zip,
+        ifactive,
+        token
+    } = body;
+    let { email } = body;
+    let updateObj = [];
+
+    if(!userid || !config.patterns.numbers.test(userid)) {
+        return res.send({
+            success: false,
+            message: 'User id invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    //console.log(token + ", " + proid);
+    if(config.patterns.names.test(name)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[3].Field,
+            content: name
+        });
+    } else {
+        if(name != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.emails.test(email)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[4].Field,
+            content: email
+        });
+    } else {
+        if(email != '') {
+            return res.send({
+                success: false,
+                message: 'Invalid Email.'
+            });
+        }
+    }
+
+    if(config.patterns.passwords.test(password)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[5].Field,
+            content: password
+        });
+    } else {
+        if(password != '') {
+            return res.send({
+                success: false,
+                message: 'Invalid password.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(role)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[6].Field,
+            content: role
+        });
+    } else {
+        if(role != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(ifactive)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[8].Field,
+            content: ifactive
+        });
+    } else {
+        if(ifactive != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(address)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[9].Field,
+            content: address
+        });
+    } else {
+        if(address != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(city)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[10].Field,
+            content: city
+        });
+    } else {
+        if(city != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(state)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[11].Field,
+            content: state
+        });
+    } else {
+        if(state != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(zip)) {
+        updateObj.push({
+            name: config.tables[2].table_fields[12].Field,
+            content: zip
+        });
+    } else {
+        if(zip != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+    
+    if (req.files) {
+        if(!filename || !config.patterns.names.test(filename)) {
+            return res.send({
+                success: false,
+                message: 'Filename empty or Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+
+        let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+        let userIdInserts = [
+            config.tables[3].table_fields[1].Field,
+            config.tables[3].table_name,
+            config.tables[3].table_fields[0].Field,
+            token
+        ];
+        getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+        //console.log(getUserIdSession);
+        connection.query(getUserIdSession, function (error, results, fields) {
+            if(error) {
+                return res.send({
+                    success: false,
+                    message: 'Server Error in get userid.'
+                });
+            } else {
+                if(config.patterns.names.test(imagename)) {
+                    if(urlExists(imagePath + `/img/products/${imagename}`)) {
+                        fs.unlink(imagePath + `/img/products/${imagename}`, (err) => {
+                            if (err) {
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in delete product image update product.'
+                                });
+                            } else {
+                                let ext = '';
+                                var splitRes = req.files.file.mimetype.split("/");
+                                switch(splitRes[1]) {
+                                    case 'jpeg': ext = '.jpg'; break;
+                                    case 'jpg': ext = '.jpg'; break;
+                                    case 'png': ext = '.png'; break;
+                                    case 'gif': ext = '.gif'; break;
+                                }
+                                
+                                let image = req.body.filename + ext;
+                                if(config.patterns.names.test(image)) updateObj.push({
+                                    name: config.tables[0].table_fields[6].Field,
+                                    content: image
+                                });
+
+                                let imageFile = req.files['file'];
+                                imageFile.mv(imagePath + `/img/products/${req.body.filename}${ext}`,
+                                    function(err) {
+                                        if (err) {
+                                            return res.send({
+                                                success: false,
+                                                message: 'Server error uploading image.'
+                                            });
+                                        } else {
+                                            var updateProduct = "UPDATE ?? SET ";
+                                            var updateProductInserts = [
+                                                config.tables[0].table_name
+                                            ];
+                                            let objCount=0;
+                                            updateObj.forEach(element => {
+                                                if(updateObj.length - 1 == objCount) updateProduct += "?? = ? ";
+                                                else updateProduct += "?? = ?, ";
+                                                updateProductInserts.push(element.name);
+                                                updateProductInserts.push(element.content);
+                                                objCount++;
+                                            });
+                                            updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
+                                            updateProductInserts.push(config.tables[0].table_fields[0].Field);
+                                            updateProductInserts.push(config.tables[0].table_fields[3].Field);
+                                            
+                                            updateProduct = mysql.format(updateProduct, updateProductInserts);
+                                            //console.log(updateProduct);
+                                            connection.query(updateProduct, function (error, result, fields) {
+                                                if(error) {
+                                                    //console.log("Error: in Register New User: " + err);
+                                                    return res.send({
+                                                        success: false,
+                                                        message: 'Server Error in product update'
+                                                    });
+                                                } else {
+                                                    // do results here
+                                                    return res.send({
+                                                        success: true,
+                                                        message: 'Your Product has been successfully updated.',
+                                                        id: result.insertId,
+                                                        menu: menu,
+                                                        name: name,
+                                                        description: description,
+                                                        price: price,
+                                                        stock: stock,
+                                                        ifmanaged: ifmanaged,
+                                                        sku: sku,
+                                                        image: image
+                                                    });
+                                                }
+                                            });    
+                                        }
+                                });
+                            }
+                        });
+                    } else {
+                        return res.send({
+                            success: false,
+                            message: 'The Image does not exsist. Please delete the product and try again.'
+                        });
+                    }
+                }
+            }
+        });
+    } else {
+        let image = '';
+        let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+        let userIdInserts = [
+            config.tables[3].table_fields[1].Field,
+            config.tables[3].table_name,
+            config.tables[3].table_fields[0].Field,
+            token
+        ];
+        getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+        //console.log(getUserIdSession);
+        connection.query(getUserIdSession, function (error, results, fields) {
+            if(error) {
+                return res.send({
+                    success: false,
+                    message: 'Server Error in get userid no image.'
+                });
+            } else {
+                var updateProduct = "UPDATE ?? SET ";
+                var updateProductInserts = [
+                    config.tables[0].table_name
+                ];
+                let objCount=0;
+                updateObj.forEach(element => {
+                    if(updateObj.length - 1 == objCount) updateProduct += "?? = ? ";
+                    else updateProduct += "?? = ?, ";
+                    updateProductInserts.push(element.name);
+                    updateProductInserts.push(element.content);
+                    objCount++;
+                });
+                updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
+                updateProductInserts.push(config.tables[0].table_fields[0].Field);
+                updateProductInserts.push(config.tables[0].table_fields[3].Field);
+                
+                updateProduct = mysql.format(updateProduct, updateProductInserts);
+                //console.log(updateProduct);
+                connection.query(updateProduct, function (error, result, fields) {
+                    if(error) {
+                        //console.log("Error: in Register New User: " + err);
+                        return res.send({
+                            success: false,
+                            message: 'Server Error in product update no image'
+                        });
+                    } else {
+                        //console.log(util.inspect(result, {showHidden: false, depth: null}));
+                        //console.log("Here Result: " + result);
+                        return res.send({
+                            success: true,
+                            message: 'Your Product has been successfully updated.',
+                            id: proid,
+                            menu: menu,
+                            name: name,
+                            description: description,
+                            price: price,
+                            stock: stock,
+                            ifmanaged: ifmanaged,
+                            sku: sku,
+                            image: image
+                        });
+                    }
+                });
+            }
+        });
+    }
 });
 
 app.listen(4000, () => {

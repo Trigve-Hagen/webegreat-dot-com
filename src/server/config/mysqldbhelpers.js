@@ -1,4 +1,4 @@
-module.exports = function(database, config, connection, moment) {
+module.exports = function(database, config, connection, moment, fs, reqPath) {
     var module = {};
     let tablesAndRowsDb = [];
     let tablesAndRowsConfig = config.tables;
@@ -113,6 +113,32 @@ module.exports = function(database, config, connection, moment) {
         });
     }
 
+    function createUserAvatar() {
+        let unique = 321 - 50 * 2;
+        signUpDir = reqPath + '/assets/img/avatar/' + unique;
+        if (fs.existsSync(signUpDir)) {
+            console.log('User avatar folder exist on server.');
+        } else {
+            fs.mkdir(signUpDir, function(err, data) {
+                if(err) {
+                    console.log('Could not make folder.');
+                } else {
+                    fs.readFile(reqPath + '/assets/img/user-avatar.jpg', function (err, imageData) {
+                        if (err) {
+                            console.log('Could not read image.');
+                        } else {
+                            fs.writeFile(reqPath + '/assets/img/avatar/' + unique + '/user-avatar.jpg', imageData, function (err) {
+                                if (err) {
+                                    console.log('Could not write image.');
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
+
     // what if they want to update the names for tighter security
     function addInitialRows(configObject) {
         let currentTimestamp = moment().unix();
@@ -186,6 +212,7 @@ module.exports = function(database, config, connection, moment) {
                 if(results[0] == undefined) {
                     addAndRemoveTables(tablesAndRowsDb, tablesAndRowsConfig.sort(compare));
                     addInitialRows(tablesAndRowsConfig.sort(compare));
+                    createUserAvatar();
                 } else {
                     results.forEach(element => {
                         const GET_COLUMN_NAMES = `DESCRIBE ${element.table_name};`;

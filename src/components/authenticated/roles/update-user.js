@@ -14,6 +14,7 @@ class UpdateUser extends React.Component {
             userUpdateCity: '',
             userUpdateState: '',
             userUpdateZip: '',
+            userUpdateIfActive: '',
             userUpdatePassword: '',
             uploadInput: '',
             fileName: ''
@@ -35,6 +36,7 @@ class UpdateUser extends React.Component {
 			data.append('city', this.state.userUpdateCity.value);
             data.append('state', this.state.userUpdateState.value);
             data.append('zip', this.state.userUpdateZip.value);
+            data.append('ifactive', this.state.userUpdateIfActive.value);
             data.append('password', this.state.userUpdatePassword.value);
             data.append('token', this.props.authentication[0].token);
 
@@ -54,6 +56,7 @@ class UpdateUser extends React.Component {
                         city: json.stock,
                         state: json.ifmanaged,
                         zip: json.description,
+                        ifactive: json.ifactive,
                         image: json.image,
                         password: json.password
                     });
@@ -66,6 +69,7 @@ class UpdateUser extends React.Component {
                         userUpdateCity: '',
                         userUpdateState: '',
                         userUpdateZip: '',
+                        userUpdateIfActive: '',
                         userUpdatePassword: '',
                         uploadInput: '',
                         fileName: ''
@@ -97,9 +101,19 @@ class UpdateUser extends React.Component {
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>
-                                <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdateRole = ref; }} type="text" className="form-element" placeholder="User Role"/>
-                                </fieldset>
+                                <div className="form-group">
+                                    <select ref={ (ref) => { this.state.userUpdateRole = ref; }} name="userUpdateRole" className="form-element custom">
+                                        <option value="1">Customer</option>
+                                        <option value="2">Employee</option>
+                                        <option value="3">Administator</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <select ref={ (ref) => { this.state.userUpdateIfActive = ref; }} name="userUpdateIfActive" className="form-element custom">
+                                        <option value="0">Account Inactive</option>
+                                        <option value="1">Account Active</option>
+                                    </select>
+                                </div>
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.userUpdateName = ref; }} type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
@@ -107,19 +121,25 @@ class UpdateUser extends React.Component {
                                     <input ref={(ref) => { this.state.userUpdateemail = ref; }} type="email" className="form-element" placeholder="Email"/>
                                 </fieldset>
                                 <fieldset className="form-group">
+                                    <input ref={(ref) => { this.state.userUpdatePassword = ref; }} type="password" className="form-element" placeholder="Password"/>
+                                </fieldset>
+                                <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.userUpdateAddress = ref; }} type="text" className="form-element" placeholder="Address"/>
                                 </fieldset>
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.userUpdateCity = ref; }} type="text" className="form-element" placeholder="City"/>
                                 </fieldset>
-                                <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdateState = ref; }} type="text" className="form-element" placeholder="State"/>
-                                </fieldset>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                                <div className="form-group">
+                                    <select ref={ (ref) => { this.state.userUpdateState = ref; }} className="form-element custom">
+                                        {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.userUpdateZip = ref; }} type="text" className="form-element" placeholder="Zip"/>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdatePassword = ref; }} type="password" className="form-element" placeholder="Password"/>
                                 </fieldset>
                             </div>
                             <button type="submit" className="btn btn-army">User Update</button>

@@ -124,9 +124,12 @@ class UpdateProducts extends React.Component {
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.proUpdateStock = ref; }} type="text" className="form-element" placeholder="Number in Stock"/>
                                 </fieldset>
-                                <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUpdateIfManaged = ref; }} type="text" className="form-element" placeholder="If Managed Stock"/>
-                                </fieldset>
+                                <div className="form-group">
+                                    <select ref={ (ref) => { this.state.proUpdateIfManaged = ref; }} value={this.state.proUpdateIfManaged} className="form-element custom">
+                                        <option value="0">Always In Stock</option>
+                                        <option value="1">Managed Stock</option>
+                                    </select>
+                                </div>
                                 <fieldset className="form-group">
                                     <textarea ref={(ref) => { this.state.proUpdateDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
                                 </fieldset>

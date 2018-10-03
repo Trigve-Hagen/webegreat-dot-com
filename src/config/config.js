@@ -1,8 +1,12 @@
-// Copy this file as config.js in the same folder, with the proper database connection URI.
-
 module.exports = {
   //site_url: 'https://webegreat.com',
   site_url: 'http://localhost:4000',
+
+  // All custom work will happen in this folder.
+  // Put the same folder structure here as in src and
+  // the program will check for these folders and files
+  // first before using the ones in src.
+  fallback_folder_name: '',
 
   facebook_app_id: '',
   facebook_version: '',
