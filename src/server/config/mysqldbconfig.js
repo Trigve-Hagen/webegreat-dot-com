@@ -1,7 +1,17 @@
 module.exports = {
-    base: {
+    paypal_urls: {
         success: '/success',
         cancel: '/cancel',
+    },
+    emailer_urls: {
+        signup_complete: '/signup',
+        order_complete: '/orders',
+        order_shipped: '/shipped',
+        thank_you: '/thanks'
+    },
+    emailer: {
+        email: 'trigve.hagen@gmail.com',
+        password: 'password'
     },
     patterns: {
         names: /^[\w\s.&$_-]+$/i,

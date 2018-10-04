@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
+const nodemailer = require('nodemailer');
 const urlConfig = require('../config/config');
 const app = express();
 /*app.use(function(req, res, next) {
@@ -16,7 +17,7 @@ const app = express();
     next();
 });*/
 let reqPath = path.join(__dirname, '../'); let imagePath = '';
-console.log(reqPath.split(path.sep).indexOf("html"));
+//console.log(reqPath.split(path.sep).indexOf("html"));
 if(reqPath.split(path.sep).indexOf("html") == -1) {
     imagePath = reqPath + 'assets';
 } else {
@@ -26,7 +27,7 @@ if(reqPath.split(path.sep).indexOf("html") == -1) {
         res.sendFile(path.join(reqPath, 'dist', 'index.html'));
     });
 }
-console.log(imagePath);
+//console.log(imagePath);
 const config = require('./config/mysqldbconfig');
 
 let currentTimestamp = moment().unix();
@@ -77,6 +78,30 @@ function testErrorsOnServer(content) {
         else console.log("The file was saved!");
     });
 };
+
+function sendMail(mailOptions) {
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: config.emailer.email,
+          pass: config.emailer.password
+        }
+    });
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            return res.send({
+                success: false,
+                message: 'Error sending message. Please try again later.'
+            });
+        } else {
+            return res.send({
+                success: false,
+                message: 'Message sent. We will get back to you shortly.'
+            });
+        }
+    });
+}
 
 /*
  ************************ Registration && Signup ***********************
@@ -202,7 +227,13 @@ app.post('/api/account/signup', (req, res, next) => {
                                                                 id: null
                                                             });
                                                         } else {
-                                                            //console.log("Results: in SignIn: " + results);
+                                                            var mailOptions = {
+                                                                from: config.emailer.email,
+                                                                to: config.emailer.email,
+                                                                subject: 'Click the link below to complete signup',
+                                                                html: '<p>Thank you for signing up ' + name + '. Please click this link to confirm your email.</p><br /><a href="' + urlConfig.site_url + urlConfig.emailer.signup_complete + '?email=' + email + '" target="_blank">Click here to confirm email</a>'
+                                                            };
+                                                            sendMail(mailOptions);
                                                             return res.send({
                                                                 success: true,
                                                                 message: 'Successfull registration',
@@ -220,6 +251,41 @@ app.post('/api/account/signup', (req, res, next) => {
                     }
                 });
             }
+        }
+    });
+});
+
+app.post('/api/account/signup-complete', (req, res, next) => {
+    const { body } = req;
+    const { password } = body;
+    let { email } = body;
+
+    if(!email || !config.patterns.emails.test(email)) {
+        return res.send({
+        success: false,
+        message: 'Error: Email name cannot be blank or invalid'
+        });
+    }
+
+    email = email.toLowerCase();
+
+    let updateIfActiveUser = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
+    let inserts = [config.tables[2].table_name, config.tables[2].table_fields[8].Field, config.tables[2].table_fields[4].Field, email];
+    updateIfActiveUser = mysql.format(updateIfActiveUser, inserts);
+    //console.log(updateIfActiveUser);
+    connection.query(updateIfActiveUser, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in check user exsists signin',
+                token: null,
+                id: null
+            });
+        } else {
+            return res.send({
+                success: true,
+                message: 'Success'
+            });
         }
     });
 });
@@ -1972,8 +2038,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
                         });
                     });
                     //console.log(util.inspect(items, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
-                    let cancelUrl = urlConfig.site_url + config.base.cancel;
-                    let successUrl = urlConfig.site_url + config.base.success;
+                    let cancelUrl = urlConfig.site_url + urlConfig.paypal.cancel;
+                    let successUrl = urlConfig.site_url + urlConfig.paypal.success;
                     let create_payment_json = {
                         "intent": "sale",
                         "payer": {
@@ -2159,6 +2225,46 @@ app.get('/api/paypal/cancel', function(req, res) {
             });
         }
     });
+});
+
+/*
+ ***************************** Emailing ********************************
+ ***********************************************************************
+ */
+
+app.post('/api/contact/request', function(req, res) {
+    const { body } = req;
+    const {
+        name,
+        message
+    } = body;
+    let { email } = body;
+
+    if(!name || !config.patterns.names.test(name)) {
+        return res.send({
+        success: false,
+        message: 'Error: Name cannot be blank'
+        });
+    }
+    if(!email || !config.patterns.emails.test(email)) {
+        return res.send({
+        success: false,
+        message: 'Error: Email name cannot be blank'
+        });
+    }
+    if(!message || !config.patterns.names.test(message)) {
+        return res.send({
+        success: false,
+        message: 'Error: Message name cannot be blank'
+        });
+    }
+    var mailOptions = {
+        from: config.emailer.email,
+        to: config.emailer.email,
+        subject: 'Contact Request from ' + name + ' @ ' + email,
+        text: message
+    };
+    sendMail(mailOptions);
 });
 
 /*
@@ -2600,7 +2706,7 @@ app.post('/api/roles/update-users', function(req, res) {
     if(config.patterns.passwords.test(password)) {
         updateObj.push({
             name: config.tables[2].table_fields[5].Field,
-            content: password
+            content: generateHash(password)
         });
     } else {
         if(password != '') {
@@ -2739,7 +2845,7 @@ app.post('/api/roles/update-users', function(req, res) {
                                 
                                 let image = req.body.filename + ext;
                                 if(config.patterns.names.test(image)) updateObj.push({
-                                    name: config.tables[0].table_fields[6].Field,
+                                    name: config.tables[2].table_fields[7].Field,
                                     content: image
                                 });
 
@@ -2752,45 +2858,35 @@ app.post('/api/roles/update-users', function(req, res) {
                                                 message: 'Server error uploading image.'
                                             });
                                         } else {
-                                            var updateProduct = "UPDATE ?? SET ";
-                                            var updateProductInserts = [
-                                                config.tables[0].table_name
+                                            let updateUser = "UPDATE ?? SET ";
+                                            let updateUserInserts = [
+                                                config.tables[2].table_name
                                             ];
                                             let objCount=0;
                                             updateObj.forEach(element => {
-                                                if(updateObj.length - 1 == objCount) updateProduct += "?? = ? ";
-                                                else updateProduct += "?? = ?, ";
-                                                updateProductInserts.push(element.name);
-                                                updateProductInserts.push(element.content);
+                                                if(updateObj.length - 1 == objCount) updateUser += "?? = ? ";
+                                                else updateUser += "?? = ?, ";
+                                                updateUserInserts.push(element.name);
+                                                updateUserInserts.push(element.content);
                                                 objCount++;
                                             });
-                                            updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
-                                            updateProductInserts.push(config.tables[0].table_fields[0].Field);
-                                            updateProductInserts.push(config.tables[0].table_fields[3].Field);
+                                            updateUser += `WHERE ?? = ${results[0]['user_id']}`;
+                                            updateUserInserts.push(config.tables[0].table_fields[0].Field);
                                             
-                                            updateProduct = mysql.format(updateProduct, updateProductInserts);
-                                            //console.log(updateProduct);
-                                            connection.query(updateProduct, function (error, result, fields) {
+                                            updateUser = mysql.format(updateUser, updateUserInserts);
+                                            //console.log(updateUser);
+                                            connection.query(updateUser, function (error, result, fields) {
                                                 if(error) {
                                                     //console.log("Error: in Register New User: " + err);
                                                     return res.send({
                                                         success: false,
-                                                        message: 'Server Error in product update'
+                                                        message: 'Server Error in user update'
                                                     });
                                                 } else {
                                                     // do results here
                                                     return res.send({
                                                         success: true,
-                                                        message: 'Your Product has been successfully updated.',
-                                                        id: result.insertId,
-                                                        menu: menu,
-                                                        name: name,
-                                                        description: description,
-                                                        price: price,
-                                                        stock: stock,
-                                                        ifmanaged: ifmanaged,
-                                                        sku: sku,
-                                                        image: image
+                                                        message: 'User successfully updated.'
                                                     });
                                                 }
                                             });    
@@ -2825,46 +2921,35 @@ app.post('/api/roles/update-users', function(req, res) {
                     message: 'Server Error in get userid no image.'
                 });
             } else {
-                var updateProduct = "UPDATE ?? SET ";
-                var updateProductInserts = [
-                    config.tables[0].table_name
+                let updateUser = "UPDATE ?? SET ";
+                let updateUserInserts = [
+                    config.tables[2].table_name
                 ];
                 let objCount=0;
                 updateObj.forEach(element => {
-                    if(updateObj.length - 1 == objCount) updateProduct += "?? = ? ";
-                    else updateProduct += "?? = ?, ";
-                    updateProductInserts.push(element.name);
-                    updateProductInserts.push(element.content);
+                    if(updateObj.length - 1 == objCount) updateUser += "?? = ? ";
+                    else updateUser += "?? = ?, ";
+                    updateUserInserts.push(element.name);
+                    updateUserInserts.push(element.content);
                     objCount++;
                 });
-                updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
-                updateProductInserts.push(config.tables[0].table_fields[0].Field);
-                updateProductInserts.push(config.tables[0].table_fields[3].Field);
+                updateUser += `WHERE ?? = ${results[0]['user_id']}`;
+                updateUserInserts.push(config.tables[0].table_fields[0].Field);
                 
-                updateProduct = mysql.format(updateProduct, updateProductInserts);
-                //console.log(updateProduct);
-                connection.query(updateProduct, function (error, result, fields) {
+                updateUser = mysql.format(updateUser, updateUserInserts);
+                //console.log(updateUser);
+                connection.query(updateUser, function (error, result, fields) {
                     if(error) {
                         //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
-                            message: 'Server Error in product update no image'
+                            message: 'Server Error in user update'
                         });
                     } else {
-                        //console.log(util.inspect(result, {showHidden: false, depth: null}));
-                        //console.log("Here Result: " + result);
+                        // do results here
                         return res.send({
                             success: true,
-                            message: 'Your Product has been successfully updated.',
-                            id: proid,
-                            menu: menu,
-                            name: name,
-                            description: description,
-                            price: price,
-                            stock: stock,
-                            ifmanaged: ifmanaged,
-                            sku: sku,
-                            image: image
+                            message: 'User successfully updated.'
                         });
                     }
                 });

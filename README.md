@@ -10,6 +10,8 @@ Download the zip file and save it where ever you like. Once downloaded unzip and
 
 I've uploaded server configuration now but its in testing stage. Made a production set up in the server/index.js that redirects and uses the dist folder for static assets. Going to test at webegreat.com. Works great in development. Ment for nginx on ubuntu 16.04. After running npm install in production you will have to change the site_url in src/config/config.js to the domain of your website. Also you will need to update connection to your mysql database in src/server/config/mysqldbconfig.js. You need to proxy nginx to http://localhost:4000 and express will server both react and the server files together. Check out the Digital Ocean link for details.<br>
 
+For the fallback system. All custom work will happen in the fallback_folder_name folder that you can set in the src/config/config.js. Put the same folder structure there as in src and the program will check for these folders and files first before using the ones in src. The idea will be to have another folder stucture exactly the same as the core code like magento. Then a module checks for code in the fallback_folder_name first before falling back to the core in src. Simply copy the file into the fallback_folder_name but in the same folder structure as src and make changes to it there so those in src stay the same. Also for now everything server wise is one file server.js and everything routing wise is in index.js for ease of developing but when the work is done and I start on the fallback system I will be putting server.js files and routing.js files in with each component and separating out index.js and server.js into these files based on the component needs. The module will then look for these files in each component and create a single file from these. Its the plan anyways I will see how it goes when I get there.<br>
+
 There is a method for checking your errors on the server. testErrorsOnServer(content). You can use it to anonomously check for errors in production. It writes a file to /tmp/webegreat. You can change the name to whatever you like. The check for production server checks the path on the server for a certain folder this one it html.<br>if(!reqPath.split(path.sep).indexOf("html")) development<br>
 else production
 
@@ -128,6 +130,7 @@ All config for the database is in server/config/mysqldbconfig.js. The databases 
 Put all fields in for each row. They all follow the mysql database schema except Null and Key.
 No Foriegn Key at the moment and just NULL and NOT NULL. PRIMARY KEYS are also as is.
 You can get layouts for PRIMARY KEYS and TIMESTAMP from the code. They are all that has been tested.
+You can change fallback_folder_name in src/config/config.js and names of tables and rows in mysqldbconfig.js for security purposes. The program read tables and rows by indexes so you can change the names to any allowable name. Please only add rows to the ends of the tables and tables to the end of the list to preserve the functionality unless you intend to change the functionality in server.js too.
 
 * `Field: 'productid'` - userid, name, created_at, updated_at, etc...
 * `Type: 'int(11)'` - int(11), varchar(255), text, timestamp, etc...
@@ -177,8 +180,15 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-applica
 Express server tutorial<br>
 https://www.tutorialspoint.com/expressjs/expressjs_sessions.htm
 
+`Shakhor Smith`<br>
+nodemailer<br>
+https://www.youtube.com/watch?v=HZOXPta21PI&t=33s<br>
+https://www.youtube.com/watch?v=EPnBO8HgyRU<br>
+https://www.w3schools.com/nodejs/nodejs_email.asp
+
 `Code refrences`<br>
 https://reactjs.org<br>
+https://www.youtube.com/watch?v=xa-_FIy2NgE<br>
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions<br>
 https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/lifecycle_methods_overview.html
 

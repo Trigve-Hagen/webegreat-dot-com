@@ -37,6 +37,7 @@ import Roles from './components/authenticated/roles';
 
 import Success from './components/paypal/success';
 import Cancel from  './components/paypal/cancel';
+import Signup from  './components/register/signup-complete';
 
 import( /* webpackChunkName: 'application' */ './App')
     .then(({ default: App }) =>
@@ -49,6 +50,7 @@ import( /* webpackChunkName: 'application' */ './App')
                             <Route exact path="/about" component={About}/>
                             <Route exact path="/contact" component={Contact}/>
                             <Route exact path="/register" component={Register}/>
+                            <Route exact path="/signup" component={Signup}/>
                             <Route exact path="/login" component={Login}/>
                             <Route exact path="/cart" component={Cart}/>
                             <Route exact path="/logout" component={Logout}/>
