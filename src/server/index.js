@@ -434,6 +434,226 @@ app.get('/api/account/verify', (req, res, next) => {
  ***********************************************************************
  */
 
+app.post('/api/menu/update', function(req, res) {
+    const { body } = req;
+    const {
+        id,
+        name,
+        level,
+        parent,
+        ifproduct,
+        description,
+        token
+    } = body;
+    let updateObj = [];
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Menu id invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(config.patterns.names.test(name)) {
+        updateObj.push({
+            name: config.tables[7].table_fields[4].Field,
+            content: name
+        });
+    } else {
+        if(name != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(description)) {
+        updateObj.push({
+            name: config.tables[7].table_fields[7].Field,
+            content: description
+        });
+    } else {
+        if(description != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(level)) {
+        updateObj.push({
+            name: config.tables[7].table_fields[5].Field,
+            content: parseInt(level)
+        });
+    } else {
+        if(level != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.names.test(parent)) {
+        updateObj.push({
+            name: config.tables[7].table_fields[6].Field,
+            content: parent
+        });
+    } else {
+        if(parent != '') {
+            return res.send({
+                success: false,
+                message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(ifproduct)) {
+        updateObj.push({
+            name: config.tables[7].table_fields[8].Field,
+            content: parseInt(ifproduct)
+        });
+    } else {
+        if(ifproduct != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid.'
+            });
+        } else {
+            let updateMenu = "UPDATE ?? SET ";
+            let updateMenuInserts = [
+                config.tables[7].table_name
+            ];
+            let objCount=0;
+            updateObj.forEach(element => {
+                if(updateObj.length - 1 == objCount) updateMenu += "?? = ? ";
+                else updateMenu += "?? = ?, ";
+                updateMenuInserts.push(element.name);
+                updateMenuInserts.push(element.content);
+                objCount++;
+            });
+            updateMenu += `WHERE ?? = ${id} AND ?? = ${results[0]['user_id']}`;
+            updateMenuInserts.push(config.tables[7].table_fields[0].Field);
+            updateMenuInserts.push(config.tables[7].table_fields[1].Field);
+            
+            updateMenu = mysql.format(updateMenu, updateMenuInserts);
+            //console.log(ifproduct);
+            connection.query(updateMenu, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in menu update'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Your menu has been successfully updated.',
+                        id: id,
+                        name: name,
+                        level: level,
+                        parent: parent,
+                        ifproduct: ifproduct,
+                        description: description,
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/menu/delete-item', function(req, res) {
+    const { body } = req;
+    const {
+        id,
+        token
+    } = body;
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Id invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in check userid delete menu.'
+            });
+        } else {
+            let deleteMenu = "DELETE FROM ?? WHERE ?? = ? AND ?? = ?";
+            let deleteMenuInserts = [
+                config.tables[7].table_name,
+                config.tables[7].table_fields[0].Field,
+                id,
+                config.tables[7].table_fields[1].Field,
+                results[0]['user_id'],
+            ];
+            deleteMenu = mysql.format(deleteMenu, deleteMenuInserts);
+            //console.log(deleteMenu);
+            connection.query(deleteMenu, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in delete menu row.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success'
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.post('/api/menu/front', function(req, res) {
     let getFrontMenu = "SELECT * FROM ??";
     let getFrontMenuInserts = [
@@ -529,15 +749,15 @@ app.post('/api/menu/upload', function(req, res) {
                 message: 'Server Error in get userid upload menu.'
             });
         } else {
-            var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?)";
-            var insertProductInserts = [
+            var insertMenu = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?)";
+            var insertMenuInserts = [
                 config.tables[7].table_name,
                 results[0]['user_id'], myDate, myDate, name,
                 level, parent, description, ifproduct
             ];
-            insertProduct = mysql.format(insertProduct, insertProductInserts);
-            //console.log(insertProduct);
-            connection.query(insertProduct, function (error, result, fields) {
+            insertMenu = mysql.format(insertMenu, insertMenuInserts);
+            //console.log(insertMenu);
+            connection.query(insertMenu, function (error, result, fields) {
                 if(error) {
                     //console.log("Error: in Register New User: " + err);
                     return res.send({

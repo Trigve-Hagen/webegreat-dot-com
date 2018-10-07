@@ -53,39 +53,44 @@ class MenuDisplay extends React.Component {
     }
 
     render() {
-        let menuString = '<nav><div class="menu-item alpha"><h3>Army Strong</h3>';    
-        menuString += '<p>We have a large selection of Army products for sale including shirts, hats, belts, backpacks and much much more. Please have a look around and feel free to get a hold of a sales representative through the chat application at the bottom of the screen. Thanks for your service.</p>';
-        menuString += '</div><div class="menu-item">';
+        let menuString = '';
         this.state.loadMenuItems.forEach(level1 => {
-            if(level1.level == 1) {
-                menuString += '<h4>' + level1.name + '</h4><ul>';
+            if(level1.level == 0) {
+                menuString += '<div class="menu-item"><h4>' + level1.name + '</h4><ul>';
                 this.state.loadMenuItems.forEach(level2 => {
-                    if(level2.level == 2 && level2.parent == level1.name) {
+                    if(level2.level == 1 && level2.parent == level1.name) {
                         let linkName2 = level1.name + "-" + level2.name;
                         if(level2.ifproduct == 1) menuString += '<li><a href="#">' + level2.name + '</a></li>';
-                        else menuString += '<li>' + level2.name + '</h5>';
+                        else menuString += '<li>' + level2.name + '</li>';
 
                         this.state.loadMenuItems.forEach(level3 => {
                             menuString += '<ul>';
-                            if(level3.level == 3 && level3.parent == level2.name) {
+                            if(level3.level == 2 && level3.parent == level2.name) {
                                 let linkName3 = level1.name + "-" + level2.name + "-" + level3.name;
                                 if(level3.ifproduct == 1) menuString += '<li><a href="#">' + level3.name + '</a></li>';
-                                else menuString += '<li>' + level3.name + '</h5>';
+                                else menuString += '<li>' + level3.name + '</li>';
                             }
                             menuString += '</ul>';
                         });
                     }
                 });
+                menuString += '</ul></div>';
             }
-            menuString += '</ul>';
         });
-        menuString += '</ul></div></nav>';
         return (
             <div className="row space-top-20px space-bottom-50px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                            <div dangerouslySetInnerHTML={{__html: menuString}} />
+                            <nav>
+                                <div className="menu-item alpha">
+                                    <h3>Army Strong</h3>
+                                    <p>We have a large selection of Army products for sale including shirts, hats, belts, backpacks and much much more. Please have a look around and feel free to get a hold of a sales representative through the chat application at the bottom of the screen. Thanks for your service.</p>
+                                </div>
+                                <div className="menu-item">
+                                    <div dangerouslySetInnerHTML={{__html: menuString}} />
+                                </div>
+                            </nav>
                         </div>
                     </div>
                 </div>

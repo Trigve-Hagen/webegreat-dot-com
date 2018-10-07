@@ -13,22 +13,26 @@ class UploadMenu extends React.Component {
             menuUploadIfProduct: '',
             menuUploadDescription: ''
 		}
-
+        this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-	}
+    }
+    
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
 
 	onSubmit(e) {
 		e.preventDefault();
         
         const data = new FormData();
-            data.append('name', this.state.menuUploadName.value);
-            data.append('parent', this.state.menuUploadParent.value);
-            data.append('level', this.state.menuUploadLevel.value);
-            data.append('description', this.state.menuUploadDescription.value);
-            data.append('ifproduct', this.state.menuUploadIfProduct.value);
+            data.append('name', this.state.menuUploadName);
+            data.append('parent', this.state.menuUploadParent);
+            data.append('level', this.state.menuUploadLevel);
+            data.append('description', this.state.menuUploadDescription);
+            data.append('ifproduct', this.state.menuUploadIfProduct);
             data.append('token', this.props.authentication[0].token);
 
-		fetch(config.site_url + '/api/product/upload', {
+		fetch(config.site_url + '/api/menu/upload', {
             method: 'POST',
             body: data,
 		}).then(res => res.json())
@@ -73,32 +77,37 @@ class UploadMenu extends React.Component {
                         <form name="menuUpload" onSubmit={this.onSubmit}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.menuUploadName = ref; }} type="text" className="form-element" placeholder="Menu Level Name"/>
+                                    <input value={this.state.menuUploadName} onChange={this.onChange} name="menuUploadName" type="text" className="form-element" placeholder="Menu Level Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <select ref={ (ref) => { this.state.menuUploadLevel = ref; }} className="form-element custom">
+                                    <select value={this.state.menuUploadLevel} onChange={this.onChange} name="menuUploadLevel" className="form-element custom">
                                         <option value="">Choose its menu level</option>
-                                        <option value="0">Base Level</option>
-                                        <option value="1">Level One</option>
-                                        <option value="2">Level Two</option>
+                                        <option value="0">Level One</option>
+                                        <option value="1">Level Two</option>
+                                        <option value="2">Level Three</option>
                                     </select>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <select ref={ (ref) => { this.state.menuUploadParent = ref; }} className="form-element custom">
+                                    <select value={this.state.menuUploadParent} onChange={this.onChange} name="menuUploadParent" className="form-element custom">
                                         <option value="">Choose the parent level</option>
                                         <option value="base">Base Level</option>
-                                        {this.props.menu.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
+                                        {
+                                            this.props.menuItems.filter(item => 
+                                                    item.level == 0 || item.level == 1 || item.level == 2 && !item.ifproduct).map(item =>
+                                                        <option key={item.id} value={item.name}>{item.name}</option>
+                                                )
+                                        }
                                     </select>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <select ref={ (ref) => { this.state.menuUploadIfProduct = ref; }} className="form-element custom">
-                                        <option value="">Choose if products or catagory</option>
-                                        <option value="0">Catelog Level</option>
-                                        <option value="1">Product Level</option>
+                                    <select value={this.state.menuUploadIfProduct} onChange={this.onChange} name="menuUploadIfProduct" className="form-element custom">
+                                        <option value="">Choose if product link or catagory</option>
+                                        <option value="0">Category</option>
+                                        <option value="1">Product Link</option>
                                     </select>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <textarea ref={(ref) => { this.state.menuUploadDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
+                                    <textarea value={this.state.menuUploadDescription} onChange={this.onChange} name="menuUploadDescription" className="form-element" rows="3" placeholder="Description"/>
                                 </fieldset>
                             </div>
                             <button type="submit" className="btn btn-army">Menu Upload</button>
