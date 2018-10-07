@@ -722,7 +722,7 @@ app.post('/api/product/delete-product', function(req, res) {
                 results[0]['user_id'],
             ];
             getProductToDeleteById = mysql.format(getProductToDeleteById, getProductToDeleteByIdInserts);
-            console.log(getProductToDeleteById);
+            //console.log(getProductToDeleteById);
             connection.query(getProductToDeleteById, function (error, results, fields) {
                 if(error) {
                     return res.send({
@@ -747,7 +747,7 @@ app.post('/api/product/delete-product', function(req, res) {
                                     results[0]['user_id'],
                                 ];
                                 deleteProduct = mysql.format(deleteProduct, deleteProductInserts);
-                                console.log(deleteProduct);
+                                //console.log(deleteProduct);
                                 connection.query(deleteProduct, function (error, result, fields) {
                                     if(error) {
                                         return res.send({
@@ -773,7 +773,7 @@ app.post('/api/product/delete-product', function(req, res) {
                             results[0]['user_id'],
                         ];
                         deleteProduct = mysql.format(deleteProduct, deleteProductInserts);
-                        console.log(deleteProduct);
+                        //console.log(deleteProduct);
                         connection.query(deleteProduct, function (error, result, fields) {
                             if(error) {
                                 return res.send({

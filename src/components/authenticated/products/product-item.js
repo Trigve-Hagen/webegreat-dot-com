@@ -20,7 +20,7 @@ export default function ProductItem(props) {
                 <p>${ props.product[0].price }</p>
             </div>
             <div className="product-button">
-            <button className="btn btn-army">Add To Cart (0)</button>
+            <button className="btn btn-army">+ (0)</button>
             </div>
         </div>
     </div>

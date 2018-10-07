@@ -40,11 +40,11 @@ class Products extends React.Component {
                             id: value['productid'],
                             image: value['image'],
                             sku: value['sku'],
-                            menu: value['menu'],
+                            menu: value['menu_location'],
                             name: value['name'],
                             price: value['price'],
                             stock: value['stock'],
-                            ifmanaged: value['ifmanaged'],
+                            ifmanaged: value['managed_stock'],
                             description: value['description']
                         });
                     }
@@ -84,8 +84,8 @@ class Products extends React.Component {
     }
 
     onDelete(e) {
-        console.log(e.target.dataset.productid);
-        let productObject = this.getProductObject(e.target.dataset.productid);
+        let productId = e.target.dataset.productid;
+        let productObject = this.getProductObject(productId);
         if (confirm(`Are you sure you want to delete ${productObject.name}?`)) {
             fetch(config.site_url + '/api/product/delete-product', {
 			method: 'POST',
@@ -93,7 +93,7 @@ class Products extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-                id: e.target.dataset.productid,
+                id: productId,
                 token: this.props.authentication[0].token
 			})
 		}).then(res => res.json())
@@ -101,7 +101,7 @@ class Products extends React.Component {
 				if(json.success) {
                     let arrayArgs = [];
                     this.state.products.map(product => {
-                        if(e.target.dataset.productid != product.id) {
+                        if(productId != product.id) {
                             arrayArgs.push({
                                 id: product.id,
                                 menu: product.menu,

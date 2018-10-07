@@ -7,6 +7,7 @@ class UpdateProducts extends React.Component {
 		super(props);
 		this.state = {
             proUpdateError: '',
+            proUpdateId: this.props.product[0].id,
             proUpdateMenu: this.props.product[0].menu,
             proUpdateName: this.props.product[0].name,
             proUpdateSku: this.props.product[0].sku,
@@ -20,7 +21,24 @@ class UpdateProducts extends React.Component {
         this.onChange= this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
     }
-    
+
+    componentDidUpdate(nextProps) {
+        if(nextProps.product[0].id !== this.props.product[0].id) {
+            this.setState({
+                proUpdateId: this.props.product[0].id,
+                proUpdateMenu: this.props.product[0].menu,
+                proUpdateName: this.props.product[0].name,
+                proUpdateSku: this.props.product[0].sku,
+                proUpdatePrice: this.props.product[0].price,
+                proUpdateStock: this.props.product[0].stock,
+                proUpdateIfManaged: this.props.product[0].ifmanaged,
+                proUpdateDescription: this.props.product[0].description,
+                updateInput: '',
+                fileName: this.props.product[0].image.split(".")[0]
+            });
+        }
+    }
+
     onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
@@ -97,7 +115,7 @@ class UpdateProducts extends React.Component {
                         }
                         <form name="proUpdate" onSubmit={this.onSubmit}>
                             <fieldset className="form-group">
-                                <input value={this.state.updateInput} onChange={this.onChange} name="updateInput" type="file" className="form-control-file btn btn-army"/>
+                                <input ref={(ref) => { this.state.updateInput = ref; }} type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
