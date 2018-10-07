@@ -17,23 +17,27 @@ class UploadProducts extends React.Component {
             uploadInput: '',
             fileName: ''
 		}
-
+        this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-	}
+    }
+    
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
 
 	onSubmit(e) {
 		e.preventDefault();
         
         const data = new FormData();
             data.append('file', this.state.uploadInput.files[0]);
-            data.append('filename', this.state.fileName.value);
-            data.append('menu', this.state.proUploadMenu.value);
-            data.append('name', this.state.proUploadName.value);
-            data.append('sku', this.state.proUploadSku.value);
-			data.append('description', this.state.proUploadDescription.value);
-            data.append('price', this.state.proUploadPrice.value);
-            data.append('stock', this.state.proUploadStock.value);
-            data.append('ifmanaged', this.state.proUploadIfManaged.value);
+            data.append('filename', this.state.fileName);
+            data.append('menu', this.state.proUploadMenu);
+            data.append('name', this.state.proUploadName);
+            data.append('sku', this.state.proUploadSku);
+			data.append('description', this.state.proUploadDescription);
+            data.append('price', this.state.proUploadPrice);
+            data.append('stock', this.state.proUploadStock);
+            data.append('ifmanaged', this.state.proUploadIfManaged);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/product/upload', {
@@ -91,31 +95,32 @@ class UploadProducts extends React.Component {
                             </fieldset>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
+                                    <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUploadMenu = ref; }} type="text" className="form-element" placeholder="Menu Place"/>
+                                    <input value={this.state.proUploadMenu} onChange={this.onChange} name="proUploadMenu" type="text" className="form-element" placeholder="Menu Place"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUploadName = ref; }} type="text" className="form-element" placeholder="Name"/>
+                                    <input value={this.state.proUploadName} onChange={this.onChange} name="proUploadName" type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUploadSku = ref; }} type="text" className="form-element" placeholder="Sku"/>
+                                    <input value={this.state.proUploadSku} onChange={this.onChange} name="proUploadSku" type="text" className="form-element" placeholder="Sku"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUploadPrice = ref; }} type="text" className="form-element" placeholder="0.00"/>
+                                    <input value={this.state.proUploadPrice} onChange={this.onChange} name="proUploadPrice" type="text" className="form-element" placeholder="0.00"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUploadStock = ref; }} type="text" className="form-element" placeholder="Number in Stock"/>
+                                    <input value={this.state.proUploadStock} onChange={this.onChange} name="proUploadStock" type="text" className="form-element" placeholder="Number in Stock"/>
                                 </fieldset>
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.proUploadIfManaged = ref; }} value={this.state.proUploadIfManaged} className="form-element custom">
+                                    <select value={this.state.proUploadIfManaged} onChange={this.onChange} name="proUploadIfManaged" className="form-element custom">
+                                        <option value="">Please select a value.</option>
                                         <option value="0">Always In Stock</option>
                                         <option value="1">Managed Stock</option>
                                     </select>
                                 </div>
                                 <fieldset className="form-group">
-                                    <textarea ref={(ref) => { this.state.proUploadDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
+                                    <textarea value={this.state.proUploadDescription} onChange={this.onChange} name="proUploadDescription" className="form-element" rows="3" placeholder="Description"/>
                                 </fieldset>
                             </div>
                             <button type="submit" className="btn btn-army">Product Upload</button>

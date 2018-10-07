@@ -14,19 +14,53 @@ class UpdateProfile extends React.Component {
             profileState: '',
             profileZip: ''
         }
+        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onChange(e) {
+		this.setState({ [e.target.name]: e.target.value });
+    }
+
+    componentDidMount() {
+        fetch(config.site_url + '/api/account/get-account', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+					this.setState({
+                        profileError: json.message,
+                        profileName: json.name,
+                        profileEmail: json.email,
+                        profileAddress: json.address,
+                        profileCity: json.city,
+                        profileState: json.state,
+                        profileZip: json.zip
+					});
+				} else {
+                    this.setState({
+						profileError: json.message
+					});
+                }
+			});
     }
 
 	onSubmit(e) {
 		e.preventDefault();
 
         const data = new FormData();
-            data.append('name', this.state.profileName.value);
-            data.append('email', this.state.profileEmail.value);
-            data.append('address', this.state.profileAddress.value);
-            data.append('city', this.state.profileCity.value);
-            data.append('state', this.state.profileState.value);
-            data.append('zip', this.state.profileZip.value);
+            data.append('name', this.state.profileName);
+            data.append('email', this.state.profileEmail);
+            data.append('address', this.state.profileAddress);
+            data.append('city', this.state.profileCity);
+            data.append('state', this.state.profileState);
+            data.append('zip', this.state.profileZip);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/profile/update-profile', {
@@ -35,7 +69,6 @@ class UpdateProfile extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-                    console.log("Profile update successfull.");
 					this.setState({
                         profileError: json.message,
                         profileName: json.name,
@@ -67,28 +100,28 @@ class UpdateProfile extends React.Component {
                         <form className="updateProfile" onSubmit={this.onSubmit}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.profileName = ref; }} type="text" className="form-element" id="profileName" placeholder="Full Name" />
+                                    <input value={this.state.profileName} onChange={this.onChange} type="text" className="form-element" name="profileName" placeholder="Full Name" />
                                 </div>
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.profileEmail = ref; }} type="email" className="form-element" id="profileEmail" placeholder="Email Address" />
+                                    <input value={this.state.profileEmail} onChange={this.onChange} type="email" className="form-element" name="profileEmail" placeholder="Email Address" />
                                 </div>
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.profileAddress = ref; }} type="text" className="form-element" id="profileAddress" placeholder="Address" />
+                                    <input value={this.state.profileAddress} onChange={this.onChange} type="text" className="form-element" name="profileAddress" placeholder="Address" />
                                 </div>
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.profileCity = ref; }} type="text" className="form-element" id="profileCity" placeholder="City" />
+                                    <input value={this.state.profileCity} onChange={this.onChange} type="text" className="form-element" name="profileCity" placeholder="City" />
                                 </div>
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.profileState = ref; }} className="form-element custom">
+                                    <select value={this.state.profileState} onChange={this.onChange} className="form-element custom" name="profileState">
                                         {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                     </select>
                                 </div>
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.profileZip = ref; }} type="text" className="form-element" id="profileZip" placeholder="Zip" />
+                                    <input value={this.state.profileZip} onChange={this.onChange} type="text" className="form-element" name="profileZip" placeholder="Zip" />
                                 </div>
                             </div>
                             <button type="submit" className="btn btn-army">Update Profile</button>

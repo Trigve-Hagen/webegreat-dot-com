@@ -1,8 +1,11 @@
 const initialState = {
     id: 1,
     menu: "products",
+    sku: "AS-1",
     image: "airborne-shirt.png",
     name: "Army Airborne T-Shirt",
+    stock: 100,
+    ifmanaged: 1,
     price: '39.99',
     description: "Grey t-shirt with Airborne image on front and American flag on sleeve."
 }

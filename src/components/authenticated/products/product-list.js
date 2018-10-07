@@ -6,16 +6,16 @@ import config from '../../../config/config';
 class ProductList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
+        /*this.state = {
             perPage: 15,
             loadProductError: '',
             products: []
         }
         this.onView = this.onView.bind(this);
-        this.onDelete = this.onDelete.bind(this);
+        this.onDelete = this.onDelete.bind(this);*/
     }
 
-    componentDidMount() {
+    /*componentDidMount() {
 		fetch(config.site_url + '/api/product/front', {
 			method: 'POST',
 			headers: {
@@ -33,8 +33,12 @@ class ProductList extends React.Component {
                         arrayArgs.push({
                             id: value['productid'],
                             image: value['image'],
+                            sku: value['sku'],
+                            menu: value['menu'],
                             name: value['name'],
                             price: value['price'],
+                            stock: value['stock'],
+                            ifmanaged: value['ifmanaged'],
                             description: value['description']
                         });
                     }
@@ -56,8 +60,12 @@ class ProductList extends React.Component {
         this.state.products.map(product => {
             if(product.id == productId) {
                 obj.id = product.id;
+                obj.menu = product.menu;
                 obj.image = product.image;
+                obj.sku = product.sku;
                 obj.name = product.name;
+                obj.stock = product.stock;
+                obj.ifmanaged = product.ifmanaged;
                 obj.price = product.price;
                 obj.description = product.description;
             }
@@ -90,9 +98,13 @@ class ProductList extends React.Component {
                         if(productId != product.id) {
                             arrayArgs.push({
                                 id: product.id,
+                                menu: product.menu,
+                                sku: product.sku,
                                 image: product.image,
                                 name: product.name,
+                                stock: product.stock,
                                 price: product.price,
+                                ifmanaged: product.ifmanaged,
                                 description: product.description
                             });
                         }
@@ -103,9 +115,13 @@ class ProductList extends React.Component {
                     });
                     this.props.updateProduct({
                         id: arrayArgs[0].id,
+                        menu: arrayArgs[0].menu,
+                        sku: arrayArgs[0].sku,
                         image: arrayArgs[0].image,
                         name: arrayArgs[0].name,
+                        stock: arrayArgs[0].stock,
                         price: arrayArgs[0].price,
+                        ifmanaged: arrayArgs[0].ifmanaged,
                         description: arrayArgs[0].description
                     });
                     //location.reload();
@@ -116,7 +132,7 @@ class ProductList extends React.Component {
                 }
 			});
         }
-    }
+    }*/
 
     render() {
         //this.props.resetProduct();
@@ -127,19 +143,14 @@ class ProductList extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        {
-                            (this.state.loadProductError) ? (
-                                <label>{this.state.loadProductError}</label>
-                            ) : (null)
-                        }
                         <Pagination />
                         <ul className="ul-styles">
                             {
-                                this.state.products.map(product => 
+                                this.props.products.map(product => 
                                     <li key={product.id}> 
                                         {product.name} 
-                                        <a href="#" onClick={() => this.onView(product.id)}> View</a>  
-                                        <a href="#" onClick={() => this.onDelete(product.id)}> Delete</a> 
+                                        <a href="#" data-productid={product.id} onClick={this.props.onView}> View</a>  
+                                        <a href="#" data-productid={product.id} onClick={this.props.onDelete}> Delete</a> 
                                     </li>
                                 )
                             }

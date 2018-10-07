@@ -566,6 +566,78 @@ app.post('/api/menu/upload', function(req, res) {
  ***********************************************************************
  */
 
+app.post('/api/product/get-product', function(req, res) {
+    const { body } = req;
+    const {
+        id,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Id invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update profile.'
+            });
+        } else {
+            let getProductById = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
+            let getProductByIdInserts = [
+                config.tables[0].table_name,
+                config.tables[0].table_fields[0].Field,
+                id,
+                config.tables[0].table_fields[3].Field,
+                results[0]['user_id'],
+            ];
+            getProductById = mysql.format(getProductById, getProductByIdInserts);
+            //console.log(getProductById);
+            connection.query(getProductById, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get product details.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        image: result[0]['image'],
+                        menu: result[0]['menu_location'],
+                        name: result[0]['name'],
+                        sku: result[0]['sku'],
+                        price: result[0]['price'],
+                        stock: result[0]['stock'],
+                        ifmanaged: result[0]['managed_stock'],
+                        description: result[0]['description']
+                    });
+                }
+            });
+        }
+    });
+});
+
 
 app.post('/api/product/pagination', function(req, res) {
     const { body } = req;
@@ -915,7 +987,7 @@ app.post('/api/product/upload', function(req, res) {
                         var insertProductInserts = [
                             config.tables[0].table_name,
                             myDate, myDate, results[0]['user_id'], name,
-                            description, image, price, menu, metta
+                            description, image, price, menu, stock, ifmanaged, sku, metta
                         ];
                         insertProduct = mysql.format(insertProduct, insertProductInserts);
                         //console.log(insertProduct);
@@ -1421,6 +1493,66 @@ app.post('/api/avatar/update-avatar', function(req, res) {
     });
 });
 
+app.post('/api/account/get-account', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update profile.'
+            });
+        } else {
+            let getUserDetails = "SELECT * FROM ?? WHERE ?? = ?";
+            let getUserDetailsInserts = [
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                results[0]['user_id']
+            ];
+            getUserDetails = mysql.format(getUserDetails, getUserDetailsInserts);
+            //console.log(getUserDetails);
+            connection.query(getUserDetails, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get userid details.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        name: result[0]['name'],
+                        email: result[0]['email'],
+                        address: result[0]['shipping_address'],
+                        city: result[0]['shipping_city'],
+                        state: result[0]['shipping_state'],
+                        zip: result[0]['shipping_zip']
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.post('/api/profile/update-profile', function(req, res) {
     const { body } = req;
     const {
@@ -1432,8 +1564,6 @@ app.post('/api/profile/update-profile', function(req, res) {
         token
     } = body;
     let { email } = body;
-
-    console.log(name + ", " + email);
 
     let updateObj = [];
 
@@ -1579,6 +1709,63 @@ app.post('/api/profile/update-profile', function(req, res) {
                         city: city,
                         state: state,
                         zip: zip
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/account/get-paypal', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update profile.'
+            });
+        } else {
+            let getUserDetails = "SELECT * FROM ?? WHERE ?? = ?";
+            let getUserDetailsInserts = [
+                config.tables[4].table_name,
+                config.tables[4].table_fields[1].Field,
+                results[0]['user_id']
+            ];
+            getUserDetails = mysql.format(getUserDetails, getUserDetailsInserts);
+            //console.log(getUserDetails);
+            connection.query(getUserDetails, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get userid details.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        mode: result[0]['mode'],
+                        client: result[0]['client'],
+                        secret: result[0]['secret']
                     });
                 }
             });

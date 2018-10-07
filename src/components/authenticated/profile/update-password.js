@@ -10,7 +10,12 @@ class UpdatePassword extends React.Component {
             password: '',
             rePassword: '',
         }
+        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
     }
 
 	onSubmit(e) {
@@ -30,8 +35,8 @@ class UpdatePassword extends React.Component {
 					console.log("Avatar update successfull.");
 					this.setState({
                         passwordError: json.message,
-                        password: json.password,
-                        rePassword: json.repassword
+                        password: '',
+                        rePassword: ''
                     });
 				} else {
                     this.setState({
@@ -55,10 +60,10 @@ class UpdatePassword extends React.Component {
                         <form className="updatePassword" onSubmit={this.onSubmit}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.password = ref; }} type="password" className="form-element" id="password" placeholder="Password" />
+                                    <input value={this.state.password} onChange={this.onChange} type="password" className="form-element" name="password" placeholder="Password" />
                                 </div>
                                 <div className="form-group">
-                                    <input ref={(ref) => { this.state.rePassword = ref; }} type="password" className="form-element" id="rePassword" placeholder="Re-Password" />
+                                    <input value={this.state.password} onChange={this.onChange} type="password" className="form-element" name="rePassword" placeholder="Re-Password" />
                                 </div>
                             </div>
                             <button type="submit" className="btn btn-army">Update Password</button>

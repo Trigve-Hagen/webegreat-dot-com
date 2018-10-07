@@ -7,37 +7,42 @@ class UpdateProducts extends React.Component {
 		super(props);
 		this.state = {
             proUpdateError: '',
-            proUpdateMenu: '',
-            proUpdateName: '',
-            proUpdateSku: '',
-            proUpdatePrice: '',
-            proUpdateStock: '',
-            proUpdateIfManaged: '',
-            proUpdateDescription: '',
+            proUpdateMenu: this.props.product[0].menu,
+            proUpdateName: this.props.product[0].name,
+            proUpdateSku: this.props.product[0].sku,
+            proUpdatePrice: this.props.product[0].price,
+            proUpdateStock: this.props.product[0].stock,
+            proUpdateIfManaged: this.props.product[0].ifmanaged,
+            proUpdateDescription: this.props.product[0].description,
             updateInput: '',
-            fileName: ''
-		}
+            fileName: this.props.product[0].image.split(".")[0]
+        }
+        this.onChange= this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-	}
+    }
+    
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
 
 	onSubmit(e) {
 		e.preventDefault();
         
         const data = new FormData();
             data.append('file', this.state.updateInput.files[0]);
-            data.append('filename', this.state.fileName.value);
+            data.append('filename', this.state.fileName);
             data.append('proid', this.props.product[0].id);
             data.append('imagename', this.props.product[0].image);
-            data.append('menu', this.state.proUpdateMenu.value);
-            data.append('name', this.state.proUpdateName.value);
-            data.append('sku', this.state.proUpdateSku.value);
-			data.append('description', this.state.proUpdateDescription.value);
-            data.append('price', this.state.proUpdatePrice.value);
-            data.append('stock', this.state.proUpdateStock.value);
-            data.append('ifmanaged', this.state.proUpdateIfManaged.value);
+            data.append('menu', this.state.proUpdateMenu);
+            data.append('name', this.state.proUpdateName);
+            data.append('sku', this.state.proUpdateSku);
+			data.append('description', this.state.proUpdateDescription);
+            data.append('price', this.state.proUpdatePrice);
+            data.append('stock', this.state.proUpdateStock);
+            data.append('ifmanaged', this.state.proUpdateIfManaged);
             data.append('token', this.props.authentication[0].token);
 
-        //console.log("Description: "+this.state.proUpdateDescription.value);
+        //console.log("Description: "+this.state.proUpdateDescription);
 
 		fetch(config.site_url + '/api/product/update', {
             method: 'POST',
@@ -46,42 +51,31 @@ class UpdateProducts extends React.Component {
 			.then(json => {
 				if(json.success) {
                     console.log("Successfull Product Update.");
-                    let obj = {}
-                    obj['id'] = this.props.product[0].id;
-                    if(json.menu != '') obj['menu']=json.menu;
-                    else obj['menu'] = this.props.product[0].menu;
-                    if(json.name != '') obj['name']=json.name;
-                    else obj['name'] = this.props.product[0].name;
-                    if(json.sku != '') obj['sku']=json.sku;
-                    else obj['sku'] = this.props.product[0].sku;
-                    if(json.price != '') obj['price']=json.price;
-                    else obj['price'] = this.props.product[0].price;
-                    if(json.stock != '') obj['stock']=json.stock;
-                    else obj['stock'] = this.props.product[0].stock;
-                    if(json.ifmanaged != '') obj['ifmanaged']=json.ifmanaged;
-                    else obj['ifmanaged'] = this.props.product[0].ifmanaged;
-                    if(json.description != '') obj['description']=json.description;
-                    else obj['description'] = this.props.product[0].description;
-                    if(json.image != '') obj['image']=json.image;
-                    else obj['image'] = this.props.product[0].image;
-
-                    this.props.updateProduct(obj);
+                    this.props.updateProduct({
+                        id: json.id,
+                        menu: json.menu,
+                        name: json.name,
+                        sku: json.sku,
+                        price: json.price,
+                        stock: json.stock,
+                        ifmanaged: json.ifmanaged,
+                        description: json.description,
+                        image: json.image
+                    });
                     let imagename = obj.image.split(".");
 					this.setState({
                         proUpdateError: json.message,
-                        proUpdateMenu: json.menu != '' ? json.menu : this.props.product[0].menu,
-                        proUpdateName: json.name != '' ? json.name : this.props.product[0].name,
-                        proUpdateSku: json.sku != '' ? json.sku : this.props.product[0].sku,
-                        proUpdatePrice: json.price != '' ? json.price : this.props.product[0].price,
-                        proUpdateStock: json.stock != '' ? json.stock : this.props.product[0].stock,
-                        proUpdateIfManaged: json.ifmanaged != '' ? json.ifmanaged : this.props.product[0].ifmanaged,
-                        proUpdateDescription: json.description != '' ? json.description : this.props.product[0].description,
+                        proUpdateMenu: json.menu,
+                        proUpdateName: json.name,
+                        proUpdateSku: json.sku,
+                        proUpdatePrice: json.price,
+                        proUpdateStock: json.stock,
+                        proUpdateIfManaged: json.ifmanaged,
+                        proUpdateDescription: json.description,
                         updateInput: '',
                         fileName: imagename[0]
                     });
-                    location.reload();
 				} else {
-                    console.log(json.message);
                     this.setState({
 						proUpdateError: json.message
 					});
@@ -103,35 +97,36 @@ class UpdateProducts extends React.Component {
                         }
                         <form name="proUpdate" onSubmit={this.onSubmit}>
                             <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.updateInput = ref; }} type="file" className="form-control-file btn btn-army"/>
+                                <input value={this.state.updateInput} onChange={this.onChange} name="updateInput" type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
+                                    <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUpdateMenu = ref; }} type="text" className="form-element" placeholder="Menu Place"/>
+                                    <input value={this.state.proUpdateMenu} onChange={this.onChange} name="proUpdateMenu" type="text" className="form-element" placeholder="Menu Place"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUpdateName = ref; }} type="text" className="form-element" placeholder="Name"/>
+                                    <input value={this.state.proUpdateName} onChange={this.onChange} name="proUpdateName" type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUpdateSku = ref; }} type="text" className="form-element" placeholder="Sku"/>
+                                    <input value={this.state.proUpdateSku} onChange={this.onChange} name="proUpdateSku" type="text" className="form-element" placeholder="Sku"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUpdatePrice = ref; }} type="text" className="form-element" placeholder="0.00"/>
+                                    <input value={this.state.proUpdatePrice} onChange={this.onChange} name="proUpdatePrice" type="text" className="form-element" placeholder="0.00"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.proUpdateStock = ref; }} type="text" className="form-element" placeholder="Number in Stock"/>
+                                    <input value={this.state.proUpdateStock} onChange={this.onChange} name="proUpdateStock" type="text" className="form-element" placeholder="Number in Stock"/>
                                 </fieldset>
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.proUpdateIfManaged = ref; }} value={this.state.proUpdateIfManaged} className="form-element custom">
+                                    <select value={this.state.proUpdateIfManaged} onChange={this.onChange} name="proUpdateIfManaged" className="form-element custom">
+                                        <option value="">Please select a value.</option>
                                         <option value="0">Always In Stock</option>
                                         <option value="1">Managed Stock</option>
                                     </select>
                                 </div>
                                 <fieldset className="form-group">
-                                    <textarea ref={(ref) => { this.state.proUpdateDescription = ref; }} className="form-element" rows="3" placeholder="Description"/>
+                                    <textarea value={this.state.proUpdateDescription} onChange={this.onChange} name="proUpdateDescription" className="form-element" rows="3" placeholder="Description"/>
                                 </fieldset>
                             </div>
                             <button type="submit" className="btn btn-army">Product Update</button>

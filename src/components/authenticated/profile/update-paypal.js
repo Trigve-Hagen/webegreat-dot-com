@@ -9,18 +9,64 @@ class UpdatePaypal extends React.Component {
             paypalError: '',
             paypalMode: '',
             paypalClient: '',
-            paypalSecret: ''
+            paypalSecret: '',
+            paypalClientInputType: 'password',
+            paypalSecretInputType: 'password'
         }
+        this.onClickView = this.onClickView.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    onClickView(e) {
+        console.log(e.target.name);
+        if(e.target.name == 'client') {
+            this.setState({ paypalClientInputType: this.state.paypalClientInputType === 'password' ? 'text' : 'password' })
+        }
+        if(e.target.name == 'secret') {
+            this.setState({ paypalSecretInputType: this.state.paypalSecretInputType === 'password' ? 'text' : 'password' })
+        }
+    }
+
+    onChange(e) {
+		this.setState({ [e.target.name]: e.target.value });
+    }
+
+    componentDidMount() {
+        fetch(config.site_url + '/api/account/get-paypal', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    console.log(json.mode);
+					this.setState({
+                        paypalError: json.message,
+                        paypalMode: json.mode,
+                        paypalClient: json.client,
+                        paypalSecret: json.secret
+					});
+				} else {
+                    this.setState({
+						paypalError: json.message
+					});
+                }
+			});
+    }
+
 	onSubmit(e) {
+        console.log(this.state.paypalMode);
 		e.preventDefault();
 
         const data = new FormData();
-            data.append('mode', this.state.paypalMode.value);
-            data.append('client', this.state.paypalClient.value);
-            data.append('secret', this.state.paypalSecret.value);
+            data.append('mode', this.state.paypalMode);
+            data.append('client', this.state.paypalClient);
+            data.append('secret', this.state.paypalSecret);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/profile/update-paypal', {
@@ -29,12 +75,12 @@ class UpdatePaypal extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-					console.log("Paypal update successfull.");
+                    console.log("Paypal update successfull.");
 					this.setState({
                         paypalError: json.message,
-                        paypalMode: '',
-                        paypalClient: '',
-                        paypalSecret: ''
+                        paypalMode: json.mode,
+                        paypalClient: json.client,
+                        paypalSecret: json.secret
                     });
 				} else {
                     this.setState({
@@ -58,19 +104,26 @@ class UpdatePaypal extends React.Component {
                         <form className="paypalCredentials" onSubmit={this.onSubmit}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.paypalMode = ref; }} className="form-element custom">
+                                    <select value={this.state.paypalMode} onChange={this.onChange} name="paypalMode" className="form-element custom">
+                                        <option value="">Please select a value..</option>
                                         <option value="sandbox">Sandbox</option>
                                         <option value="live">Live</option>
                                     </select>
                                 </div>
-                                <div className="form-group">
-                                    <input ref={(ref) => { this.state.paypalClient = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Client Id" />
+                                <div className="input-group margin-top-20px">
+                                    <input value={this.state.paypalClient} onChange={this.onChange} type={this.state.paypalClientInputType} className="form-element" name="paypalClient" placeholder="Paypal Client Id" />
+                                    <span className="input-group-btn">
+                                        <button className="btn btn-army" type="button" name="client" onClick={this.onClickView}>View</button>
+                                    </span>
                                 </div>
-                                <div className="form-group">
-                                    <input ref={(ref) => { this.state.paypalSecret = ref; }} type="text" className="form-element" id="paypalClient" placeholder="Paypal Secret" />
+                                <div className="input-group margin-top-20px">
+                                <input value={this.state.paypalSecret} onChange={this.onChange} type={this.state.paypalSecretInputType} className="form-element" name="paypalSecret" placeholder="Paypal Secret" />
+                                    <span className="input-group-btn">
+                                        <button className="btn btn-army" type="button" name="secret" onClick={this.onClickView}>View</button>
+                                    </span>
                                 </div>
                             </div>
-                            <button type="submit" className="btn btn-army">Update Paypal Credentials</button>
+                            <button type="submit" className="btn btn-army margin-top-20px">Update Paypal Credentials</button>
                         </form>
                     </div>
                 </div>
