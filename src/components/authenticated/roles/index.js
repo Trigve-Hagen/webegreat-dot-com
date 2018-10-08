@@ -52,7 +52,7 @@ class UserRoles extends React.Component {
                             ifactive: value['store_visible']
                         });
                     }
-                    console.log(arrayArgs);
+                    //console.log(arrayArgs);
                     this.setState({
                         loadUserError: json.message,
                         users: arrayArgs

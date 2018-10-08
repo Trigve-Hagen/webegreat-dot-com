@@ -65,7 +65,7 @@ class Register extends React.Component {
 		if(this.state.redirect) return <Redirect to='/profile' />
         return (
 			<div>
-				<Navigation path="/register" authenticated={this.props.authentication[0].authenticated} />
+				<Navigation path="/register" />
 				<div className="container">
 					<div className="row space-top-20px space-bottom-50px">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">

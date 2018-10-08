@@ -1,11 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ProductListing from '../product-listing';
-//import products from '../../data/products';
 import Navigation from '../navigation';
 import Footer from '../footer';
 import config from '../../config/config';
-//import ProductMenu from '../../components/product-menu';
 import MenuDisplay from '../authenticated/menu/menu-display';
 import SearchBar from '../../components/search-bar';
 
@@ -50,7 +48,7 @@ class Home extends React.Component {
                             description: value['description']
                         });
                     }
-                    console.log(arrayArgs);
+                    //console.log(arrayArgs);
 					this.setState({
                         loadProductError: json.message,
                         products: arrayArgs
@@ -67,7 +65,11 @@ class Home extends React.Component {
         //this.props.resetProduct();
         return (
             <div>
-                <Navigation path="/" authenticated={this.props.authentication[0].authenticated}/>
+                <Navigation
+                    path="/"
+                    authenticated={this.props.authentication[0].authenticated}
+                    role={this.props.authentication[0].role}
+                />
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">

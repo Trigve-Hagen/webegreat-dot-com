@@ -31,7 +31,7 @@ class AvatarImage extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-                    console.log(json.id);
+                    //console.log(json.id);
 					this.setState({
                         avatarError: json.message,
                         avatarId: json.id,
@@ -80,7 +80,7 @@ class AvatarImage extends React.Component {
     render() {
         //this.props.resetAvatar();
         let avatarUrl = uniqueId(this.state.avatarId);
-        console.log(avatarUrl);
+        //console.log(avatarUrl);
         return (
             <div>
                 <div className="row">

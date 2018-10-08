@@ -58,7 +58,7 @@ class Login extends React.Component {
         if(this.state.loginRedirect) return <Redirect to='/profile' />;
         return (
             <div>
-                <Navigation path="/login" authenticated={this.props.authentication[0].authenticated}/>
+                <Navigation path="/login" />
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">

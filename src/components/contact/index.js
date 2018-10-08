@@ -23,7 +23,7 @@ class Contact extends React.Component {
 
 	onSubmit(e) {
 		e.preventDefault();
-		console.log(this.state);
+		//console.log(this.state);
 		const {
 			contactName,
 			contactEmail,
@@ -62,7 +62,7 @@ class Contact extends React.Component {
     render() {
         return (
             <div>
-                <Navigation path="/contact" authenticated={this.props.authentication[0].authenticated}/>
+                <Navigation path="/contact" />
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">

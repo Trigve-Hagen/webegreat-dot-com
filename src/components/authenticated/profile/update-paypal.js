@@ -44,7 +44,7 @@ class UpdatePaypal extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-                    console.log(json.mode);
+                    //console.log(json.mode);
 					this.setState({
                         paypalError: json.message,
                         paypalMode: json.mode,
@@ -60,7 +60,7 @@ class UpdatePaypal extends React.Component {
     }
 
 	onSubmit(e) {
-        console.log(this.state.paypalMode);
+        //console.log(this.state.paypalMode);
 		e.preventDefault();
 
         const data = new FormData();

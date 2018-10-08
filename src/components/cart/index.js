@@ -51,7 +51,7 @@ class Cart extends React.Component {
             count++;
         });
 
-        console.log(items);
+        //console.log(items);
 
         const data = new FormData();
             data.append('name', this.state.cartName.value);
@@ -104,7 +104,11 @@ class Cart extends React.Component {
         } else {
             return (
                 <div>
-                    <Navigation path="/cart" authenticated={this.props.authentication[0].authenticated}/>
+                    <Navigation
+                        path="/cart"
+                        authenticated={this.props.authentication[0].authenticated}
+                        role={this.props.authentication[0].role}
+                    />
                     <div className="container">
                         <div className="row space-top-50px">
                             {

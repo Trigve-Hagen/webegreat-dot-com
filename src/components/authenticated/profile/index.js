@@ -8,7 +8,6 @@ import UpdateProfile from './update-profile';
 import UpdatePassword from './update-password';
 import Footer from '../../footer';
 import UpdatePaypal from './update-paypal';
-import config from '../../../config/config';
 
 class Profile extends React.Component {
     constructor(props) {

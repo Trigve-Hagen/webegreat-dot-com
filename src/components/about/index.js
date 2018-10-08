@@ -8,18 +8,14 @@ class About extends React.Component {
         super(props);
     }
 
-    componentWillReceiveProps() {
-        if(this.props.authentication[0].authenticated != undefined) {
-            this.setState({
-                authenticated: this.props.authentication[0].authenticated 
-            });
-        }
-    }
-
     render() {
         return (
             <div>
-                <Navigation path="/about" authenticated={this.props.authentication[0].authenticated}/>
+                <Navigation
+                    path="/about"
+                    authenticated={this.props.authentication[0].authenticated}
+                    role={this.props.authentication[0].role}
+                />
                 <div className="container">
                     <div className="row space-top-20px space-bottom-50px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
