@@ -1760,12 +1760,14 @@ app.post('/api/account/get-account', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Success',
+                        id: result[0]['userid'],
                         name: result[0]['name'],
                         email: result[0]['email'],
                         address: result[0]['shipping_address'],
                         city: result[0]['shipping_city'],
                         state: result[0]['shipping_state'],
-                        zip: result[0]['shipping_zip']
+                        zip: result[0]['shipping_zip'],
+                        avatar: result[0]['avatar']
                     });
                 }
             });
@@ -3088,7 +3090,7 @@ app.post('/api/roles/user-update', function(req, res) {
         });
     }
 
-    //console.log(token + ", " + proid);
+    //console.log(token + ", " + id);
     if(config.patterns.names.test(name)) {
         updateObj.push({
             name: config.tables[2].table_fields[3].Field,
@@ -3214,183 +3216,183 @@ app.post('/api/roles/user-update', function(req, res) {
             });
         }
     }
-    
-    if (req.files) {
-        if(!filename || !config.patterns.names.test(filename)) {
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
             return res.send({
                 success: false,
-                message: 'Filename empty or Letters Numbers Spaces _ - and . allowed.'
+                message: 'Server Error in get userid roles update user.'
             });
-        }
+        } else {
+            let getUserImage = "SELECT ?? FROM ?? WHERE ?? = ?";
+            let getUserImageInserts = [
+                config.tables[2].table_fields[7].Field,
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                parseInt(id)
+            ];
+            getUserImage = mysql.format(getUserImage, getUserImageInserts);
+            //console.log(getUserImage);
+            connection.query(getUserImage, function (error, imgResults, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in get userid roles get user image.'
+                    });
+                } else {
+                    if (req.files) {
+                        if(!filename || !config.patterns.names.test(filename)) {
+                            return res.send({
+                                success: false,
+                                message: 'Filename empty or Letters Numbers Spaces _ - and . allowed.'
+                            });
+                        }
+                        if(config.patterns.names.test(imgResults[0]['avatar'])) {
+                            if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imgResults[0]['avatar']}`)) {
+                                fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imgResults[0]['avatar']}`, (err) => {
+                                    if (err) {
+                                        return res.send({
+                                            success: false,
+                                            message: 'Server Error in delete user image update user.'
+                                        });
+                                    } else {
+                                        let ext = '';
+                                        var splitRes = req.files.file.mimetype.split("/");
+                                        switch(splitRes[1]) {
+                                            case 'jpeg': ext = '.jpg'; break;
+                                            case 'jpg': ext = '.jpg'; break;
+                                            case 'png': ext = '.png'; break;
+                                            case 'gif': ext = '.gif'; break;
+                                        }
+                                        
+                                        let image = req.body.filename + ext;
+                                        if(config.patterns.names.test(image)) updateObj.push({
+                                            name: config.tables[2].table_fields[7].Field,
+                                            content: image
+                                        });
 
-        let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-        let userIdInserts = [
-            config.tables[3].table_fields[1].Field,
-            config.tables[3].table_name,
-            config.tables[3].table_fields[0].Field,
-            token
-        ];
-        getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-        //console.log(getUserIdSession);
-        connection.query(getUserIdSession, function (error, results, fields) {
-            if(error) {
-                return res.send({
-                    success: false,
-                    message: 'Server Error in get userid roles update user.'
-                });
-            } else {
-                if(config.patterns.names.test(imagename)) {
-                    if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imagename}`)) {
-                        fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imagename}`, (err) => {
-                            if (err) {
-                                return res.send({
-                                    success: false,
-                                    message: 'Server Error in delete user image update user.'
-                                });
-                            } else {
-                                let ext = '';
-                                var splitRes = req.files.file.mimetype.split("/");
-                                switch(splitRes[1]) {
-                                    case 'jpeg': ext = '.jpg'; break;
-                                    case 'jpg': ext = '.jpg'; break;
-                                    case 'png': ext = '.png'; break;
-                                    case 'gif': ext = '.gif'; break;
-                                }
-                                
-                                let image = req.body.filename + ext;
-                                if(config.patterns.names.test(image)) updateObj.push({
-                                    name: config.tables[2].table_fields[7].Field,
-                                    content: image
-                                });
-
-                                let imageFile = req.files['file'];
-                                imageFile.mv(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${req.body.filename}${ext}`,
-                                    function(err) {
-                                        if (err) {
-                                            return res.send({
-                                                success: false,
-                                                message: 'Server error uploading image.'
-                                            });
-                                        } else {
-                                            let updateUser = "UPDATE ?? SET ";
-                                            let updateUserInserts = [
-                                                config.tables[2].table_name
-                                            ];
-                                            let objCount=0;
-                                            updateObj.forEach(element => {
-                                                if(updateObj.length - 1 == objCount) updateUser += "?? = ? ";
-                                                else updateUser += "?? = ?, ";
-                                                updateUserInserts.push(element.name);
-                                                updateUserInserts.push(element.content);
-                                                objCount++;
-                                            });
-                                            updateUser += `WHERE ?? = ?`;
-                                            updateUserInserts.push(config.tables[2].table_fields[0].Field);
-                                            updateUserInserts.push(results[0]['user_id']);
-                                            
-                                            updateUser = mysql.format(updateUser, updateUserInserts);
-                                            //console.log(updateUser);
-                                            connection.query(updateUser, function (error, result, fields) {
-                                                if(error) {
-                                                    //console.log("Error: in Register New User: " + err);
+                                        let imageFile = req.files['file'];
+                                        imageFile.mv(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${req.body.filename}${ext}`,
+                                            function(err) {
+                                                if (err) {
                                                     return res.send({
                                                         success: false,
-                                                        message: 'Server Error in user update'
+                                                        message: 'Server error uploading image.'
                                                     });
                                                 } else {
-                                                    // do results here
-                                                    return res.send({
-                                                        success: true,
-                                                        message: 'User successfully updated.',
-                                                        id: id,
-                                                        role: role,
-                                                        name: name,
-                                                        email: email,
-                                                        ifactive: ifactive,
-                                                        address: address,
-                                                        city: city,
-                                                        state: state,
-                                                        zip: zip,
+                                                    let updateUser = "UPDATE ?? SET ";
+                                                    let updateUserInserts = [
+                                                        config.tables[2].table_name
+                                                    ];
+                                                    let objCount=0;
+                                                    updateObj.forEach(element => {
+                                                        if(updateObj.length - 1 == objCount) updateUser += "?? = ? ";
+                                                        else updateUser += "?? = ?, ";
+                                                        updateUserInserts.push(element.name);
+                                                        updateUserInserts.push(element.content);
+                                                        objCount++;
                                                     });
+                                                    updateUser += `WHERE ?? = ?`;
+                                                    updateUserInserts.push(config.tables[2].table_fields[0].Field);
+                                                    updateUserInserts.push(parseInt(id));
+                                                    
+                                                    updateUser = mysql.format(updateUser, updateUserInserts);
+                                                    //console.log(updateUser);
+                                                    connection.query(updateUser, function (error, result, fields) {
+                                                        if(error) {
+                                                            //console.log("Error: in Register New User: " + err);
+                                                            return res.send({
+                                                                success: false,
+                                                                message: 'Server Error in user update'
+                                                            });
+                                                        } else {
+                                                            // do results here
+                                                            return res.send({
+                                                                success: true,
+                                                                message: 'User successfully updated.',
+                                                                id: id,
+                                                                role: role,
+                                                                name: name,
+                                                                email: email,
+                                                                ifactive: ifactive,
+                                                                address: address,
+                                                                city: city,
+                                                                state: state,
+                                                                zip: zip,
+                                                                image: image
+                                                            });
+                                                        }
+                                                    });    
                                                 }
-                                            });    
-                                        }
+                                        });
+                                    }
+                                });
+                            } else {
+                                return res.send({
+                                    success: false,
+                                    message: 'The Image does not exsist. Please delete the product and try again.'
+                                });
+                            }
+                        }
+                    } else {
+                        let image = imgResults[0]['avatar'];
+                        let updateUser = "UPDATE ?? SET ";
+                        let updateUserInserts = [
+                            config.tables[2].table_name
+                        ];
+                        let objCount=0;
+                        updateObj.forEach(element => {
+                            if(updateObj.length - 1 == objCount) updateUser += "?? = ? ";
+                            else updateUser += "?? = ?, ";
+                            updateUserInserts.push(element.name);
+                            updateUserInserts.push(element.content);
+                            objCount++;
+                        });
+                        updateUser += `WHERE ?? = ?`;
+                        updateUserInserts.push(config.tables[2].table_fields[0].Field);
+                        updateUserInserts.push(parseInt(id));
+                        
+                        updateUser = mysql.format(updateUser, updateUserInserts);
+                        //console.log(updateUser);
+                        connection.query(updateUser, function (error, result, fields) {
+                            if(error) {
+                                //console.log("Error: in Register New User: " + err);
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in user update'
+                                });
+                            } else {
+                                // do results here
+                                return res.send({
+                                    success: true,
+                                    message: 'User successfully updated.',
+                                    id: id,
+                                    role: role,
+                                    name: name,
+                                    image: image,
+                                    email: email,
+                                    ifactive: ifactive,
+                                    address: address,
+                                    city: city,
+                                    state: state,
+                                    zip: zip,
                                 });
                             }
                         });
-                    } else {
-                        return res.send({
-                            success: false,
-                            message: 'The Image does not exsist. Please delete the product and try again.'
-                        });
                     }
                 }
-            }
-        });
-    } else {
-        let image = '';
-        let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-        let userIdInserts = [
-            config.tables[3].table_fields[1].Field,
-            config.tables[3].table_name,
-            config.tables[3].table_fields[0].Field,
-            token
-        ];
-        getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-        //console.log(getUserIdSession);
-        connection.query(getUserIdSession, function (error, results, fields) {
-            if(error) {
-                return res.send({
-                    success: false,
-                    message: 'Server Error in get userid no image.'
-                });
-            } else {
-                let updateUser = "UPDATE ?? SET ";
-                let updateUserInserts = [
-                    config.tables[2].table_name
-                ];
-                let objCount=0;
-                updateObj.forEach(element => {
-                    if(updateObj.length - 1 == objCount) updateUser += "?? = ? ";
-                    else updateUser += "?? = ?, ";
-                    updateUserInserts.push(element.name);
-                    updateUserInserts.push(element.content);
-                    objCount++;
-                });
-                updateUser += `WHERE ?? = ?`;
-                updateUserInserts.push(config.tables[2].table_fields[0].Field);
-                updateUserInserts.push(parseInt(id));
-                
-                updateUser = mysql.format(updateUser, updateUserInserts);
-                //console.log(updateUser);
-                connection.query(updateUser, function (error, result, fields) {
-                    if(error) {
-                        //console.log("Error: in Register New User: " + err);
-                        return res.send({
-                            success: false,
-                            message: 'Server Error in user update'
-                        });
-                    } else {
-                        // do results here
-                        return res.send({
-                            success: true,
-                            message: 'User successfully updated.',
-                            id: id,
-                            role: role,
-                            name: name,
-                            image: image,
-                            email: email,
-                            ifactive: ifactive,
-                            address: address,
-                            city: city,
-                            state: state,
-                            zip: zip,
-                        });
-                    }
-                });
-            }
-        });
-    }
+            });
+        }
+    });
 });
 
 app.listen(4000, () => {

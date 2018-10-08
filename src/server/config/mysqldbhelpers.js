@@ -158,7 +158,7 @@ module.exports = function(database, config, connection, moment, fs, reqPath) {
                 });
             }
             if(element.table_name == 'c_users') {
-                const ADMIN_USER = `INSERT INTO ${element.table_name} VALUES(321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '$2a$08$gfXxjtPIkYSSP9tNQMF0qeeUB7cJ.RPHVo3Kg.3.zj4IoSTB/irw6', 3, '', 0, '', '', '', '');`;
+                const ADMIN_USER = `INSERT INTO ${element.table_name} VALUES(321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '$2a$08$gfXxjtPIkYSSP9tNQMF0qeeUB7cJ.RPHVo3Kg.3.zj4IoSTB/irw6', 3, 'user-avatar.jpg', 0, '', '', '', '');`;
                 connection.query(ADMIN_USER, (error, results) => {
                     if(error) console.log(error);
                 });

@@ -7,6 +7,7 @@ class UpdateUser extends React.Component {
 		super(props);
 		this.state = {
             userUpdateError: '',
+            userUpdateImage: '',
             userUpdateId: this.props.role[0].id,
             userUpdateRole: this.props.role[0].role,
             userUpdateName: this.props.role[0].name,
@@ -30,6 +31,7 @@ class UpdateUser extends React.Component {
                 userUpdateId: this.props.role[0].id,
                 userUpdateRole: this.props.role[0].role,
                 userUpdateName: this.props.role[0].name,
+                userUpdateImage: this.props.role[0].image,
                 userUpdateEmail: this.props.role[0].email,
                 userUpdateAddress: this.props.role[0].address,
                 userUpdateCity: this.props.role[0].city,
@@ -86,17 +88,19 @@ class UpdateUser extends React.Component {
                     });
 					this.setState({
                         userUpdateError: json.message,
-                        userUpdateRole: '',
-                        userUpdateName: '',
-                        userUpdateEmail: '',
-                        userUpdateAddress: '',
-                        userUpdateCity: '',
-                        userUpdateState: '',
-                        userUpdateZip: '',
-                        userUpdateIfActive: '',
+                        userUpdateId: json.id,
+                        userUpdateRole: json.role,
+                        userUpdateName: json.name,
+                        userUpdateEmail: json.email,
+                        userUpdateImage: json.image,
+                        userUpdateAddress: json.address,
+                        userUpdateCity: json.city,
+                        userUpdateState: json.state,
+                        userUpdateZip: json.zip,
+                        userUpdateIfActive: json.ifactive,
                         userUpdatePassword: '',
                         uploadInput: '',
-                        fileName: ''
+                        fileName: json.image.split(".")[0]
                     });
 				} else {
                     this.setState({

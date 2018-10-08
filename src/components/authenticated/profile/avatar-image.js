@@ -13,13 +13,14 @@ class AvatarImage extends React.Component {
             avatarError: '',
             avatarId: '',
             avatarUploadInput: '',
-            avatarFileName: ''
+            avatarFileName: '',
+            avatarImage: ''
         }
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentDidMount() {
-		fetch(config.site_url + '/api/avatar/get-avatar', {
+		fetch(config.site_url + '/api/account/get-account', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -30,9 +31,11 @@ class AvatarImage extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
+                    console.log(json.id);
 					this.setState({
                         avatarError: json.message,
-                        avatarId: json.folderid
+                        avatarId: json.id,
+                        avatarImage: json.avatar
                     });
 				} else {
                     this.setState({
@@ -77,11 +80,12 @@ class AvatarImage extends React.Component {
     render() {
         //this.props.resetAvatar();
         let avatarUrl = uniqueId(this.state.avatarId);
+        console.log(avatarUrl);
         return (
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <img src={ `/img/avatar/${avatarUrl}/${this.props.avatar[0].avatar}` } alt="Army Strong" className="img-responsive"/>
+                        <img src={ `/img/avatar/${avatarUrl}/${this.state.avatarImage}` } alt="Army Strong" className="img-responsive"/>
                     </div>
                 </div>
                 <div className="row">
