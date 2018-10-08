@@ -9,7 +9,7 @@ function uniqueId(id) {
 }
 
 export default function UserItem(props) {
-    let folder = uniqueId(props.folderid);
+    let folder = uniqueId(props.user[0].id);
     return <div className="row" style={style}>
         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24 text-center">
             <img

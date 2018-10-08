@@ -1554,7 +1554,7 @@ app.post('/api/product/update', function(req, res) {
  ***********************************************************************
  */
 
-app.post('/api/avatar/get-avatar', function(req, res) {
+/*app.post('/api/avatar/get-avatar', function(req, res) {
     const { body } = req;
     const {
         token
@@ -1590,7 +1590,7 @@ app.post('/api/avatar/get-avatar', function(req, res) {
             });
         }
     });
-});
+});*/
 
 app.post('/api/avatar/update-avatar', function(req, res) {
     const { body } = req;
@@ -2717,13 +2717,11 @@ app.post('/api/roles/delete-user', function(req, res) {
                 message: 'Server Error in check userid delete user.'
             });
         } else {
-            let getUserToDeleteById = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
+            let getUserToDeleteById = "SELECT * FROM ?? WHERE ?? = ?";
             let getUserToDeleteByIdInserts = [
-                config.tables[0].table_name,
-                config.tables[0].table_fields[0].Field,
-                id,
-                config.tables[0].table_fields[3].Field,
-                results[0]['user_id'],
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                parseInt(id),
             ];
             getUserToDeleteById = mysql.format(getUserToDeleteById, getUserToDeleteByIdInserts);
             console.log(getUserToDeleteById);
@@ -2734,8 +2732,8 @@ app.post('/api/roles/delete-user', function(req, res) {
                         message: 'Server Error in get user by id to delete.'
                     });
                 } else {
-                    if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${result[0]['image']}`)) {
-                        fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${result[0]['image']}`, (err) => {
+                    if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${result[0]['image']}`)) {
+                        fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${result[0]['image']}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -2746,7 +2744,7 @@ app.post('/api/roles/delete-user', function(req, res) {
                                 let deleteUserInserts = [
                                     config.tables[2].table_name,
                                     config.tables[2].table_fields[0].Field,
-                                    id
+                                    parseInt(id)
                                 ];
                                 deleteUser = mysql.format(deleteUser, deleteUserInserts);
                                 //console.log(deleteUser);
@@ -2770,7 +2768,7 @@ app.post('/api/roles/delete-user', function(req, res) {
                         let deleteUserInserts = [
                             config.tables[2].table_name,
                             config.tables[2].table_fields[0].Field,
-                            id
+                            parseInt(id)
                         ];
                         deleteUser = mysql.format(deleteUser, deleteUserInserts);
                         //console.log(deleteProduct);
@@ -2864,7 +2862,7 @@ app.post('/api/roles/users', function(req, res) {
     });
 });
 
-app.post('/api/roles/upload-users', (req, res, next) => {
+app.post('/api/roles/upload', (req, res, next) => {
     const { body } = req;
     const {
         role,
@@ -2914,7 +2912,7 @@ app.post('/api/roles/upload-users', (req, res, next) => {
         message: 'Error: Address name cannot be blank'
         });
     }
-    if(!city || !config.patterns.nammes.test(city)) {
+    if(!city || !config.patterns.names.test(city)) {
         return res.send({
         success: false,
         message: 'Error: City name cannot be blank'
@@ -2941,7 +2939,7 @@ app.post('/api/roles/upload-users', (req, res, next) => {
     //console.log(testForExistingUser);
     connection.query(testForExistingUser, function (error, results, fields) {
         if(error) {
-            testErrorsOnServer(testForExistingUser + ", " + error);
+            //testErrorsOnServer(testForExistingUser + ", " + error);
             return res.send({
                 success: false,
                 message: 'Server Error in check user exsists signup.',
@@ -2966,7 +2964,7 @@ app.post('/api/roles/upload-users', (req, res, next) => {
                     state, zip 
                 ];
                 insertUserIfNonExists = mysql.format(insertUserIfNonExists, inserts);
-                //console.log(insertUserIfNonExists);
+                console.log(insertUserIfNonExists);
                 connection.query(insertUserIfNonExists, function (err, result, fields) {
                     if(err) {
                         //console.log("Error: in Register New User: " + err);
@@ -3031,7 +3029,16 @@ app.post('/api/roles/upload-users', (req, res, next) => {
                                                             return res.send({
                                                                 success: true,
                                                                 message: 'Successfull registration',
-                                                                token: results.insertId
+                                                                token: results.insertId,
+                                                                id: result.insertId,
+                                                                role: role,
+                                                                name: name,
+                                                                email: email,
+                                                                ifactive: ifactive,
+                                                                address: address,
+                                                                city: city,
+                                                                state: state,
+                                                                zip: zip,
                                                             });
                                                         }
                                                     });
@@ -3049,10 +3056,10 @@ app.post('/api/roles/upload-users', (req, res, next) => {
     });
 });
 
-app.post('/api/roles/update-users', function(req, res) {
+app.post('/api/roles/user-update', function(req, res) {
     const { body } = req;
     const {
-        userid,
+        id,
         filename,
         role,
         name,
@@ -3067,7 +3074,7 @@ app.post('/api/roles/update-users', function(req, res) {
     let { email } = body;
     let updateObj = [];
 
-    if(!userid || !config.patterns.numbers.test(userid)) {
+    if(!id || !config.patterns.numbers.test(id)) {
         return res.send({
             success: false,
             message: 'User id invalid or cannot be left empty.'
@@ -3127,7 +3134,7 @@ app.post('/api/roles/update-users', function(req, res) {
     if(config.patterns.numbers.test(role)) {
         updateObj.push({
             name: config.tables[2].table_fields[6].Field,
-            content: role
+            content: parseInt(role)
         });
     } else {
         if(role != '') {
@@ -3141,7 +3148,7 @@ app.post('/api/roles/update-users', function(req, res) {
     if(config.patterns.numbers.test(ifactive)) {
         updateObj.push({
             name: config.tables[2].table_fields[8].Field,
-            content: ifactive
+            content: parseInt(ifactive)
         });
     } else {
         if(ifactive != '') {
@@ -3197,7 +3204,7 @@ app.post('/api/roles/update-users', function(req, res) {
     if(config.patterns.numbers.test(zip)) {
         updateObj.push({
             name: config.tables[2].table_fields[12].Field,
-            content: zip
+            content: parseInt(zip)
         });
     } else {
         if(zip != '') {
@@ -3233,12 +3240,12 @@ app.post('/api/roles/update-users', function(req, res) {
                 });
             } else {
                 if(config.patterns.names.test(imagename)) {
-                    if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`)) {
-                        fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`, (err) => {
+                    if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imagename}`)) {
+                        fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imagename}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
-                                    message: 'Server Error in delete product image update product.'
+                                    message: 'Server Error in delete user image update user.'
                                 });
                             } else {
                                 let ext = '';
@@ -3257,7 +3264,7 @@ app.post('/api/roles/update-users', function(req, res) {
                                 });
 
                                 let imageFile = req.files['file'];
-                                imageFile.mv(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${req.body.filename}${ext}`,
+                                imageFile.mv(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${req.body.filename}${ext}`,
                                     function(err) {
                                         if (err) {
                                             return res.send({
@@ -3277,8 +3284,9 @@ app.post('/api/roles/update-users', function(req, res) {
                                                 updateUserInserts.push(element.content);
                                                 objCount++;
                                             });
-                                            updateUser += `WHERE ?? = ${results[0]['user_id']}`;
-                                            updateUserInserts.push(config.tables[0].table_fields[0].Field);
+                                            updateUser += `WHERE ?? = ?`;
+                                            updateUserInserts.push(config.tables[2].table_fields[0].Field);
+                                            updateUserInserts.push(results[0]['user_id']);
                                             
                                             updateUser = mysql.format(updateUser, updateUserInserts);
                                             //console.log(updateUser);
@@ -3293,7 +3301,16 @@ app.post('/api/roles/update-users', function(req, res) {
                                                     // do results here
                                                     return res.send({
                                                         success: true,
-                                                        message: 'User successfully updated.'
+                                                        message: 'User successfully updated.',
+                                                        id: id,
+                                                        role: role,
+                                                        name: name,
+                                                        email: email,
+                                                        ifactive: ifactive,
+                                                        address: address,
+                                                        city: city,
+                                                        state: state,
+                                                        zip: zip,
                                                     });
                                                 }
                                             });    
@@ -3340,8 +3357,9 @@ app.post('/api/roles/update-users', function(req, res) {
                     updateUserInserts.push(element.content);
                     objCount++;
                 });
-                updateUser += `WHERE ?? = ${results[0]['user_id']}`;
-                updateUserInserts.push(config.tables[0].table_fields[0].Field);
+                updateUser += `WHERE ?? = ?`;
+                updateUserInserts.push(config.tables[2].table_fields[0].Field);
+                updateUserInserts.push(parseInt(id));
                 
                 updateUser = mysql.format(updateUser, updateUserInserts);
                 //console.log(updateUser);
@@ -3356,7 +3374,17 @@ app.post('/api/roles/update-users', function(req, res) {
                         // do results here
                         return res.send({
                             success: true,
-                            message: 'User successfully updated.'
+                            message: 'User successfully updated.',
+                            id: id,
+                            role: role,
+                            name: name,
+                            image: image,
+                            email: email,
+                            ifactive: ifactive,
+                            address: address,
+                            city: city,
+                            state: state,
+                            zip: zip,
                         });
                     }
                 });

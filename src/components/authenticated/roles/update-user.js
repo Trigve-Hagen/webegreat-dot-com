@@ -7,37 +7,61 @@ class UpdateUser extends React.Component {
 		super(props);
 		this.state = {
             userUpdateError: '',
-            userUpdateRole: '',
-            userUpdateName: '',
-            userUpdateemail: '',
-            userUpdateAddress: '',
-            userUpdateCity: '',
-            userUpdateState: '',
-            userUpdateZip: '',
-            userUpdateIfActive: '',
+            userUpdateId: this.props.role[0].id,
+            userUpdateRole: this.props.role[0].role,
+            userUpdateName: this.props.role[0].name,
+            userUpdateEmail: this.props.role[0].email,
+            userUpdateAddress: this.props.role[0].address,
+            userUpdateCity: this.props.role[0].city,
+            userUpdateState: this.props.role[0].state,
+            userUpdateZip: this.props.role[0].zip,
+            userUpdateIfActive: this.props.role[0].ifactive,
             userUpdatePassword: '',
             uploadInput: '',
-            fileName: ''
+            fileName: this.props.role[0].image.split(".")[0]
 		}
-
+        this.onChange= this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-	}
+    }
+    
+    componentDidUpdate(nextProps) {
+        if(nextProps.role[0].id !== this.props.role[0].id) {
+            this.setState({
+                userUpdateId: this.props.role[0].id,
+                userUpdateRole: this.props.role[0].role,
+                userUpdateName: this.props.role[0].name,
+                userUpdateEmail: this.props.role[0].email,
+                userUpdateAddress: this.props.role[0].address,
+                userUpdateCity: this.props.role[0].city,
+                userUpdateState: this.props.role[0].state,
+                userUpdateZip: this.props.role[0].zip,
+                userUpdateIfActive: this.props.role[0].ifactive,
+                updateInput: '',
+                fileName: this.props.role[0].image.split(".")[0]
+            });
+        }
+    }
+
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
 
 	onSubmit(e) {
 		e.preventDefault();
         
         const data = new FormData();
             data.append('file', this.state.uploadInput.files[0]);
-            data.append('filename', this.state.fileName.value);
-            data.append('role', this.state.userUpdateRole.value);
-            data.append('name', this.state.userUpdateName.value);
-            data.append('email', this.state.userUpdateemail.value);
-            data.append('address', this.state.userUpdateAddress.value);
-			data.append('city', this.state.userUpdateCity.value);
-            data.append('state', this.state.userUpdateState.value);
-            data.append('zip', this.state.userUpdateZip.value);
-            data.append('ifactive', this.state.userUpdateIfActive.value);
-            data.append('password', this.state.userUpdatePassword.value);
+            data.append('filename', this.state.fileName);
+            data.append('id', this.props.role[0].id);
+            data.append('role', this.state.userUpdateRole);
+            data.append('name', this.state.userUpdateName);
+            data.append('email', this.state.userUpdateEmail);
+            data.append('address', this.state.userUpdateAddress);
+			data.append('city', this.state.userUpdateCity);
+            data.append('state', this.state.userUpdateState);
+            data.append('zip', this.state.userUpdateZip);
+            data.append('ifactive', this.state.userUpdateIfActive);
+            data.append('password', this.state.userUpdatePassword);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/roles/user-update', {
@@ -52,19 +76,19 @@ class UpdateUser extends React.Component {
                         role : json.role,
                         name: json.name,
                         email: json.email,
-                        address: json.price,
-                        city: json.stock,
-                        state: json.ifmanaged,
-                        zip: json.description,
+                        address: json.address,
+                        city: json.city,
+                        state: json.state,
+                        zip: json.zip,
                         ifactive: json.ifactive,
-                        image: json.image,
+                        image: json.image ? json.image : 'user-avatar.jpg',
                         password: json.password
                     });
 					this.setState({
                         userUpdateError: json.message,
                         userUpdateRole: '',
                         userUpdateName: '',
-                        userUpdateemail: '',
+                        userUpdateEmail: '',
                         userUpdateAddress: '',
                         userUpdateCity: '',
                         userUpdateState: '',
@@ -95,51 +119,53 @@ class UpdateUser extends React.Component {
                         }
                         <form name="userUpdate" onSubmit={this.onSubmit}>
                             <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.uploadInput = ref; }} type="file" className="form-control-file btn btn-army"/>
+                                <input ref={(ref) => { this.state.uploadInput = ref; }} name="uploadInput" type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.fileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
+                                    <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.userUpdateRole = ref; }} name="userUpdateRole" className="form-element custom">
+                                    <select value={this.state.userUpdateRole} onChange={this.onChange} name="userUpdateRole" className="form-element custom">
+                                        <option value="">Please select a value.</option>
                                         <option value="1">Customer</option>
                                         <option value="2">Employee</option>
                                         <option value="3">Administator</option>
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.userUpdateIfActive = ref; }} name="userUpdateIfActive" className="form-element custom">
+                                    <select value={this.state.userUpdateIfActive} onChange={this.onChange} name="userUpdateIfActive" className="form-element custom">
+                                        <option value="">Please select a value.</option>
                                         <option value="0">Account Inactive</option>
                                         <option value="1">Account Active</option>
                                     </select>
                                 </div>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdateName = ref; }} type="text" className="form-element" placeholder="Name"/>
+                                    <input value={this.state.userUpdateName} onChange={this.onChange} name="userUpdateName" type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdateemail = ref; }} type="email" className="form-element" placeholder="Email"/>
+                                    <input value={this.state.userUpdateEmail} onChange={this.onChange} name="userUpdateEmail" type="email" className="form-element" placeholder="Email"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdatePassword = ref; }} type="password" className="form-element" placeholder="Password"/>
+                                    <input value={this.state.userUpdatePassword} onChange={this.onChange} name="userUpdatePassword" type="password" className="form-element" placeholder="Password"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdateAddress = ref; }} type="text" className="form-element" placeholder="Address"/>
+                                    <input value={this.state.userUpdateAddress} onChange={this.onChange} name="userUpdateAddress" type="text" className="form-element" placeholder="Address"/>
                                 </fieldset>
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdateCity = ref; }} type="text" className="form-element" placeholder="City"/>
+                                    <input value={this.state.userUpdateCity} onChange={this.onChange} name="userUpdateCity" type="text" className="form-element" placeholder="City"/>
                                 </fieldset>
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.userUpdateState = ref; }} className="form-element custom">
+                                    <select value={this.state.userUpdateState} onChange={this.onChange} name="userUpdateState" className="form-element custom">
                                         {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                     </select>
                                 </div>
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
-                                    <input ref={(ref) => { this.state.userUpdateZip = ref; }} type="text" className="form-element" placeholder="Zip"/>
+                                    <input value={this.state.userUpdateZip} onChange={this.onChange} name="userUpdateZip" type="text" className="form-element" placeholder="Zip"/>
                                 </fieldset>
                             </div>
                             <button type="submit" className="btn btn-army">User Update</button>
