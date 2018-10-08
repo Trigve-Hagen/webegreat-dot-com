@@ -1,14 +1,14 @@
 const initialState = {
     id: 1,
-    name: "",
-    image: "",
-    email: "",
-    role: 1,
+    name: "Trigve Hagen",
+    image: "user-avatar.jpg",
+    email: "trigve.hagen@gmail.com",
+    ifactive: 1,
+    role: 3,
     address: "",
     city: "",
     state: "",
-    zip: "",
-    password: "",
+    zip: ""
 }
 
 const roleReducer = (state=[initialState], action) => {

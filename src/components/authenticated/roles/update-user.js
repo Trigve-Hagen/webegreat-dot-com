@@ -83,8 +83,7 @@ class UpdateUser extends React.Component {
                         state: json.state,
                         zip: json.zip,
                         ifactive: json.ifactive,
-                        image: json.image ? json.image : 'user-avatar.jpg',
-                        password: json.password
+                        image: json.image ? json.image : 'user-avatar.jpg'
                     });
 					this.setState({
                         userUpdateError: json.message,
