@@ -202,7 +202,7 @@ module.exports = function(database, config, connection, moment, fs, reqPath) {
             if(element.table_name == 'f_orders') {
                 const orders = [
                     `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '13066 Paddy Creek Lane', 'Lodi', 'CA', '95240', '1_2', '1_2', '39.99_39.99', '', 0, '');`,
-                    `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '13066 Paddy Creek Lane', 'Lodi', 'CA', '95240', '1_3', '2_1', '39.99_69.99', '', 0, '');`,
+                    `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '13066 Paddy Creek Lane', 'Lodi', 'CA', '95240', '1_3', '2_1', '39.99_69.99', '', 0, '');`,
                 ];
                 orders.forEach(insert => {
                     connection.query(insert, (error, results) => {

@@ -3395,6 +3395,236 @@ app.post('/api/roles/user-update', function(req, res) {
     });
 });
 
+/*
+ *************************** Cust Orders  ******************************
+ ***********************************************************************
+ */
+
+app.post('/api/morders/all', function(req, res) {
+    const { body } = req;
+    const {
+        currentPage,
+        perPage,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!currentPage || !config.patterns.numbers.test(currentPage)) {
+        return res.send({
+            success: false,
+            message: 'Current page invalid or cannot be left empty.'
+        });
+    }
+
+    if(!perPage || !config.patterns.numbers.test(perPage)) {
+        return res.send({
+            success: false,
+            message: 'Per page invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid user list orders.'
+            });
+        } else {
+            let orderList = "SELECT * FROM ??";
+            let orderListInserts = [
+                config.tables[5].table_name
+            ];
+            orderList = mysql.format(orderList, orderListInserts);
+            //console.log(orderList);
+            connection.query(orderList, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in update profile'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        orders: result
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/morders/upload', (req, res, next) => {
+    const { body } = req;
+    const {
+        id,
+        name,
+        address,
+        city,
+        state,
+        zip,
+        items,
+        numofs,
+        prices,
+        token
+    } = body;
+    let { email } = body;
+
+    if(id == '') {
+        id = 0;
+    } else if(!config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Userid invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!items || !config.patterns.names.test(items)) {
+        return res.send({
+        success: false,
+        message: 'Error: Items cannot be blank'
+        });
+    }
+
+    if(!numofs || !config.patterns.names.test(numofs)) {
+        return res.send({
+        success: false,
+        message: 'Error: Numofs cannot be blank'
+        });
+    }
+
+    if(!prices || !config.patterns.names.test(prices)) {
+        return res.send({
+        success: false,
+        message: 'Error: Prices cannot be blank'
+        });
+    }
+
+    if(!name || !config.patterns.names.test(name)) {
+        return res.send({
+        success: false,
+        message: 'Error: Name cannot be blank'
+        });
+    }
+
+    if(!email || !config.patterns.emails.test(email)) {
+        return res.send({
+        success: false,
+        message: 'Error: Email name cannot be blank'
+        });
+    }
+
+    if(!address || !config.patterns.names.test(address)) {
+        return res.send({
+        success: false,
+        message: 'Error: Address name cannot be blank'
+        });
+    }
+
+    if(!city || !config.patterns.names.test(city)) {
+        return res.send({
+        success: false,
+        message: 'Error: City name cannot be blank'
+        });
+    }
+
+    if(!state || !config.patterns.names.test(state)) {
+        return res.send({
+        success: false,
+        message: 'Error: State name cannot be blank'
+        });
+    }
+    
+    if(!zip || !config.patterns.numbers.test(zip)) {
+        return res.send({
+        success: false,
+        message: 'Error: State name cannot be blank'
+        });
+    }
+
+    email = email.toLowerCase();
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid create order.'
+            });
+        } else {      
+            //console.log(result.insertId);
+            var insertMerchantOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 0, '')";
+            var inserts = [
+                config.tables[5].table_name,
+                id, myDate, myDate, name, email,
+                address, city, state, zip,
+                items, numofs, prices
+            ];
+            insertMerchantOrder = mysql.format(insertMerchantOrder, inserts);
+            connection.query(insertMerchantOrder, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register Session: " + error);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in create order',
+                        token: null,
+                        id: null
+                    });
+                } else {
+                    //console.log("Results: in SignIn: " + results);
+                    return res.send({
+                        success: true,
+                        message: 'Successfull order',
+                        transid: result.insertId,
+                        id: id,
+                        name: name,
+                        email: email,
+                        address: address,
+                        city: city,
+                        state: state,
+                        zip: zip,
+                        items: items,
+                        numofs: numofs,
+                        prices: prices
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');
 });

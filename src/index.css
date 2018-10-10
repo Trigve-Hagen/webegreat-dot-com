@@ -275,6 +275,14 @@ textarea.form-element {
   height: auto;
 }
 
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+  border-top: 1px solid #101010;
+}
+
+.table > thead > tr > th {
+  border-bottom: 2px solid #101010;
+}
+
 /* ----- Menu Styles ----- */
 
 .menu-item ul {

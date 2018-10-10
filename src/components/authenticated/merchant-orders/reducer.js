@@ -1,5 +1,6 @@
 const initialState = {
     id: 1,
+    date: '2018-10-08 07:49:43',
     name: "Trigve Hagen",
     email: "trigve.hagen@gmail.com",
     address: "",
@@ -11,11 +12,11 @@ const initialState = {
     prices: "39.99_39.99"
 }
 
-const corderReducer = (state=[initialState], action) => {
+const morderReducer = (state=[initialState], action) => {
     switch(action.type) {
-        case "RESET_CORDER":
+        case "RESET_MORDER":
             return [initialState];
-        case "UPDATE_CORDER":
+        case "UPDATE_MORDER":
             state=[];
             return [...state, action.payload];
         default:
@@ -23,4 +24,4 @@ const corderReducer = (state=[initialState], action) => {
     }
 }
 
-export default corderReducer;
+export default morderReducer;
