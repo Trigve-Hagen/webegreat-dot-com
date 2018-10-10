@@ -21,16 +21,16 @@ class About extends React.Component {
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                             <h1>About Page</h1>
                             <p>Federal tax brackets: 2018 tax brackets (for taxes due April 15, 2019)</p>
-                            <p>If tax percents goes up with earned income that means that the government pulls in more income as people make more money. It makes sense to pay the people as much as possible to bring in more income. What if there was an insentive program built by the government to pay the service workers(hired by the government) more as the wealth of the common citizen grows bases upon the tax percent brackets. As the service workers find ways to get common citizens to make more their salaries rise right along side of them. City by City so we can prosper more if we work harder for our people. The biggest jump for income pulled in in taxes is at the 20 dollars an hour mark. This should be the goal for getting people paid. This and above. I'll keep working to create a table of hourly increase per civil service workers verses how many people we need to bring up to facilitate a dollar an hour wage hike for the civil service worker.</p>
+                            <p>If tax percents goes up with earned income that means that the government pulls in more income as people make more money. It makes sense to pay the people as much as possible to bring in more income. What if there was an insentive program built by the government to pay the service workers(hired by the government) more as the wealth of the common citizen grows bases upon the tax percent brackets. As the service workers find ways to get common citizens to make more their salaries rise right along side of them. City by City so we can prosper more if we work harder for our people. The biggest jump for income pulled in in taxes is at the 20 dollars an hour mark. This should be the goal for getting people paid. This and above. Maybe a tax cut for the rich to get them to pay us more. I need the number of people in the city working for under 20 an hour and the number of civil servive workers working to calculate the raise in income it could generate.</p>
                             <div className="row space-top-20px space-bottom-50px">
                                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                                     <table className="table">
                                         <thead>
-                                            <th>Hour</th>
+                                            <tr><th>Hour</th>
                                             <th>Yearly</th>
                                             <th>Single Rate</th>
                                             <th>Pays</th>
-                                            <th>Take Home</th>
+                                            <th>Take Home</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr><td>$11</td><td>$22,880</td><td>15%</td><td>$3,432</td><td>$19,448</td></tr>
@@ -48,9 +48,9 @@ class About extends React.Component {
                                 <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
                                     <table className="table">
                                         <thead>
-                                            <th>Rate</th>
+                                            <tr><th>Rate</th>
                                             <th>Single</th>
-                                            <th>Upper Taxes</th>
+                                            <th>Upper Taxes</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr><td>10%</td><td>Up to $9,525</td><td>$953</td></tr>
@@ -66,9 +66,9 @@ class About extends React.Component {
                                 <div className="col-lg-6 col-md-6 col-sm-12 col col-xs-24">
                                     <table className="table">
                                         <thead>
-                                            <th>Rate</th>
+                                            <tr><th>Rate</th>
                                             <th>Head of Household</th>
-                                            <th>Upper Taxes</th>
+                                            <th>Upper Taxes</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr><td>10%</td><td>Up to $13,600</td><td>$1,360</td></tr>
@@ -86,9 +86,9 @@ class About extends React.Component {
                                 <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
                                     <table className="table">
                                         <thead>
-                                            <th>Rate</th>
+                                            <tr><th>Rate</th>
                                             <th>Married filing jointly or qualifying widow</th>
-                                            <th>Upper Taxes</th>
+                                            <th>Upper Taxes</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr><td>10%</td><td>Up to $19,050</td><td>$1,905</td></tr>
@@ -104,9 +104,9 @@ class About extends React.Component {
                                 <div className="col-lg-6 col-md-6 col-sm-12 col col-xs-24">
                                     <table className="table">
                                         <thead>
-                                            <th>Rate</th>
+                                            <tr><th>Rate</th>
                                             <th>Married filing separately</th>
-                                            <th>Upper Taxes</th>
+                                            <th>Upper Taxes</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr><td>10%</td><td>Up to $9,525</td><td>$953</td></tr>

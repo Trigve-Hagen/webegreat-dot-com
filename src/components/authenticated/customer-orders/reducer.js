@@ -1,20 +1,14 @@
 const initialState = {
-    transid: 1,
-    customer: {
-        name: "Trigve Hagen",
-        email: "trigve.hagen@gmail.com",
-        ifactive: 1,
-        role: 3,
-        address: "",
-        city: "",
-        state: "",
-        zip: ""
-    },
-    items: {
-        proids: "1_2",
-        numofs: "1_2",
-        prices: "39.99_39.99"
-    }
+    id: 1,
+    name: "Trigve Hagen",
+    email: "trigve.hagen@gmail.com",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
+    proids: "1_2",
+    numofs: "1_2",
+    prices: "39.99_39.99"
 }
 
 const corderReducer = (state=[initialState], action) => {
