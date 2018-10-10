@@ -1554,7 +1554,7 @@ app.post('/api/product/update', function(req, res) {
  ***********************************************************************
  */
 
-/*app.post('/api/avatar/get-avatar', function(req, res) {
+app.post('/api/avatar/get-avatar', function(req, res) {
     const { body } = req;
     const {
         token
@@ -1583,14 +1583,32 @@ app.post('/api/product/update', function(req, res) {
                 message: 'Server Error in get userid update avatar.'
             });
         } else {
-            return res.send({
-                success: true,
-                message: 'Success',
-                folderid: results[0]['user_id']
+            let getUserAvatar = "SELECT * FROM ?? WHERE ?? = ?";
+            let getUserAvatarInserts = [
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                results[0]['user_id']
+            ];
+            getUserAvatar = mysql.format(getUserAvatar, getUserAvatarInserts);
+            console.log(getUserAvatar);
+            connection.query(getUserAvatar, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in get user avatar.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        id: results[0]['user_id'],
+                        avatar: result[0]['avatar']
+                    });
+                }
             });
         }
     });
-});*/
+});
 
 app.post('/api/avatar/update-avatar', function(req, res) {
     const { body } = req;
@@ -1760,14 +1778,12 @@ app.post('/api/account/get-account', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Success',
-                        id: result[0]['userid'],
                         name: result[0]['name'],
                         email: result[0]['email'],
                         address: result[0]['shipping_address'],
                         city: result[0]['shipping_city'],
                         state: result[0]['shipping_state'],
-                        zip: result[0]['shipping_zip'],
-                        avatar: result[0]['avatar']
+                        zip: result[0]['shipping_zip']
                     });
                 }
             });

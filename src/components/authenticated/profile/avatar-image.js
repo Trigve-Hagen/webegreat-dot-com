@@ -20,7 +20,7 @@ class AvatarImage extends React.Component {
     }
 
     componentDidMount() {
-		fetch(config.site_url + '/api/account/get-account', {
+		fetch(config.site_url + '/api/avatar/get-avatar', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
