@@ -2467,8 +2467,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
                         });
                     });
                     //console.log(util.inspect(paypalItems, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
-                    let cancelUrl = "http://localhost:3000" + urlConfig.paypal.cancel;
-                    let successUrl = "http://localhost:3000" + urlConfig.paypal.success;
+                    let cancelUrl = urlConfig.site_url + urlConfig.paypal.cancel;
+                    let successUrl = urlConfig.site_url + urlConfig.paypal.success;
                     let create_payment_json = {
                         "intent": "sale",
                         "payer": {
