@@ -43,8 +43,11 @@ class Home extends React.Component {
                         arrayArgs.push({
                             id: value['productid'],
                             image: value['image'],
+                            sku: value['sku'],
                             name: value['name'],
                             price: value['price'],
+                            stock: value['stock'],
+                            ifmanaged: value['managed_stock'],
                             description: value['description']
                         });
                     }

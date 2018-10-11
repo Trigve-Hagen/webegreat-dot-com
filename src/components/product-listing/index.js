@@ -2,15 +2,11 @@ import React from 'react';
 import ProductItem from './product-item';
 import { connect } from 'react-redux';
 
-const style = {
-    marginTop: '20px'
-}
-
 function ProductListing(props) {
     if(props.products.length == 0) {
         return <div className="row space-top-20px space-bottom-50px">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <div className="product-listing" style={style}>
+                        <div className="product-listing margin-top-20px">
                             <h3>There are no products yet.</h3>
                         </div>
                     </div>
@@ -18,7 +14,7 @@ function ProductListing(props) {
     } else {
         return <div className="row space-top-20px space-bottom-50px">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <div className="product-listing" style={style}>
+                        <div className="product-listing margin-top-20px">
                             {
                                 props.products.map( product =>
                                     <ProductItem key={product.id}

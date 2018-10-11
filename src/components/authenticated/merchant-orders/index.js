@@ -68,7 +68,7 @@ class MerchantOrders extends React.Component {
                             orderitems: orderItems
                         });
                     }
-                    //console.log(arrayArgs);
+                    console.log(arrayArgs.length);
 					this.setState({
                         loadOrdersError: json.message,
                         orders: arrayArgs
@@ -84,6 +84,7 @@ class MerchantOrders extends React.Component {
     getOrderObject(orderId) {
         let obj={};
         this.state.orders.map(order => {
+            console.log(order.id + ", " + orderId);
             if(order.id == orderId) {
                 obj.id = order.id;
                 obj.date = order.date;
@@ -144,7 +145,7 @@ class MerchantOrders extends React.Component {
                         loadOrdersError: json.message,
                         orders: arrayArgs
                     });
-                    this.props.updateCOrders({
+                    this.props.updateMOrders({
                         id: arrayArgs[0].id,
                         date: arrayArgs[0].date,
                         name: arrayArgs[0].name,
@@ -168,7 +169,7 @@ class MerchantOrders extends React.Component {
     }
 
     render() {
-        //this.props.resetCOrders();
+        //this.props.resetMOrders();
         if(this.props.authentication[0].authenticated) {
             return (
                 <div>

@@ -2,12 +2,8 @@ import React from 'react';
 import AddButton from '../product-components/add-button';
 import RemoveButton from '../product-components/remove-button';
 
-const style = {
-    marginTop: '20px'
-}
-
 export default function ProductItem(props) {
-    return <div className="row" style={style}>
+    return <div className="row margin-top-20px">
         <div className="col-lg-3 col-md-3 col-sm-12 col-xs-24 text-center">
             <img
                 alt={ props.product.name }

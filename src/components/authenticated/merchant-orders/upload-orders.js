@@ -25,18 +25,24 @@ class UploadOrders extends React.Component {
 
 	onSubmit(e) {
         e.preventDefault();
-        let items = [], numofs = [], prices = [];
+        let proids = [], numofs = [], prices = [];
         function createArrays(item) {
-            items.push(item.id);
+            proids.push(item.id);
             numofs.push(item.quantity);
             prices.push(item.price);
         }
         this.props.cart.forEach(createArrays);
-        let mordersItems = items.join("_");
+        let mordersProids = proids.join("_");
         let mordersNumofs = numofs.join("_");
         let mordersPrices = prices.join("_");
         //console.log(mordersItems + ", " + mordersNumofs + ", " + mordersPrices)
-        
+        let cartCount = 0; let cartString = '';
+        this.props.cart.map(item => {
+            if(cartCount == this.props.cart.length - 1) cartString += item.id + "_" + item.name + "_" + item.sku + "_" + item.price + "_" + item.quantity + "_" + item.image + "_" + item.stock + "_" + (parseInt(item.quantity) * parseFloat(item.price)).toFixed(2);
+            else cartString += item.id + "_" + item.name + "_" + item.sku + "_" + item.price + "_" + item.quantity + "_" + item.image + "_" + item.stock + "_" + (parseInt(item.quantity) * parseFloat(item.price)).toFixed(2) + "&";
+            cartCount++;
+        });
+        console.log(cartString);
         const data = new FormData();
             data.append('id', this.state.mordersUploadId);
             data.append('name', this.state.mordersUploadName);
@@ -45,7 +51,8 @@ class UploadOrders extends React.Component {
 			data.append('city', this.state.mordersUploadCity);
             data.append('state', this.state.mordersUploadState);
             data.append('zip', this.state.mordersUploadZip);
-            data.append('items', mordersItems);
+            data.append('orderitems', cartString);
+            data.append('proids', mordersProids);
             data.append('numofs', mordersNumofs);
             data.append('prices', mordersPrices);
             data.append('token', this.props.authentication[0].token);
@@ -65,9 +72,10 @@ class UploadOrders extends React.Component {
                         city: json.city,
                         state: json.state,
                         zip: json.zip,
-                        items: json.items,
+                        proids: json.proids,
                         numofs: json.numofs,
-                        prices: json.prices
+                        prices: json.prices,
+                        orderitems: json.orderitems
                     });
 					this.setState({
                         mordersUploadError: json.message,

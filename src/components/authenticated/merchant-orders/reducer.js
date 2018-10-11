@@ -3,14 +3,14 @@ const initialState = {
     date: '2018-10-08 07:49:43',
     name: "Trigve Hagen",
     email: "trigve.hagen@gmail.com",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
+    address: "13066 Paddy Creek Lane",
+    city: "Lodi",
+    state: "CA",
+    zip: "95240",
     proids: "1_2",
     numofs: "1_2",
     prices: "39.99_39.99",
-    orderitems: ""
+    orderitems: []
 }
 
 const morderReducer = (state=[initialState], action) => {

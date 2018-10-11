@@ -3568,16 +3568,15 @@ app.post('/api/morders/upload', (req, res, next) => {
         city,
         state,
         zip,
-        items,
+        proids,
         numofs,
         prices,
+        orderitems,
         token
     } = body;
     let { email } = body;
 
-    if(id == '') {
-        id = 0;
-    } else if(!config.patterns.numbers.test(id)) {
+    if(!id || !config.patterns.numbers.test(id)) {
         return res.send({
             success: false,
             message: 'Userid invalid or cannot be left empty.'
@@ -3591,10 +3590,17 @@ app.post('/api/morders/upload', (req, res, next) => {
         });
     }
 
-    if(!items || !config.patterns.names.test(items)) {
+    if(!orderitems || !config.patterns.names.test(orderitems)) {
         return res.send({
         success: false,
-        message: 'Error: Items cannot be blank'
+        message: 'Error: Order items cannot be blank'
+        });
+    }
+
+    if(!proids || !config.patterns.names.test(proids)) {
+        return res.send({
+        success: false,
+        message: 'Error: Proids cannot be blank'
         });
     }
 
@@ -3671,16 +3677,17 @@ app.post('/api/morders/upload', (req, res, next) => {
                 success: false,
                 message: 'Server error in get userid create order.'
             });
-        } else {      
+        } else {   
             //console.log(result.insertId);
-            var insertMerchantOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 0, '')";
+            var insertMerchantOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 0, '', ?)";
             var inserts = [
                 config.tables[5].table_name,
                 id, myDate, myDate, name, email,
                 address, city, state, zip,
-                items, numofs, prices
+                proids, numofs, prices, orderitems
             ];
             insertMerchantOrder = mysql.format(insertMerchantOrder, inserts);
+            //console.log(insertMerchantOrder);
             connection.query(insertMerchantOrder, function (error, result, fields) {
                 if(error) {
                     //console.log("Error: in Register Session: " + error);
@@ -3703,9 +3710,10 @@ app.post('/api/morders/upload', (req, res, next) => {
                         city: city,
                         state: state,
                         zip: zip,
-                        items: items,
+                        proids: proids,
                         numofs: numofs,
-                        prices: prices
+                        prices: prices,
+                        orderitems: orderitems
                     });
                 }
             });

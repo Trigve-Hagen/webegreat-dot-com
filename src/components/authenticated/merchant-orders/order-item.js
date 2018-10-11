@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 class OrderItem extends React.Component {
     constructor(props) {
@@ -43,26 +42,6 @@ class OrderItem extends React.Component {
                                         </div>
                                     )
                                 }
-                            </div>
-                        </div>
-                    )
-                }
-                {
-                    this.props.order.map((product, index) =>
-                        <div className="row" key={index}>
-                            <div className="col-lg-3 col-md-3 col-sm-12 col-xs-24">
-                                <img
-                                    src={ `/img/products/${product.orderitems.image}` }
-                                    alt="Army Strong" className="img-responsive"
-                                />
-                            </div>
-                            <div className="col-lg-9 col-md-9 col-sm-12 col-xs-24 text-left">
-                                <h4>{product.orderitems.name}</h4>
-                                <p>{product.orderitems.description}</p>
-                                <p>Id: {product.orderitems.productid}</p>
-                                <p>Price: {product.orderitems.price}</p>
-                                <p>Quantity: {product.orderitems.quantity}</p>
-                                <p>Total: {product.orderitems.total}</p>
                             </div>
                         </div>
                     )
