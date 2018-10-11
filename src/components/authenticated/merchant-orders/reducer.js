@@ -9,7 +9,8 @@ const initialState = {
     zip: "",
     proids: "1_2",
     numofs: "1_2",
-    prices: "39.99_39.99"
+    prices: "39.99_39.99",
+    orderitems: ""
 }
 
 const morderReducer = (state=[initialState], action) => {

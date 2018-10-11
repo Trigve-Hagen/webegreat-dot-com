@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import config from '../../../config/config';
 
 class OrderItem extends React.Component {
     constructor(props) {
@@ -8,7 +7,6 @@ class OrderItem extends React.Component {
     }
 
     render() {
-        //console.log(this.state.products);
         return (
             <div className="row margin-top-20px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24 text-center">
@@ -75,12 +73,5 @@ class OrderItem extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        morders: state.morders,
-        authentication: state.authentication
-    }
-}
 
-
-export default connect(mapStateToProps)(OrderItem)
+export default OrderItem;

@@ -37,11 +37,11 @@ class MerchantOrders extends React.Component {
                     let arrayArgs = [];
                     for (let value of Object.values(json.orders)) {
                         let orderItems = [];
-                        //console.log(value.items);
                         let argsArray = value.items.split("&");
+                        //console.log(argsArray);
                         for(let h=0; h<argsArray.length; h++) {
                             let orderArgs = argsArray[h].split("_");
-                            //console.log(argsArray.length);
+                            //console.log(orderArgs.length);
                             orderItems.push({
                                 id: orderArgs[0],
                                 name: orderArgs[1],
