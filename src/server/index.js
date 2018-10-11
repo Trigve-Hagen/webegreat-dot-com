@@ -1575,7 +1575,7 @@ app.post('/api/avatar/get-avatar', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
+    console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2447,24 +2447,28 @@ app.post('/api/cart/call-paypal', function(req, res) {
                     });
                 } else {
                     //console.log(util.inspect(results, {showHidden: false, depth: null}));
-                    let items = [];
+                    let objCount = 0;
+                    let paypalItems = []; let itemsString = '';
                     itemIds.forEach(itemObj => {
                         results.forEach(product => {
                             //console.log(parseInt(id) + ", " + product['productid']);
                             if(parseInt(itemObj.id) == product['productid']) {
-                                items.push({
+                                paypalItems.push({
                                     "name": product['name'],
-                                    "sku": product['productid'].toString(),
+                                    "sku": product['sku'],
                                     "price": product['price'],
                                     "currency": "USD",
                                     "quantity": parseInt(itemObj.quantity),
                                 });
+                                if(objCount == itemIds.length - 1) itemsString += product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2);
+                                else itemsString += "&" + product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2);
+                                objCount++;
                             }
                         });
                     });
-                    //console.log(util.inspect(items, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
-                    let cancelUrl = urlConfig.site_url + urlConfig.paypal.cancel;
-                    let successUrl = urlConfig.site_url + urlConfig.paypal.success;
+                    //console.log(util.inspect(paypalItems, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
+                    let cancelUrl = "http://localhost:3000" + urlConfig.paypal.cancel;
+                    let successUrl = "http://localhost:3000" + urlConfig.paypal.success;
                     let create_payment_json = {
                         "intent": "sale",
                         "payer": {
@@ -2477,7 +2481,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
                         "transactions": [
                             {
                                 "item_list": {
-                                    "items": items
+                                    "items": paypalItems
                                 },
                                 "amount": {
                                     "currency": "USD",
@@ -2496,11 +2500,11 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             });
                         } else {
                             
-                            let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '')";
+                            let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '' ?)";
                             let insertOrderInserts = [
                                 config.tables[5].table_name, results[0]['user_id'],
                                 myDate, myDate, name, email, address, city, state, zip,
-                                proids, numofs, prices, payment.id
+                                proids, numofs, prices, payment.id, itemsString
                             ];
                             insertOrder = mysql.format(insertOrder, insertOrderInserts);
                             //console.log(insertOrder);
@@ -2559,7 +2563,7 @@ app.post('/api/paypal/success', function(req, res) {
         paymentId
     ];
     loadOrder = mysql.format(loadOrder, loadOrderInserts);
-    console.log(loadOrder);
+    //console.log(loadOrder);
     connection.query(loadOrder, function (error, results, fields) {
         if(error) {
             //console.log("Error: in Register New User: " + err);
@@ -3412,7 +3416,7 @@ app.post('/api/roles/user-update', function(req, res) {
 });
 
 /*
- *************************** Cust Orders  ******************************
+ ************************ Merchant Orders  *****************************
  ***********************************************************************
  */
 
@@ -3480,6 +3484,74 @@ app.post('/api/morders/all', function(req, res) {
                         success: true,
                         message: 'Success',
                         orders: result
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/morders/items', function(req, res) {
+    const { body } = req;
+    const {
+        items,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!items || !config.patterns.names.test(items)) {
+        return res.send({
+            success: false,
+            message: 'Items invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid display order.'
+            });
+        } else {
+            let productids = items.split("_");
+            let productString = productids.join(",");
+            for(let i=0; i<productids.length; i++) {
+
+            }
+            let productList = "SELECT * FROM ?? WHERE ?? IN (" + productString + ");";
+            let productListInserts = [
+                config.tables[0].table_name,
+                config.tables[0].table_fields[0].Field,
+            ];
+            productList = mysql.format(productList, productListInserts);
+            //console.log(productList);
+            connection.query(productList, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get product list display order.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        products: result
                     });
                 }
             });

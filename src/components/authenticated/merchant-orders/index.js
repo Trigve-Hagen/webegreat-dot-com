@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import Footer from '../../footer';
 import UploadOrders from './upload-orders';
-import OrdersList from './orders-list';
+import OrderList from './order-list';
+import OrderItem from './order-item';
 import config from '../../../config/config';
 
 class MerchantOrders extends React.Component {
@@ -35,18 +36,36 @@ class MerchantOrders extends React.Component {
 				if(json.success) {
                     let arrayArgs = [];
                     for (let value of Object.values(json.orders)) {
+                        let orderItems = [];
+                        //console.log(value.items);
+                        let argsArray = value.items.split("&");
+                        for(let h=0; h<argsArray.length; h++) {
+                            let orderArgs = argsArray[h].split("_");
+                            //console.log(argsArray.length);
+                            orderItems.push({
+                                id: orderArgs[0],
+                                name: orderArgs[1],
+                                sku: orderArgs[2],
+                                price: orderArgs[3],
+                                quantity: orderArgs[4],
+                                image: orderArgs[5],
+                                stock: orderArgs[6],
+                                total: orderArgs[7]
+                            });
+                        }
                         arrayArgs.push({
                             id: value['orderid'],
                             date: value['create_at'],
                             name: value['name'],
                             email: value['email'],
-                            address: value['address'],
-                            city: value['city'],
-                            state: value['state'],
-                            zip: value['zip'],
-                            proids: value['proids'],
-                            numofs: value['numofs'],
-                            prices: value['prices']
+                            address: value['shipping_address'],
+                            city: value['shipping_city'],
+                            state: value['shipping_state'],
+                            zip: value['shipping_zip'],
+                            proids: value['product_ids'],
+                            numofs: value['number_ofs'],
+                            prices: value['prices'],
+                            orderitems: orderItems
                         });
                     }
                     //console.log(arrayArgs);
@@ -62,7 +81,7 @@ class MerchantOrders extends React.Component {
 			});
     }
 
-    getProductObject(orderId) {
+    getOrderObject(orderId) {
         let obj={};
         this.state.orders.map(order => {
             if(order.id == orderId) {
@@ -77,18 +96,19 @@ class MerchantOrders extends React.Component {
                 obj.proids = order.proids;
                 obj.numofs = order.numofs;
                 obj.prices = order.prices;
+                obj.orderitems = order.orderitems;
             }
         });
         return obj;
     }
 
     onView(e) {
-        this.props.updateMOrders(this.getProductObject(e.target.dataset.orderid));
+        this.props.updateMOrders(this.getOrderObject(e.target.dataset.orderid));
     }
 
     onDelete(e) {
         let orderId = e.target.dataset.orderid;
-        let productObject = this.getProductObject(orderId);
+        let productObject = this.getOrderObject(orderId);
         if (confirm(`Are you sure you want to delete ${productObject.id}, ${productObject.name}?`)) {
             fetch(config.site_url + '/api/morders/delete-order', {
 			method: 'POST',
@@ -156,9 +176,8 @@ class MerchantOrders extends React.Component {
                     <div className="container">
                         <div className="row space-top-20px space-bottom-50px">
                             <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                                <h1>My Orders Page</h1>
                                 <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
-                                    <OrdersList
+                                    <OrderList
                                         orders={this.state.orders}
                                         onView={this.onView}
                                         onDelete={this.onDelete}
@@ -171,6 +190,7 @@ class MerchantOrders extends React.Component {
                                     <UploadOrders cart={this.props.cart} orders={this.props.morders}/>
                                 </div>
                                 <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
+                                    <OrderItem order={this.props.morders} />
                                 </div>
                             </div>
                         </div>

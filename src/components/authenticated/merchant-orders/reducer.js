@@ -14,9 +14,9 @@ const initialState = {
 
 const morderReducer = (state=[initialState], action) => {
     switch(action.type) {
-        case "RESET_MORDER":
+        case "RESET_MORDERS":
             return [initialState];
-        case "UPDATE_MORDER":
+        case "UPDATE_MORDERS":
             state=[];
             return [...state, action.payload];
         default:

@@ -509,6 +509,14 @@ module.exports = {
                     Key: '',
                     Default: null,
                     Extra: ''
+                },
+                {
+                    Field: 'items',
+                    Type: 'TEXT',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
                 }
             ]
         },

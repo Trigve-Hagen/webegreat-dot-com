@@ -11,6 +11,7 @@ import {
 import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.css';
+import 'video-react/dist/video-react.css';
 
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';

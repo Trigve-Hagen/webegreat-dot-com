@@ -1,16 +1,12 @@
 import React from 'react';
 
-const style = {
-    marginTop: '20px'
-}
-
 function uniqueId(id) {
     return parseInt(id) - 50 * 2;
 }
 
 export default function UserItem(props) {
     let folder = uniqueId(props.user[0].id);
-    return <div className="row" style={style}>
+    return <div className="row margin-top-20px">
         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24 text-center">
             <img
                 alt={ props.user[0].name }

@@ -35,7 +35,7 @@ class UploadOrders extends React.Component {
         let mordersItems = items.join("_");
         let mordersNumofs = numofs.join("_");
         let mordersPrices = prices.join("_");
-        console.log(mordersItems + ", " + mordersNumofs + ", " + mordersPrices)
+        //console.log(mordersItems + ", " + mordersNumofs + ", " + mordersPrices)
         
         const data = new FormData();
             data.append('id', this.state.mordersUploadId);
@@ -81,6 +81,7 @@ class UploadOrders extends React.Component {
                         mordersUploadNumofs: '',
                         mordersUploadPrices: ''
                     });
+                    location.reload();
 				} else {
                     this.setState({
 						mordersUploadError: json.message
@@ -93,7 +94,7 @@ class UploadOrders extends React.Component {
         //this.props.resetRole();
         return (
 			<div>
-                <h3>Merchant Orders Upload</h3>
+                <h3>Order Upload</h3>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24 margin-top-20px margin-bottom-20px">
                         {
