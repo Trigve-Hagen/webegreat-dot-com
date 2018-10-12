@@ -3799,6 +3799,94 @@ app.post('/api/corders/all', function(req, res) {
     });
 });
 
+app.post('/api/corders/survey', function(req, res) {
+    const { body } = req;
+    const {
+        iffront,
+        stars,
+        comment,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!iffront || !config.patterns.numbers.test(iffront)) {
+        return res.send({
+            success: false,
+            message: 'If front invalid or cannot be left empty.'
+        });
+    }
+
+    if(!stars || !config.patterns.numbers.test(stars)) {
+        return res.send({
+            success: false,
+            message: 'Stars invalid or cannot be left empty.'
+        });
+    }
+
+    if(!comment || !config.patterns.names.test(comment)) {
+        return res.send({
+            success: false,
+            message: 'Comment invalid or cannot be left empty.'
+        });
+    }
+
+    let survey = iffront + "_" + stars + "_" + comment;
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update survey.'
+            });
+        } else {
+            let updateSurvey = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+            let updateSurveyInserts = [
+                config.tables[5].table_name,
+                config.tables[5].table_fields[15].Field,
+                survey,
+                config.tables[5].table_fields[1].Field,
+                results[0]['user_id']
+            ];
+
+            updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);
+            //console.log(updateSurvey);
+            connection.query(updateSurvey, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in update survey'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Your survey has been successfully updated.',
+                        iffront: iffront,
+                        stars: stars,
+                        comment: comment
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');
 });

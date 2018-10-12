@@ -7,11 +7,21 @@ class UploadSurvey extends React.Component {
 		super(props);
 		this.state = {
             cordersSurveyUploadError: '',
-            cordersSurveyUploadStars: '',
-            cordersSurveyUploadComment: ''
+            cordersSurveyUploadStars: this.props.orders[0].surveyitems[0].stars,
+            cordersSurveyUploadComment: this.props.orders[0].surveyitems[0].comment
 		}
         this.onChange= this.onChange.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        console.log(this.props.orders[0].surveyitems[0].stars);
+    }
+
+    componentDidUpdate(nextProps) {
+        if(nextProps.orders[0].surveyitems !== this.props.orders[0].surveyitems) {
+            this.setState({
+                cordersSurveyUploadStars: this.props.orders[0].surveyitems[0].stars,
+                cordersSurveyUploadComment: this.props.orders[0].surveyitems[0].comment
+            });
+        }
     }
     
     onChange(e) {
@@ -20,9 +30,11 @@ class UploadSurvey extends React.Component {
 
 	onSubmit(e) {
         e.preventDefault();
-        let surveyString = this.state.cordersSurveyUploadStars + "_" + this.state.cordersSurveyUploadComment;
+        
         const data = new FormData();
-            data.append('survey', surveyString);
+            data.append('iffront', 0);
+            data.append('stars', this.state.cordersSurveyUploadStars);
+            data.append('comment', this.state.cordersSurveyUploadComment);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/corders/survey', {
@@ -32,15 +44,10 @@ class UploadSurvey extends React.Component {
 			.then(json => {
 				if(json.success) {
 					console.log("User survey successfull.");
-					/*this.props.updateCSurvey({
-                        id: json.transid,
-                        stars: json.stars,
-                        comment: json.comment
-                    });*/
 					this.setState({
                         cordersSurveyUploadError: json.message,
-                        cordersSurveyUploadStars: '',
-                        cordersSurveyUploadComment: ''
+                        cordersSurveyUploadStars: json.stars,
+                        cordersSurveyUploadComment: json.comment
                     });
                     //location.reload();
 				} else {

@@ -12,14 +12,9 @@ class Admin extends React.Component {
                             : <li><NavLink to='/products'>Products</NavLink></li>
                     }
                     {
-                        this.props.path === '/customer-orders'
-                            ? <li className="active"><NavLink to='/customer-orders'>My Orders</NavLink></li>
-                            : <li><NavLink to='/customer-orders'>My Orders</NavLink></li>
-                    }
-                    {
                         this.props.path === '/merchant-orders'
-                            ? <li className="active"><NavLink to='/merchant-orders'>Merchant Orders</NavLink></li>
-                            : <li><NavLink to='/merchant-orders'>Merchant Orders</NavLink></li>
+                            ? <li className="active"><NavLink to='/merchant-orders'>Orders</NavLink></li>
+                            : <li><NavLink to='/merchant-orders'>Orders</NavLink></li>
                     }
                     {
                         this.props.path === '/menu'

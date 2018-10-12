@@ -53,6 +53,16 @@ class CustomerOrders extends React.Component {
                                 total: orderArgs[7]
                             });
                         }
+                        let surveyItems = [];
+                        console.log("Survey:" + value.customer_survey);
+                        if(value.customer_survey != undefined) {
+                            let surveyArray = value.customer_survey.split("_");
+                            surveyItems.push({
+                                iffront: surveyArray[0],
+                                stars: surveyArray[1],
+                                comment: surveyArray[2]
+                            });
+                        }
 
                         arrayArgs.push({
                             id: value['orderid'],
@@ -66,7 +76,8 @@ class CustomerOrders extends React.Component {
                             proids: value['product_ids'],
                             numofs: value['number_ofs'],
                             prices: value['prices'],
-                            orderitems: orderItems
+                            orderitems: orderItems,
+                            surveyitems: surveyItems
                         });
                     }
                     console.log(arrayArgs.length);
@@ -99,6 +110,7 @@ class CustomerOrders extends React.Component {
                 obj.numofs = order.numofs;
                 obj.prices = order.prices;
                 obj.orderitems = order.orderitems;
+                obj.surveyitems = order.surveyitems;
             }
         });
         return obj;
@@ -131,20 +143,6 @@ class CustomerOrders extends React.Component {
                             <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
                                 <OrderItem order={this.props.corders} />
                                 <UploadSurvey cart={this.props.cart} orders={this.props.corders}/>
-                            </div>
-                        </div>
-                    </div>
-                    <Footer />
-                </div>
-            )
-        } else if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 3) {
-            return (
-                <div>
-                    <Navigation path="/customer-orders" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
-                    <div className="container">
-                        <div className="row space-top-20px space-bottom-50px">
-                            <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                                <h1>Merchant Customer Orders Page</h1>
                             </div>
                         </div>
                     </div>
