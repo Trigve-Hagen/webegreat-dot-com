@@ -7,6 +7,7 @@ import UploadOrders from './upload-orders';
 import OrderList from './order-list';
 import OrderItem from './order-item';
 import config from '../../../config/config';
+import { convertTime } from '../../../components/utils/helpers';
 
 class MerchantOrders extends React.Component {
     constructor(props) {
@@ -55,7 +56,7 @@ class MerchantOrders extends React.Component {
                         }
                         arrayArgs.push({
                             id: value['orderid'],
-                            date: value['create_at'],
+                            date: convertTime(value['created_at']),
                             name: value['name'],
                             email: value['email'],
                             address: value['shipping_address'],

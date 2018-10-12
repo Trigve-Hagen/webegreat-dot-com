@@ -18,7 +18,7 @@ class OrderList extends React.Component {
                             {
                                 this.props.orders.map(order => 
                                     <li key={order.id}> 
-                                        {order.date} {order.name} <a href="#" data-orderid={order.id} onClick={this.props.onView}>View</a> <a href="#" data-orderid={order.id} onClick={this.props.onDelete}>Delete</a> 
+                                        {order.date} {order.name} <a href="#" data-orderid={order.id} onClick={this.props.onView}>View</a> 
                                     </li>
                                 )
                             }

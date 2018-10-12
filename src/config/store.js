@@ -8,6 +8,7 @@ import menuReducer from '../components/authenticated/menu/reducer';
 import searchReducer from '../components/search-bar/reducer';
 import roleReducer from '../components/authenticated/roles/reducer';
 import mordersReducer from '../components/authenticated/merchant-orders/reducer';
+import cordersReducer from '../components/authenticated/customer-orders/reducer';
 import visibilityReducer from '../components/authenticated/profile/store-controls/store-visibility/reducer';
 
 function saveToLocalStorage(state) {
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
     menu: menuReducer,
     search: searchReducer,
     morders: mordersReducer,
+    corders: cordersReducer,
     pagination: paginationReducer,
     visibility: visibilityReducer,
     authentication: authenticationReducer

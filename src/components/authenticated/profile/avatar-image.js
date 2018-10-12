@@ -31,7 +31,7 @@ class AvatarImage extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-                    //console.log(json.id);
+                    //console.log("avatar:" + json.avatar);
 					this.setState({
                         avatarError: json.message,
                         avatarId: json.id,

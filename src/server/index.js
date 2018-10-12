@@ -160,7 +160,7 @@ app.post('/api/account/signup', (req, res, next) => {
                     id: null
                 });
             } else {
-                var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, '', 0, '', '', '', '')";
+                var insertUserIfNonExists = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, 1, 'user-avatar.jpg', 0, '', '', '', '')";
                 var inserts = [
                     config.tables[2].table_name,
                     myDate, myDate, name, email, generateHash(password)
@@ -2931,7 +2931,7 @@ app.post('/api/roles/upload', (req, res, next) => {
     if(!address || !config.patterns.names.test(address)) {
         return res.send({
         success: false,
-        message: 'Error: Address name cannot be blank'
+        message: 'Error: Address cannot be blank'
         });
     }
     if(!city || !config.patterns.names.test(city)) {
@@ -3714,6 +3714,84 @@ app.post('/api/morders/upload', (req, res, next) => {
                         numofs: numofs,
                         prices: prices,
                         orderitems: orderitems
+                    });
+                }
+            });
+        }
+    });
+});
+
+/*
+ ************************ Customer Orders  *****************************
+ ***********************************************************************
+ */
+
+app.post('/api/corders/all', function(req, res) {
+    const { body } = req;
+    const {
+        currentPage,
+        perPage,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!currentPage || !config.patterns.numbers.test(currentPage)) {
+        return res.send({
+            success: false,
+            message: 'Current page invalid or cannot be left empty.'
+        });
+    }
+
+    if(!perPage || !config.patterns.numbers.test(perPage)) {
+        return res.send({
+            success: false,
+            message: 'Per page invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid corders list.'
+            });
+        } else {
+            let orderList = "SELECT * FROM ?? WHERE ?? = ?";
+            let orderListInserts = [
+                config.tables[5].table_name,
+                config.tables[5].table_fields[1].Field,
+                results[0]['user_id']
+            ];
+            orderList = mysql.format(orderList, orderListInserts);
+            //console.log(orderList);
+            connection.query(orderList, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get corders list'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        orders: result
                     });
                 }
             });
