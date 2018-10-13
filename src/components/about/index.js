@@ -32,7 +32,9 @@ class About extends React.Component {
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <Honesty />
-                                <p>This is truly what America is about.</p>
+                                <div className="embed-responsive embed-responsive-4by3 margin-top-20px">
+                                    <iframe className="embed-responsive-item" src="https://www.youtube.com/embed/AKBLKkg5ikk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                </div>
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <h1>About Page</h1>

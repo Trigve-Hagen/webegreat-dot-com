@@ -10,7 +10,25 @@ const initialState = {
     proids: "1_2",
     numofs: "1_2",
     prices: "39.99_39.99",
-    orderitems: []
+    orderitems: [
+        {
+            id: 1,
+            name: "Army Airborne T-Shirt",
+            sku: "WBG-TS1",
+            price: "39.99",
+            quantity: 1,
+            image: "airborne-shirt.png",
+            stock: 100,
+            total: "39.99"
+        }
+    ],
+    surveyitems: [
+        {
+            iffront: 0,
+            stars: 5,
+            comment: "Great site great prices."
+        }
+    ]
 }
 
 const morderReducer = (state=[initialState], action) => {

@@ -32,6 +32,7 @@ class UploadSurvey extends React.Component {
         e.preventDefault();
         
         const data = new FormData();
+            data.append('id', this.props.orders[0].id);
             data.append('iffront', 0);
             data.append('stars', this.state.cordersSurveyUploadStars);
             data.append('comment', this.state.cordersSurveyUploadComment);

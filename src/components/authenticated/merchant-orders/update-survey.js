@@ -11,7 +11,6 @@ class UpdateSurvey extends React.Component {
 		}
         this.onChange= this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-        console.log(this.props.orders[0].surveyitems[0].stars);
     }
 
     componentDidUpdate(nextProps) {
@@ -57,15 +56,15 @@ class UpdateSurvey extends React.Component {
 	}
 
     render() {
-        let starString = ''; let ifShowing = '';
-        if(this.props.orders[0].surveyitems[0].iffront == 0) ifShowing = "Not Showing in referrals";
-        if(this.props.orders[0].surveyitems[0].iffront == 1) ifShowing = "Showing in referrals";
-        if(this.props.orders[0].surveyitems[0].stars == 1) starString = <div><span className="glyphicon glyphicon-star" /></div>;
-        else if(this.props.orders[0].surveyitems[0].stars == 2) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
-        else if(this.props.orders[0].surveyitems[0].stars == 3) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
-        else if(this.props.orders[0].surveyitems[0].stars == 4) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
-        else if(this.props.orders[0].surveyitems[0].stars == 5) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
         if(this.props.orders[0].surveyitems[0].comment) {
+            let starString = ''; let ifShowing = '';
+            if(this.props.orders[0].surveyitems[0].iffront == 0) ifShowing = "Not Showing in referrals";
+            if(this.props.orders[0].surveyitems[0].iffront == 1) ifShowing = "Showing in referrals";
+            if(this.props.orders[0].surveyitems[0].stars == 1) starString = <div><span className="glyphicon glyphicon-star" /></div>;
+            else if(this.props.orders[0].surveyitems[0].stars == 2) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
+            else if(this.props.orders[0].surveyitems[0].stars == 3) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
+            else if(this.props.orders[0].surveyitems[0].stars == 4) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
+            else if(this.props.orders[0].surveyitems[0].stars == 5) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
             return (
                 <div className="margin-top-50px">
                     <div className="row">
