@@ -79,6 +79,10 @@ a, a:active, a:focus {
   margin-top: 50px;
 }
 
+.margin-top-50px {
+  margin-top: 20px;
+}
+
 .margin-top-20px {
   margin-top: 20px;
 }
@@ -107,10 +111,6 @@ a, a:active, a:focus {
 
 .ul-styles {
   list-style: none;
-}
-
-.contactHeader {
-
 }
 
 .contactText {
@@ -281,6 +281,11 @@ textarea.form-element {
 
 .table > thead > tr > th {
   border-bottom: 2px solid #101010;
+}
+
+.glyphicon-star {
+  font-size: 25px;
+  color: #00a651;
 }
 
 /* ----- Menu Styles ----- */

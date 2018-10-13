@@ -8,6 +8,7 @@ import OrderList from './order-list';
 import OrderItem from './order-item';
 import config from '../../../config/config';
 import { convertTime } from '../../../components/utils/helpers';
+import UpdateSurvey from './update-survey';
 
 class MerchantOrders extends React.Component {
     constructor(props) {
@@ -54,6 +55,17 @@ class MerchantOrders extends React.Component {
                                 total: orderArgs[7]
                             });
                         }
+
+                        let surveyItems = [];
+                        if(value.customer_survey != undefined) {
+                            let surveyArray = value.customer_survey.split("_");
+                            surveyItems.push({
+                                iffront: surveyArray[0],
+                                stars: surveyArray[1],
+                                comment: surveyArray[2]
+                            });
+                        }
+
                         arrayArgs.push({
                             id: value['orderid'],
                             date: convertTime(value['created_at']),
@@ -66,7 +78,8 @@ class MerchantOrders extends React.Component {
                             proids: value['product_ids'],
                             numofs: value['number_ofs'],
                             prices: value['prices'],
-                            orderitems: orderItems
+                            orderitems: orderItems,
+                            surveyitems: surveyItems
                         });
                     }
                     console.log(arrayArgs.length);
@@ -85,7 +98,7 @@ class MerchantOrders extends React.Component {
     getOrderObject(orderId) {
         let obj={};
         this.state.orders.map(order => {
-            console.log(order.id + ", " + orderId);
+            //console.log(order.id + ", " + orderId);
             if(order.id == orderId) {
                 obj.id = order.id;
                 obj.date = order.date;
@@ -99,6 +112,7 @@ class MerchantOrders extends React.Component {
                 obj.numofs = order.numofs;
                 obj.prices = order.prices;
                 obj.orderitems = order.orderitems;
+                obj.surveyitems = order.surveyitems;
             }
         });
         return obj;
@@ -193,6 +207,7 @@ class MerchantOrders extends React.Component {
                                 </div>
                                 <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
                                     <OrderItem order={this.props.morders} />
+                                    <UpdateSurvey orders={this.props.morders} /> 
                                 </div>
                             </div>
                         </div>

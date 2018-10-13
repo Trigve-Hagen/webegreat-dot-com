@@ -3802,11 +3802,19 @@ app.post('/api/corders/all', function(req, res) {
 app.post('/api/corders/survey', function(req, res) {
     const { body } = req;
     const {
+        id,
         iffront,
         stars,
         comment,
         token
     } = body;
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Id invalid or cannot be left empty.'
+        });
+    }
 
     if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
@@ -3859,8 +3867,8 @@ app.post('/api/corders/survey', function(req, res) {
                 config.tables[5].table_name,
                 config.tables[5].table_fields[15].Field,
                 survey,
-                config.tables[5].table_fields[1].Field,
-                results[0]['user_id']
+                config.tables[5].table_fields[0].Field,
+                id
             ];
 
             updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);

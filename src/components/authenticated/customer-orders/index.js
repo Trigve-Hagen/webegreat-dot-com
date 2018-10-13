@@ -54,7 +54,6 @@ class CustomerOrders extends React.Component {
                             });
                         }
                         let surveyItems = [];
-                        console.log("Survey:" + value.customer_survey);
                         if(value.customer_survey != undefined) {
                             let surveyArray = value.customer_survey.split("_");
                             surveyItems.push({
