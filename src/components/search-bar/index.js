@@ -26,11 +26,11 @@ class SearchBar extends React.Component {
                                     <label>{this.state.searchError}</label>
                                 ) : (null)
                             }
-                            <form name="search" onSubmit={this.props.setSearchParam}>
+                            <form name="search" onSubmit={this.props.setSearchParam} data-searchstring={this.state.searchString}>
                                 <div className="input-group">
                                     <input value={this.state.searchString} onChange={this.onChange} type="text" name="searchString" className="form-element" placeholder="Search for..." />
                                     <span className="input-group-btn">
-                                        <button className="btn btn-army" type="button">Go!</button>
+                                        <button className="btn btn-army" type="submit">Go!</button>
                                     </span>
                                 </div>
                             </form>

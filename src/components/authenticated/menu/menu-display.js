@@ -9,12 +9,6 @@ class MenuDisplay extends React.Component {
             loadMenuError: '',
             loadMenuItems: []
         }
-        this.onClick = this.onClick.bind(this);
-    }
-
-    onClick(e) {
-        e.preventDefault();
-        console.log(e.target.name);
     }
 
     componentDidMount() {
@@ -77,7 +71,7 @@ class MenuDisplay extends React.Component {
                 level1Count++;
             }
         });
-        console.log(menuString);
+        //console.log(menuString);
         return (
             <div className="row space-top-20px space-bottom-50px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
@@ -95,11 +89,11 @@ class MenuDisplay extends React.Component {
                                             {
                                                 level1.children.map((level2, index) =>
                                                     level2.iflink
-                                                        ? <li key={index}><a href={level2.link} onClick={this.onClick} name={level2.name}>{level2.name}</a></li>
+                                                        ? <li key={index}><a href={level2.link} onClick={this.props.onClick} data-linkname={level2.name}>{level2.name}</a></li>
                                                         : <li key={index}>{level2.name}<ul>
                                                             {
                                                                 level2.children.map((level3, index) =>
-                                                                    <li key={index}><a href={level3.link} onClick={this.onClick} name={level2.name}>{level3.name}</a></li>
+                                                                    <li key={index}><a href={level3.link} onClick={this.props.onClick} data-linkname={level3.name}>{level3.name}</a></li>
                                                                 )
                                                             }
                                                         </ul></li>
