@@ -14,6 +14,7 @@ class MenuDisplay extends React.Component {
 
     onClick(e) {
         e.preventDefault();
+        console.log(e.target.name);
     }
 
     componentDidMount() {
@@ -53,30 +54,30 @@ class MenuDisplay extends React.Component {
     }
 
     render() {
-        let menuString = '';
+        let menuString = []; let level1Count = 0;
         this.state.loadMenuItems.forEach(level1 => {
             if(level1.level == 0) {
-                menuString += '<div class="menu-item"><h4>' + level1.name + '</h4><ul>';
+                menuString.push({ name: level1.name, iflink: false, link: "#", children: [] });
+                let level2Count = 0;
                 this.state.loadMenuItems.forEach(level2 => {
                     if(level2.level == 1 && level2.parent == level1.name) {
-                        let linkName2 = level1.name + "-" + level2.name;
-                        if(level2.ifproduct == 1) menuString += '<li><a href="#">' + level2.name + '</a></li>';
-                        else menuString += '<li>' + level2.name + '</li>';
-
+                        //console.log(level1Count + ", " + level2.name);
+                        if(level2.ifproduct == 1) menuString[level1Count]['children'].push({ name: level2.name, iflink: true, link: "#", children: [] });
+                        else menuString[level1Count]['children'].push({ name: level2.name, iflink: false, link: "#", children: [] });
                         this.state.loadMenuItems.forEach(level3 => {
-                            menuString += '<ul>';
                             if(level3.level == 2 && level3.parent == level2.name) {
-                                let linkName3 = level1.name + "-" + level2.name + "-" + level3.name;
-                                if(level3.ifproduct == 1) menuString += '<li><a href="#">' + level3.name + '</a></li>';
-                                else menuString += '<li>' + level3.name + '</li>';
+                                //console.log(level2Count + ", " + level3.name);
+                                if(level3.ifproduct == 1) menuString[level1Count]['children'][level2Count]['children'].push({ name: level3.name, iflink: true, link: "#", children: [] });
+                                else menuString[level1Count]['children'][level2Count]['children'].push({ name: level3.name, iflink: false, link: "#", children: [] });
                             }
-                            menuString += '</ul>';
                         });
+                        level2Count++;
                     }
                 });
-                menuString += '</ul></div>';
+                level1Count++;
             }
         });
+        console.log(menuString);
         return (
             <div className="row space-top-20px space-bottom-50px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
@@ -88,7 +89,25 @@ class MenuDisplay extends React.Component {
                                     <p>We have a large selection of Army products for sale including shirts, hats, belts, backpacks and much much more. Please have a look around and feel free to get a hold of a sales representative through the chat application at the bottom of the screen. Thanks for your service.</p>
                                 </div>
                                 <div className="menu-item">
-                                    <div dangerouslySetInnerHTML={{__html: menuString}} />
+                                    {
+                                        menuString.map((level1, index) => 
+                                            <div key={index} className="menu-item"><h4>{level1.name}</h4><ul>
+                                            {
+                                                level1.children.map((level2, index) =>
+                                                    level2.iflink
+                                                        ? <li key={index}><a href={level2.link} onClick={this.onClick} name={level2.name}>{level2.name}</a></li>
+                                                        : <li key={index}>{level2.name}<ul>
+                                                            {
+                                                                level2.children.map((level3, index) =>
+                                                                    <li key={index}><a href={level3.link} onClick={this.onClick} name={level2.name}>{level3.name}</a></li>
+                                                                )
+                                                            }
+                                                        </ul></li>
+                                                )
+                                            }
+                                            </ul></div>
+                                        )
+                                    }
                                 </div>
                             </nav>
                         </div>
