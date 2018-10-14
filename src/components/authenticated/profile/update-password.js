@@ -22,8 +22,8 @@ class UpdatePassword extends React.Component {
 		e.preventDefault();
 
         const data = new FormData();
-            data.append('password', this.state.password.value);
-            data.append('repassword', this.state.rePassword.value);
+            data.append('password', this.state.password);
+            data.append('repassword', this.state.rePassword);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/profile/update-password', {
@@ -63,7 +63,7 @@ class UpdatePassword extends React.Component {
                                     <input value={this.state.password} onChange={this.onChange} type="password" className="form-element" name="password" placeholder="Password" />
                                 </div>
                                 <div className="form-group">
-                                    <input value={this.state.password} onChange={this.onChange} type="password" className="form-element" name="rePassword" placeholder="Re-Password" />
+                                    <input value={this.state.rePassword} onChange={this.onChange} type="password" className="form-element" name="rePassword" placeholder="Re-Password" />
                                 </div>
                             </div>
                             <button type="submit" className="btn btn-army">Update Password</button>

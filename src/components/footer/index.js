@@ -52,7 +52,7 @@ class Footer extends React.Component {
                             <p className="navbar-text pull-left">© 2018 - Site Built By Trigve Hagen</p>
 
                             <a href="http://globalwebmethods.com" className="navbar-btn btn-primary btn pull-right">
-                            <span className="glyphicon glyphicon-star"></span>  Global Web Methods</a>
+                            <span className="glyphicon glyphicon-plane" />  Global Web Methods</a>
                         </div>
                     </div>
                     <div className="row space-top-20px space-bottom-50px">

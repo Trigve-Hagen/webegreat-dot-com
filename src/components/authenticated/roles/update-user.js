@@ -132,8 +132,6 @@ class UpdateUser extends React.Component {
                                     <select value={this.state.userUpdateRole} onChange={this.onChange} name="userUpdateRole" className="form-element custom">
                                         <option value="">Please select a value.</option>
                                         <option value="1">Customer</option>
-                                        <option value="2">Employee</option>
-                                        <option value="3">Administator</option>
                                     </select>
                                 </div>
                                 <div className="form-group">
