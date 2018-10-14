@@ -55,6 +55,7 @@ class UploadMenu extends React.Component {
                         menuUploadIfProduct: '',
                         menuUploadDescription: ''
                     });
+                    location.reload();
 				} else {
                     this.setState({
 						menuUploadError: json.message

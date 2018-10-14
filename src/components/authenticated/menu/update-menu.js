@@ -75,7 +75,7 @@ class UpdateMenu extends React.Component {
                         menuUpdateIfProduct: json.ifproduct,
                         menuUpdateDescription: json.description,
                     });
-                    //location.reload();
+                    location.reload();
 				} else {
                     //console.log(json.message);
                     this.setState({
@@ -133,7 +133,7 @@ class UpdateMenu extends React.Component {
                                     <textarea value={this.state.menuUpdateDescription} onChange={this.onChange} name="menuUpdateDescription" className="form-element" rows="3" placeholder="Description"/>
                                 </fieldset>
                             </div>
-                            <button type="submit" className="btn btn-army">Menu Upload</button>
+                            <button type="submit" className="btn btn-army">Menu Update</button>
                         </form>
                     </div>
                 </div>

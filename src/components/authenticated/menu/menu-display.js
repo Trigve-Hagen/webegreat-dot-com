@@ -80,6 +80,7 @@ class MenuDisplay extends React.Component {
                             <nav>
                                 <div className="menu-item alpha">
                                     <h3>Army Strong</h3>
+                                    <a href="#" onClick={this.props.onClick} data-linkname="all" className="margin-top-20px margin-bottom-20px">Display All Products</a>
                                     <p>We have a large selection of Army products for sale including shirts, hats, belts, backpacks and much much more. Please have a look around and feel free to get a hold of a sales representative through the chat application at the bottom of the screen. Thanks for your service.</p>
                                 </div>
                                 <div className="menu-item">

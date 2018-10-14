@@ -5,6 +5,8 @@ import Navigation from '../navigation';
 import Footer from '../footer';
 import config from '../../config/config';
 import MenuDisplay from '../authenticated/menu/menu-display';
+import SearchBar from '../search-bar';
+import pagination from '../product-components/pagination';
 
 class Home extends React.Component {
     constructor(props) {
@@ -13,82 +15,30 @@ class Home extends React.Component {
             perPage: 15,
             currentPage: 1,
             loadProductError: '',
-            searchString: '',
+            searchString: 'all',
             products: []
         }
         this.onClick = this.onClick.bind(this);
-        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-	}
-
     onClick(e) {
         e.preventDefault();
-        console.log(e.target.dataset.linkname);
+        this.searchProducts(e.target.dataset.linkname);
     }
 
     onSubmit(e) {
         e.preventDefault();
-        console.log(this.state.searchString);
-        //this.updateSearch({ searchString: this.state.searchString });
-        /*e.preventDefault();
-        
-        const data = new FormData();
-            data.append('role', this.state.userUploadRole);
-            data.append('name', this.state.userUploadName);
-            data.append('email', this.state.userUploadEmail);
-            data.append('address', this.state.userUploadAddress);
-			data.append('city', this.state.userUploadCity);
-            data.append('state', this.state.userUploadState);
-            data.append('zip', this.state.userUploadZip);
-            data.append('ifactive', this.state.userUploadIfActive);
-            data.append('password', this.state.userUploadPassword);
-            data.append('token', this.props.authentication[0].token);
-
-		fetch(config.site_url + '/api/roles/upload', {
-            method: 'POST',
-            body: data,
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
-					console.log("User upload successfull.");
-					this.props.updateRole({
-                        id: json.id,
-                        role : json.role,
-                        name: json.name,
-                        email: json.email,
-                        address: json.address,
-                        city: json.city,
-                        state: json.state,
-                        zip: json.zip,
-                        ifactive: json.ifactive,
-                        image: 'user-avatar.jpg'
-                    });
-					this.setState({
-                        userUploadError: json.message,
-                        userUploadRole: '',
-                        userUploadName: '',
-                        userUploadEmail: '',
-                        userUploadAddress: '',
-                        userUploadCity: '',
-                        userUploadState: '',
-                        userUploadZip: '',
-                        userUploadIfActive: '',
-                        userUploadPassword: ''
-                    });
-				} else {
-                    this.setState({
-						userUploadError: json.message
-					});
-                }
-			});*/
+        this.props.updateSearch({ searchString: e.target.dataset.searchstring });
+        this.searchProducts(e.target.dataset.searchstring);
     }
 
     componentDidMount() {
-		fetch(config.site_url + '/api/product/front', {
+		this.searchProducts(this.state.searchString)
+    }
+
+    searchProducts(searchString) {
+        fetch(config.site_url + '/api/product/front', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -96,7 +46,7 @@ class Home extends React.Component {
 			body: JSON.stringify({
 				currentPage: this.state.currentPage,
                 perPage: this.state.perPage,
-                searchString: this.state.searchString
+                searchString: searchString
 			})
 		}).then(res => res.json())
 			.then(json => {
@@ -139,21 +89,7 @@ class Home extends React.Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24 margin-top-20px">
-                                {
-                                    (this.state.searchError) ? (
-                                        <label>{this.state.searchError}</label>
-                                    ) : (null)
-                                }
-                                <form name="search" onSubmit={this.onSubmit}>
-                                    <div className="input-group">
-                                        <input value={this.state.searchString} onChange={this.onChange} name="searchString" type="text" className="form-element" placeholder="Search for..." />
-                                        <span className="input-group-btn">
-                                            <button className="btn btn-army" type="submit">Go!</button>
-                                        </span>
-                                    </div>
-                                </form>
-                            </div>
+                            <SearchBar onSubmit={this.onSubmit}/>
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
                                 <MenuDisplay onClick={this.onClick}/>
                             </div>

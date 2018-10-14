@@ -1018,7 +1018,8 @@ app.post('/api/product/front', function(req, res) {
     const { body } = req;
     const {
         perPage,
-        currentPage
+        currentPage,
+        searchString
     } = body;
     
     if(!perPage || !config.patterns.numbers.test(perPage)) {
@@ -1028,6 +1029,12 @@ app.post('/api/product/front', function(req, res) {
         });
     }
     if(!currentPage || !config.patterns.numbers.test(currentPage)) {
+        return res.send({
+            success: false,
+            message: 'Current page name invalid or cannot be left empty.'
+        });
+    }
+    if(!searchString || !config.patterns.names.test(searchString)) {
         return res.send({
             success: false,
             message: 'Current page name invalid or cannot be left empty.'
@@ -1051,15 +1058,31 @@ app.post('/api/product/front', function(req, res) {
             let start = (currentPage-1)*perPage;
             //console.log(util.inspect(results[0]['COUNT(`productid`)'], {showHidden: false, depth: null}))
             //console.log(start + ", Pages");
-
-            let getFrontProducts = "SELECT * FROM ?? ORDER BY ?? DESC LIMIT ?, ?";
-            let getFrontProductInserts = [
-                config.tables[0].table_name,
-                config.tables[0].table_fields[7].Field,
-                start, perPage
-            ];
-            getFrontProducts = mysql.format(getFrontProducts, getFrontProductInserts);
+            let getFrontProducts = '';
+            let getFrontProductInserts = [];
+            if(searchString == "all") {
+                getFrontProducts = "SELECT * FROM ?? ORDER BY ?? DESC LIMIT ?, ?";
+                getFrontProductInserts.push(
+                    config.tables[0].table_name,
+                    config.tables[0].table_fields[7].Field,
+                    start, perPage
+                    );
+            } else {
+                let stringParamas = searchString.split(" ");
+                getFrontProducts = "SELECT * FROM ?? WHERE "
+                getFrontProductInserts.push(config.tables[0].table_name);
+                //console.log(stringParamas.length);
+                for(let i=0; i<stringParamas.length; i++) {
+                    getFrontProductInserts.push(config.tables[0].table_fields[12].Field);
+                    if(i == stringParamas.length - 1) getFrontProducts += `?? LIKE '%${stringParamas[i].toLowerCase()}%' `;
+                    else getFrontProducts += `?? LIKE '%${stringParamas[i].toLowerCase()}%' OR `;
+                }
+                getFrontProductInserts.push(config.tables[0].table_fields[7].Field, start, perPage);
+                getFrontProducts += "ORDER BY ?? DESC LIMIT ?, ?";
+                //console.log(getFrontProducts);
+            }
             //console.log(getFrontProducts);
+            getFrontProducts = mysql.format(getFrontProducts, getFrontProductInserts);
             connection.query(getFrontProducts, function (err, result, fields) {
                 if(err) {
                     console.log("Error: in Register New User: " + err);
@@ -1166,7 +1189,7 @@ app.post('/api/product/upload', function(req, res) {
         });
     }
 
-    let metta = name + " " + menu + " " + price + " " + sku + " " + description;
+    let metta = name.toLowerCase() + " " + menu.toLowerCase() + " " + price.toLowerCase() + " " + sku.toLowerCase() + " " + description.toLowerCase();
 
     let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
     let userIdInserts = [
@@ -3530,9 +3553,6 @@ app.post('/api/morders/items', function(req, res) {
         } else {
             let productids = items.split("_");
             let productString = productids.join(",");
-            for(let i=0; i<productids.length; i++) {
-
-            }
             let productList = "SELECT * FROM ?? WHERE ?? IN (" + productString + ");";
             let productListInserts = [
                 config.tables[0].table_name,

@@ -31,7 +31,8 @@ class About extends React.Component {
                     <div className="row space-top-20px space-bottom-50px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-                                <Honesty />
+                                <h2>If it seems brocken..</h2>
+                                <p>For those who have signed up log out and log back in. I reload the whole site to test the install system and Arm system nearly everytime I update the code at github. If you are logged in and I do that the session that was created will not be there any more and your session will be invalid causing the forms to not work.</p>
                                 <div className="embed-responsive embed-responsive-4by3 margin-top-20px">
                                     <iframe className="embed-responsive-item" src="https://www.youtube.com/embed/AKBLKkg5ikk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                                 </div>
