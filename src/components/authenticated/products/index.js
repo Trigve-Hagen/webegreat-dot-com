@@ -30,6 +30,7 @@ class Products extends React.Component {
 			body: JSON.stringify({
 				currentPage: this.props.pagination[0].currentPage,
                 perPage: this.state.perPage,
+                searchString: "all"
 			})
 		}).then(res => res.json())
 			.then(json => {

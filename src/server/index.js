@@ -1037,7 +1037,7 @@ app.post('/api/product/front', function(req, res) {
     if(!searchString || !config.patterns.names.test(searchString)) {
         return res.send({
             success: false,
-            message: 'Current page name invalid or cannot be left empty.'
+            message: 'search string invalid or cannot be left empty.'
         });
     }
 
@@ -2490,8 +2490,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
                         });
                     });
                     //console.log(util.inspect(paypalItems, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
-                    let cancelUrl = urlConfig.site_url + urlConfig.paypal.cancel;
-                    let successUrl = urlConfig.site_url + urlConfig.paypal.success;
+                    let cancelUrl = urlConfig.site_url + config.paypal_urls.cancel;
+                    let successUrl = urlConfig.site_url + config.paypal_urls.success;
                     let create_payment_json = {
                         "intent": "sale",
                         "payer": {
@@ -2523,7 +2523,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             });
                         } else {
                             
-                            let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '' ?)";
+                            let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?)";
                             let insertOrderInserts = [
                                 config.tables[5].table_name, results[0]['user_id'],
                                 myDate, myDate, name, email, address, city, state, zip,
