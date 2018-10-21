@@ -3443,6 +3443,51 @@ app.post('/api/roles/user-update', function(req, res) {
  ***********************************************************************
  */
 
+app.post('/api/orders/referrals', function(req, res) {
+    const { body } = req;
+    const {
+        currentPage,
+        perPage
+    } = body;
+
+    if(!currentPage || !config.patterns.numbers.test(currentPage)) {
+        return res.send({
+            success: false,
+            message: 'Current page invalid or cannot be left empty.'
+        });
+    }
+
+    if(!perPage || !config.patterns.numbers.test(perPage)) {
+        return res.send({
+            success: false,
+            message: 'Per page invalid or cannot be left empty.'
+        });
+    }
+
+    let orderList = "SELECT * FROM ??";
+    let orderListInserts = [
+        config.tables[5].table_name
+    ];
+    orderList = mysql.format(orderList, orderListInserts);
+    //console.log(orderList);
+    connection.query(orderList, function (error, result, fields) {
+        if(error) {
+            //console.log("Error: in Register New User: " + err);
+            return res.send({
+                success: false,
+                message: 'Server error in update profile'
+            });
+        } else {
+            // do results here
+            return res.send({
+                success: true,
+                message: 'Success',
+                orders: result
+            });
+        }
+    });
+});
+
 app.post('/api/morders/all', function(req, res) {
     const { body } = req;
     const {

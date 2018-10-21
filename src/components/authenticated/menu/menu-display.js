@@ -85,7 +85,8 @@ class MenuDisplay extends React.Component {
                                 <div className="menu-item">
                                     {
                                         menuString.map((level1, index) => 
-                                            <div key={index} className="menu-item margin-bottom-5px"><h4>{level1.name}</h4><ul>
+                                            <div key={index} className="menu-item">
+                                            <h4 className="margin-bottom-5px">{level1.name}</h4><ul>
                                             {
                                                 level1.children.map((level2, index) =>
                                                     level2.iflink

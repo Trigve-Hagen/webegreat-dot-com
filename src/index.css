@@ -339,8 +339,12 @@ textarea.form-element {
   border-bottom: 2px solid #101010;
 }
 
-.glyphicon-star {
-  font-size: 25px;
+.referrals {
+  font-size: 18px;
+  font-family: Toy Soldiers;
+}
+
+.font-awesome-star {
   color: #00a651;
 }
 

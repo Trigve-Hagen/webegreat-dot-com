@@ -504,7 +504,7 @@ module.exports = {
                 },
                 {
                     Field: 'customer_survey',
-                    Type: 'varchar(255)',
+                    Type: 'TEXT',
                     Null: 'NULL',
                     Key: '',
                     Default: null,

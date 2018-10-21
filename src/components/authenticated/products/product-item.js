@@ -10,13 +10,11 @@ export default function ProductItem(props) {
             />
         </div>
         <div className="col-lg-9 col-md-9 col-sm-12 col-xs-24">
-            <h3>{ props.product[0].name }</h3>
-            <p>{ props.product[0].description }</p>
-            <div className="product-price">
-                <p>${ props.product[0].price }</p>
-            </div>
+            <h3 className="margin-bottom-5px">{ props.product[0].name }</h3>
+            <p className="margin-bottom-5px">{ props.product[0].description }</p>
+            <p className="margin-bottom-5px">${ props.product[0].price }</p>
             <div className="product-button">
-            <button className="btn btn-army">+ (0)</button>
+                <button className="btn btn-army">+ (0)</button>
             </div>
         </div>
     </div>

@@ -6,6 +6,7 @@ import Footer from '../footer';
 import config from '../../config/config';
 import MenuDisplay from '../authenticated/menu/menu-display';
 import SearchBar from '../search-bar';
+import Referrals from './referrals';
 import pagination from '../product-components/pagination';
 
 class Home extends React.Component {
@@ -100,6 +101,11 @@ class Home extends React.Component {
                                     ? <ProductListing products={this.state.products}/>
                                     : <h3>No products yet.</h3>
                             } 
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-12 col-md-12 col-sm-12">
+                            <Referrals />
                         </div>
                     </div>
                 </div>

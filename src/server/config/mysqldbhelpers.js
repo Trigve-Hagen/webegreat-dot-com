@@ -201,8 +201,8 @@ module.exports = function(database, config, connection, moment, fs, reqPath) {
             }
             if(element.table_name == 'f_orders') {
                 const orders = [
-                    `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '13066 Paddy Creek Lane', 'Lodi', 'CA', '95240', '1_2', '1_2', '39.99_39.99', '', 0, '', '1_Army Airborne T-Shirt_WBG-TS1_39.99_1_airborne-shirt.png_100_39.99&2_Dont Tread on Me_WBG-TS2_39.99_2_black-shirt.png_100_79.98');`,
-                    `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '13066 Paddy Creek Lane', 'Lodi', 'CA', '95240', '1_3', '2_1', '39.99_69.99', '', 0, '', '1_Army Airborne T-Shirt_WBG-TS1_39.99_2_airborne-shirt.png_100_79.98&3_Army Cologne_WBG-C1_69.99_1_cologne.png_100_69.99');`,
+                    `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '13066 Paddy Creek Lane', 'Lodi', 'CA', '95240', '1_2', '1_2', '39.99_39.99', '', 0, '1_5_Great Products. Im really impressed with the service and would recomend them to anyone. They really care about the customer here.', '1_Army Airborne T-Shirt_WBG-TS1_39.99_1_airborne-shirt.png_100_39.99&2_Dont Tread on Me_WBG-TS2_39.99_2_black-shirt.png_100_79.98');`,
+                    `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Trigve Hagen', 'trigve.hagen@gmail.com', '13066 Paddy Creek Lane', 'Lodi', 'CA', '95240', '1_3', '2_1', '39.99_69.99', '', 0, '1_5_Fast Service and really friendly staff.', '1_Army Airborne T-Shirt_WBG-TS1_39.99_2_airborne-shirt.png_100_79.98&3_Army Cologne_WBG-C1_69.99_1_cologne.png_100_69.99');`,
                 ];
                 orders.forEach(insert => {
                     connection.query(insert, (error, results) => {
