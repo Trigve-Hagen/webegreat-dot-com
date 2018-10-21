@@ -15,6 +15,7 @@ import 'video-react/dist/video-react.css';
 
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
+import 'font-awesome/css/font-awesome.min.css';
 
 import './index.css';
 
@@ -22,6 +23,7 @@ import store from './config/store';
 import NotFound from './NotFound';
 
 import Home from './components/home';
+import Store from './components/store';
 import About from './components/about';
 import Contact from './components/contact';
 import Register from './components/register';
@@ -49,6 +51,7 @@ import( /* webpackChunkName: 'application' */ './App')
                         <Switch>
                             <Route exact path="/" component={Home}/>
                             <Route exact path="/about" component={About}/>
+                            <Route exact path="/store" component={Store}/>
                             <Route exact path="/contact" component={Contact}/>
                             <Route exact path="/register" component={Register}/>
                             <Route exact path="/signup" component={Signup}/>

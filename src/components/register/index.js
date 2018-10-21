@@ -67,7 +67,7 @@ class Register extends React.Component {
 			<div>
 				<Navigation path="/register" />
 				<div className="container">
-					<div className="row space-top-20px space-bottom-50px">
+					<div className="row margin-top-20px margin-bottom-50px">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
 							<h1>Register</h1>
 							<div className="row">

@@ -93,7 +93,7 @@ class UpdatePaypal extends React.Component {
     render() {
         return (
             <div>
-                <div className="row space-top-20px">
+                <div className="row margin-top-20px">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         <h3>Update Paypal Credentials</h3>
                         {
@@ -111,16 +111,36 @@ class UpdatePaypal extends React.Component {
                                     </select>
                                 </div>
                                 <div className="input-group margin-top-20px">
-                                    <input value={this.state.paypalClient} onChange={this.onChange} type={this.state.paypalClientInputType} className="form-element" name="paypalClient" placeholder="Paypal Client Id" />
-                                    <span className="input-group-btn">
-                                        <button className="btn btn-army" type="button" name="client" onClick={this.onClickView}>View</button>
-                                    </span>
+                                    <input
+                                        value={this.state.paypalClient}
+                                        onChange={this.onChange}
+                                        type={this.state.paypalClientInputType}
+                                        className="form-element"
+                                        name="paypalClient"
+                                        placeholder="Paypal Client Id"
+                                    />
+                                    <button
+                                        className="btn btn-army margin-top-10px"
+                                        type="button"
+                                        name="client"
+                                        onClick={this.onClickView}
+                                    >View</button>
                                 </div>
                                 <div className="input-group margin-top-20px">
-                                <input value={this.state.paypalSecret} onChange={this.onChange} type={this.state.paypalSecretInputType} className="form-element" name="paypalSecret" placeholder="Paypal Secret" />
-                                    <span className="input-group-btn">
-                                        <button className="btn btn-army" type="button" name="secret" onClick={this.onClickView}>View</button>
-                                    </span>
+                                    <input
+                                        value={this.state.paypalSecret}
+                                        onChange={this.onChange}
+                                        type={this.state.paypalSecretInputType}
+                                        className="form-element"
+                                        name="paypalSecret"
+                                        placeholder="Paypal Secret"
+                                    />
+                                    <button 
+                                        className="btn btn-army margin-top-10px"
+                                        type="button"
+                                        name="secret"
+                                        onClick={this.onClickView}
+                                    >View</button>
                                 </div>
                             </div>
                             <button type="submit" className="btn btn-army margin-top-20px">Update Paypal Credentials</button>

@@ -17,18 +17,35 @@ class SearchBar extends React.Component {
 
     render() {
         return (
-            <div className="row space-top-20px">
+            <div className="row margin-top-20px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                     {
                         (this.state.searchError) ? (
                             <label>{this.state.searchError}</label>
                         ) : (null)
                     }
-                    <form name="search" onSubmit={this.props.onSubmit} data-searchstring={this.state.searchString}>
+                    <form
+                        name="search"
+                        onSubmit={this.props.onSubmit}
+                        data-searchstring={this.state.searchString}
+                    >
                         <div className="input-group mb-3">
-                            <input value={this.state.searchString} onChange={this.onChange} type="text" className="form-element" placeholder="Search for..." aria-label="Search for..." aria-describedby="button-addon2" />
+                            <input
+                                value={this.state.searchString}
+                                onChange={this.onChange}
+                                name="searchString"
+                                type="text"
+                                className="form-control"
+                                placeholder="Search for..."
+                                aria-label="Search for..."
+                                aria-describedby="button-addon2"
+                            />
                             <div className="input-group-append">
-                                <button className="btn btn-army" type="submit" id="button-addon2">Go!</button>
+                                <button
+                                    className="btn btn-army"
+                                    type="submit"
+                                    id="button-addon2"
+                                >Go!</button>
                             </div>
                         </div>
                     </form>

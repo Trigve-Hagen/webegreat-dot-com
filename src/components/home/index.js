@@ -1,105 +1,43 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProductListing from '../product-listing';
 import Navigation from '../navigation';
 import Footer from '../footer';
-import config from '../../config/config';
-import MenuDisplay from '../authenticated/menu/menu-display';
-import SearchBar from '../search-bar';
-import pagination from '../product-components/pagination';
+import { Player } from 'video-react';
+
+function Honesty(props) {
+  return (
+    <Player
+      playsInline
+      poster={ `/img/memorial-day.jpg` }
+      src={ `https://dms.licdn.com/playback/C5105AQH8AyEspFYsyA/058a9f235f49443ca949820c1199352a/feedshare-mp4_3300-captions-thumbnails/1507940147251-drlcss?e=1539367200&v=beta&t=SXAnwI1vqg7ru5jkY6dXowqR5Z2kGgFQccRgkiT--Y4` }
+    />
+  );
+};
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            perPage: 15,
-            currentPage: 1,
-            loadProductError: '',
-            searchString: 'all',
-            products: []
-        }
-        this.onClick = this.onClick.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-    }
-
-    onClick(e) {
-        e.preventDefault();
-        this.searchProducts(e.target.dataset.linkname);
-    }
-
-    onSubmit(e) {
-        e.preventDefault();
-        this.props.updateSearch({ searchString: e.target.dataset.searchstring });
-        this.searchProducts(e.target.dataset.searchstring);
-    }
-
-    componentDidMount() {
-		this.searchProducts(this.state.searchString)
-    }
-
-    searchProducts(searchString) {
-        fetch(config.site_url + '/api/product/front', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				currentPage: this.state.currentPage,
-                perPage: this.state.perPage,
-                searchString: searchString
-			})
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
-                    let arrayArgs = [];
-                    for (let value of Object.values(json.products)) {
-                        arrayArgs.push({
-                            id: value['productid'],
-                            image: value['image'],
-                            sku: value['sku'],
-                            name: value['name'],
-                            price: value['price'],
-                            stock: value['stock'],
-                            ifmanaged: value['managed_stock'],
-                            description: value['description']
-                        });
-                    }
-                    //console.log(arrayArgs);
-					this.setState({
-                        loadProductError: json.message,
-                        products: arrayArgs
-					});
-				} else {
-                    this.setState({
-						loadProductError: json.message
-					});
-                }
-			});
     }
 
     render() {
-        //this.props.resetProduct();
         return (
             <div>
                 <Navigation
-                    path="/"
+                    path="/home"
                     authenticated={this.props.authentication[0].authenticated}
                     role={this.props.authentication[0].role}
                 />
                 <div className="container">
-                    <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12">
-                            <SearchBar onSubmit={this.onSubmit}/>
+                    <div className="row margin-top-20px margin-bottom-50px">
+                        <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                            <h2>If it seems brocken..</h2>
+                            <p>For those who have signed up log out and log back in. I reload the whole site to test the install system and Arm system nearly everytime I update the code at github. If you are logged in and I do that the session that was created will not be there any more and your session will be invalid causing the forms to not work.</p>
+                            <div className="embed-responsive embed-responsive-4by3 margin-top-20px">
+                                <iframe className="embed-responsive-item" src="https://www.youtube.com/embed/AKBLKkg5ikk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
                         </div>
-                        <div className="col-lg-4 col-md-4 col-sm-12">
-                            <MenuDisplay onClick={this.onClick}/>
-                        </div>
-                        <div className="col-lg-8 col-md-8 col-sm-12">
-                            {
-                                this.props.visibility[0].visibility
-                                    ? <ProductListing products={this.state.products}/>
-                                    : <h3>No products yet.</h3>
-                            } 
+                        <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                            <h1>Home Page</h1>
                         </div>
                     </div>
                 </div>
@@ -111,19 +49,8 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        search: state.search,
-        product: state.product,
-        visibility: state.visibility,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateSearch: (value) => {
-            dispatch({ type: 'UPDATE_SEARCH', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps)(Home)

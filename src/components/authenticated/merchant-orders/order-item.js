@@ -15,9 +15,9 @@ class OrderItem extends React.Component {
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <div className="row">
                                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                                        <h4>Ship to: {item.name}</h4>
-                                        <p>{item.email}</p>
-                                        <p>{item.address}</p>
+                                        <h4 className="margin-bottom-5px">Ship to: {item.name}</h4>
+                                        <p className="margin-bottom-5px">{item.email}</p>
+                                        <p className="margin-bottom-5px">{item.address}</p>
                                         <p>{item.city}, {item.state} {item.zip}</p>
                                     </div>
                                 </div>
@@ -31,9 +31,9 @@ class OrderItem extends React.Component {
                                                 />
                                             </div>
                                             <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
-                                                <h4>{product.name}</h4>
-                                                <p>Price: {product.price}</p>
-                                                <p>Quantity: {product.quantity}</p>
+                                                <h4 className="margin-bottom-5px">{product.name}</h4>
+                                                <p className="margin-bottom-5px">Price: {product.price}</p>
+                                                <p className="margin-bottom-5px">Quantity: {product.quantity}</p>
                                                 <p>Total: {product.total}</p>
                                             </div>
                                         </div>

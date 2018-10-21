@@ -194,7 +194,7 @@ class MerchantOrders extends React.Component {
                         role={this.props.authentication[0].role}
                     />
                     <div className="container">
-                        <div className="row space-top-20px space-bottom-50px">
+                        <div className="row margin-top-20px margin-bottom-50px">
                             <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
                                 <h2>Merchant Orders</h2>
                                 <OrderList

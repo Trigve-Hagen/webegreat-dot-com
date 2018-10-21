@@ -57,21 +57,24 @@ class UpdateSurvey extends React.Component {
 
     render() {
         if(this.props.orders[0].surveyitems[0].comment) {
-            let starString = ''; let ifShowing = '';
-            if(this.props.orders[0].surveyitems[0].iffront == 0) ifShowing = "Not Showing in referrals";
-            if(this.props.orders[0].surveyitems[0].iffront == 1) ifShowing = "Showing in referrals";
-            if(this.props.orders[0].surveyitems[0].stars == 1) starString = <div><span className="glyphicon glyphicon-star" /></div>;
-            else if(this.props.orders[0].surveyitems[0].stars == 2) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
-            else if(this.props.orders[0].surveyitems[0].stars == 3) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
-            else if(this.props.orders[0].surveyitems[0].stars == 4) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
-            else if(this.props.orders[0].surveyitems[0].stars == 5) starString = <div><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /><span className="glyphicon glyphicon-star" /></div>;
+            let starString = '';
+            for(let i=0; i<this.props.orders[0].surveyitems[0].stars; i++) {
+                starString += <i className="fa fa-star fa-2x"></i>
+            }
+            console.log(starString);
             return (
                 <div className="margin-top-50px">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                            {starString}
-                            <p className="margin-top-bottom-zero">{this.props.orders[0].surveyitems[0].comment}</p>
-                            <p className="margin-top-bottom-zero">{ifShowing}</p>
+                            <p className="margin-bottom-5px">{starString}</p>
+                            <p className="margin-bottom-5px">{this.props.orders[0].surveyitems[0].comment}</p>
+                            <p>
+                                {
+                                    this.props.orders[0].surveyitems[0].iffront
+                                        ? 'Showing in referrals'
+                                        : 'Not Showing in referrals'
+                                }
+                            </p>
                         </div>
                     </div>
                     <h4>Set if showing in referals.</h4>

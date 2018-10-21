@@ -64,7 +64,7 @@ class Contact extends React.Component {
             <div>
                 <Navigation path="/contact" />
                 <div className="container">
-                    <div className="row space-top-20px space-bottom-50px">
+                    <div className="row margin-top-20px margin-bottom-50px">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                             <div className="row">
 								<div className="col-lg-4 col-md-4 col-sm-12 col-xs-24 margin-top-20px">

@@ -48,7 +48,7 @@ class Success extends React.Component {
             <div>
                 <Navigation path="/success" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
-                    <div className="row space-top-20px space-bottom-50px">
+                    <div className="row margin-top-20px margin-bottom-50px">
                         <div className="col-lg-8 col-md-8 col-sm-12 col xs-24">
                             <h3>Thank you {this.state.paypalSuccessResults} for shopping with us.</h3>
                             <p>Please allow up to 6 weeks for shipping.</p>

@@ -49,7 +49,7 @@ class Signup extends React.Component {
             <div>
                 <Navigation path="/signup" authenticated={this.props.authentication[0].authenticated}/>
                 <div className="container">
-                    <div className="row space-top-20px space-bottom-50px">
+                    <div className="row margin-top-20px margin-bottom-50px">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
 							<h3>Something went wrong. Please try again later.</h3>
                         </div>

@@ -112,8 +112,8 @@ class UploadOrders extends React.Component {
                                         <img src={ `/img/products/${item.image}` } alt="Army Strong" className="img-fluid"/>
                                     </div>
                                     <div className="col-lg-9 col-md-9 col-sm-12 col-xs-24">
-                                        <h4>{item.name}</h4>
-                                        <p>Quantity: {item.quantity}</p>
+                                        <h4 className="margin-bottom-5px">{item.name}</h4>
+                                        <p className="margin-bottom-5px">Quantity: {item.quantity}</p>
                                         <p>Price: {item.price}</p>
                                     </div>
                                 </div>

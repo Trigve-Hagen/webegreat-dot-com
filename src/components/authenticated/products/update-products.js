@@ -104,7 +104,7 @@ class UpdateProducts extends React.Component {
     render() {
         //this.props.resetProduct();
         return (
-                <div className="row margin-top-20px">
+                <div className="row margin-top-20px margin-bottom-50px">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         <h3>Product Update</h3>
                         {
