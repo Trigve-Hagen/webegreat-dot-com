@@ -11,22 +11,20 @@ class ProductList extends React.Component {
         //this.props.resetProduct();
         return (
             <div>
-                <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <Pagination />
-                        <ul className="ul-styles">
-                            {
-                                this.props.products.map(product => 
-                                    <li key={product.id}> 
-                                        {product.name} 
-                                        <a href="#" data-productid={product.id} onClick={this.props.onView}> View</a>  
-                                        <a href="#" data-productid={product.id} onClick={this.props.onDelete}> Delete</a> 
-                                    </li>
-                                )
-                            }
-                        </ul>
-                        <Pagination />
-                    </div>
+                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <Pagination />
+                    <ul className="ul-styles">
+                        {
+                            this.props.products.map(product => 
+                                <li key={product.id}> 
+                                    {product.name} 
+                                    <a href="#" data-productid={product.id} onClick={this.props.onView}> View</a>  
+                                    <a href="#" data-productid={product.id} onClick={this.props.onDelete}> Delete</a> 
+                                </li>
+                            )
+                        }
+                    </ul>
+                    <Pagination />
                 </div>
             </div>
         )

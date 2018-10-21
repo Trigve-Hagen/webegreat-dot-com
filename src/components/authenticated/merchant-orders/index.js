@@ -188,27 +188,30 @@ class MerchantOrders extends React.Component {
         if(this.props.authentication[0].authenticated) {
             return (
                 <div>
-                    <Navigation path="/merchant-orders" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
+                    <Navigation
+                        path="/merchant-orders"
+                        authenticated={this.props.authentication[0].authenticated}
+                        role={this.props.authentication[0].role}
+                    />
                     <div className="container">
                         <div className="row space-top-20px space-bottom-50px">
-                            <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                                <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
-                                    <OrderList
-                                        orders={this.state.orders}
-                                        onView={this.onView}
-                                        onDelete={this.onDelete}
-                                    />
-                                    {
-                                        (this.state.loadOrdersError) ? (
-                                            <label>{this.state.loadOrdersError}</label>
-                                        ) : (null)
-                                    }
-                                    <UploadOrders cart={this.props.cart} orders={this.props.morders}/>
-                                </div>
-                                <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
-                                    <OrderItem order={this.props.morders} />
-                                    <UpdateSurvey orders={this.props.morders} /> 
-                                </div>
+                            <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
+                                <h2>Merchant Orders</h2>
+                                <OrderList
+                                    orders={this.state.orders}
+                                    onView={this.onView}
+                                    onDelete={this.onDelete}
+                                />
+                                {
+                                    (this.state.loadOrdersError) ? (
+                                        <label>{this.state.loadOrdersError}</label>
+                                    ) : (null)
+                                }
+                                <UploadOrders cart={this.props.cart} orders={this.props.morders}/>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
+                                <OrderItem order={this.props.morders} />
+                                <UpdateSurvey orders={this.props.morders} /> 
                             </div>
                         </div>
                     </div>

@@ -11,7 +11,7 @@ export default function UserItem(props) {
             <img
                 alt={ props.user[0].name }
                 src={ `/img/avatar/${folder}/${props.user[0].image}` }
-                className="img-responsive"
+                className="img-fluid"
             />
         </div>
         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">

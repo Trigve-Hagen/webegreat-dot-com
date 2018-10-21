@@ -27,7 +27,7 @@ class OrderItem extends React.Component {
                                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
                                                 <img
                                                     src={ `/img/products/${product.image}` }
-                                                    alt="Army Strong" className="img-responsive"
+                                                    alt="Army Strong" className="img-fluid"
                                                 />
                                             </div>
                                             <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24 text-left">

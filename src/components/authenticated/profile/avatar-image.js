@@ -85,7 +85,7 @@ class AvatarImage extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <img src={ `/img/avatar/${avatarUrl}/${this.state.avatarImage}` } alt="Army Strong" className="img-responsive"/>
+                        <img src={ `/img/avatar/${avatarUrl}/${this.state.avatarImage}` } alt="Army Strong" className="img-fluid"/>
                     </div>
                 </div>
                 <div className="row">

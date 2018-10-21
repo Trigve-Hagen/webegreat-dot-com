@@ -88,18 +88,18 @@ class Home extends React.Component {
                 />
                 <div className="container">
                     <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <div className="col-lg-12 col-md-12 col-sm-12">
                             <SearchBar onSubmit={this.onSubmit}/>
-                            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
-                                <MenuDisplay onClick={this.onClick}/>
-                            </div>
-                            <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
-                                {
-                                    this.props.visibility[0].visibility
-                                        ? <ProductListing products={this.state.products}/>
-                                        : <h3>No products yet.</h3>
-                                } 
-                            </div>
+                        </div>
+                        <div className="col-lg-4 col-md-4 col-sm-12">
+                            <MenuDisplay onClick={this.onClick}/>
+                        </div>
+                        <div className="col-lg-8 col-md-8 col-sm-12">
+                            {
+                                this.props.visibility[0].visibility
+                                    ? <ProductListing products={this.state.products}/>
+                                    : <h3>No products yet.</h3>
+                            } 
                         </div>
                     </div>
                 </div>

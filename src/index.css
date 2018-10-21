@@ -71,6 +71,10 @@ a, a:active, a:focus {
   margin-bottom: 50px;
 }
 
+.margin-bottom-50px {
+  margin-bottom: 50px;
+}
+
 .margin-bottom-20px {
   margin-bottom: 20px;
 }
@@ -119,9 +123,12 @@ a, a:active, a:focus {
   margin: 0;
 }
 
+.bg-dark {
+  background-color: #101010 !important;
+}
+
 .footer-para-text {
   margin-top: 30px;
-  padding-left: 20px;
   color: #dddddd;
   font-size: 16px;
 }
@@ -152,21 +159,21 @@ a, a:active, a:focus {
 
 .btn-army {
   color: #dddddd;
-  background-color: #333333;
-  border-color: #000000;
+  background-color: #000000;
+  border-color: #333333;
 }
 
 .btn-army:focus,
 .btn-army.focus {
   color: #dddddd;
-  background-color: #000000;
-  border-color: #333333;
+  background-color: #333333;
+  border-color: #000000;
 }
 
 .btn-army:hover {
   color: #ffffff;
-  background-color: #000000;
-  border-color: #333333;
+  background-color: #333333;
+  border-color: #000000;
 }
 
 .pagination > li > a

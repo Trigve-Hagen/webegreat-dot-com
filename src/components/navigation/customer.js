@@ -8,18 +8,18 @@ class Customer extends React.Component {
                 <ul className="nav navbar-nav navbar-right">
                     {
                         this.props.path === '/customer-orders'
-                            ? <li className="active"><NavLink to='/customer-orders'>My Orders</NavLink></li>
-                            : <li><NavLink to='/customer-orders'>My Orders</NavLink></li>
+                            ? <li className="nav-item active"><NavLink className="nav-link" to='/customer-orders'>My Orders</NavLink></li>
+                            : <li className="nav-item"><NavLink className="nav-link" to='/customer-orders'>My Orders</NavLink></li>
                     }
                     {
                         this.props.path === '/profile'
-                            ? <li className="active"><NavLink to='/profile'>Profile</NavLink></li>
-                            : <li><NavLink to='/profile'>Profile</NavLink></li>
+                            ? <li className="nav-item active"><NavLink className="nav-link" to='/profile'>Profile</NavLink></li>
+                            : <li className="nav-item"><NavLink className="nav-link" to='/profile'>Profile</NavLink></li>
                     }
                     {
                         this.props.path === '/logout'
-                            ? <li className="active"><NavLink to='/logout'>Logout</NavLink></li>
-                            : <li><NavLink to='/logout'>Logout</NavLink></li>
+                            ? <li className="nav-item active"><NavLink className="nav-link" to='/logout'>Logout</NavLink></li>
+                            : <li className="nav-item"><NavLink className="nav-link" to='/logout'>Logout</NavLink></li>
                     }
                 </ul>
             </React.Fragment>

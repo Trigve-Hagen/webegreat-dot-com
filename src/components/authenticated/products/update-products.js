@@ -104,10 +104,9 @@ class UpdateProducts extends React.Component {
     render() {
         //this.props.resetProduct();
         return (
-			<div>
-                <h3>Product Update</h3>
-                <div className="row">
+                <div className="row margin-top-20px">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <h3>Product Update</h3>
                         {
                             (this.state.proUpdateError) ? (
                                 <label>{this.state.proUpdateError}</label>
@@ -151,7 +150,6 @@ class UpdateProducts extends React.Component {
                         </form>
                     </div>
                 </div>
-            </div>
         )
     }
 }

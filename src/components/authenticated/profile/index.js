@@ -20,9 +20,9 @@ class Profile extends React.Component {
                 <div>
                     <Navigation path="/profile" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
                     <div className="container">
-                        <div className="row space-bottom-50px">
+                        <div className="row margin-top-50px margin-bottom-50px">
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
-                                <h1>Profile Page</h1>
+                                <h2>Profile Page</h2>
                                 <AvatarImage />
                             </div>
                             <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
@@ -39,7 +39,7 @@ class Profile extends React.Component {
                 <div>
                     <Navigation path="/profile" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
                     <div className="container">
-                        <div className="row space-bottom-50px">
+                        <div className="row margin-top-50px margin-bottom-50px">
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
                                 <h1>Profile Page</h1>
                                 <AvatarImage />

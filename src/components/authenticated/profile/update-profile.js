@@ -89,7 +89,7 @@ class UpdateProfile extends React.Component {
     render() {
         return (
             <div>
-                <div className="row space-top-50px">
+                <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                         <h3>Update Profile</h3>
                         {

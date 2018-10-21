@@ -3,30 +3,23 @@ import ProductItem from './product-item';
 import { connect } from 'react-redux';
 
 function ProductListing(props) {
+    //console.log(props.products);
     if(props.products.length == 0) {
-        return <div className="row space-top-20px space-bottom-50px">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <div className="product-listing margin-top-20px">
-                            <h3>There are no products yet.</h3>
-                        </div>
-                    </div>
+        return <div className="product-listing margin-bottom-50px">
+                    <h3>There are no products yet.</h3>
                 </div>
     } else {
-        return <div className="row space-top-20px space-bottom-50px">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <div className="product-listing margin-top-20px">
-                            {
-                                props.products.map( product =>
-                                    <ProductItem key={product.id}
-                                        product={product}
-                                        addToCart={props.addToCart}
-                                        removeFromCart={props.removeFromCart}
-                                        cartItem={props.cart.filter(cartItem => cartItem.id === product.id)[0]}
-                                    />
-                                )
-                            }
-                        </div>
-                    </div>
+        return <div className="product-listing margin-bottom-50px">
+                    {
+                        props.products.map( product =>
+                            <ProductItem key={product.id}
+                                product={product}
+                                addToCart={props.addToCart}
+                                removeFromCart={props.removeFromCart}
+                                cartItem={props.cart.filter(cartItem => cartItem.id === product.id)[0]}
+                            />
+                        )
+                    }
                 </div>
     }
 }

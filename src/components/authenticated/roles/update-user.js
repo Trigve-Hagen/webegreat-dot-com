@@ -111,52 +111,52 @@ class UpdateUser extends React.Component {
 
     render() {
         return (
-			<div>
-                <h3>User Update</h3>
-                <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        {
-                            (this.state.userUpdateError) ? (
-                                <label>{this.state.userUpdateError}</label>
-                            ) : (null)
-                        }
-                        <form name="userUpdate" onSubmit={this.onSubmit}>
+            <div className="row">
+                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <h3>User Update</h3>
+                    {
+                        (this.state.userUpdateError) ? (
+                            <label>{this.state.userUpdateError}</label>
+                        ) : (null)
+                    }
+                    <form name="userUpdate" onSubmit={this.onSubmit}>
+                        <fieldset className="form-group">
+                            <input ref={(ref) => { this.state.uploadInput = ref; }} name="uploadInput" type="file" className="form-control-file btn btn-army"/>
+                        </fieldset>
+                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                             <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.uploadInput = ref; }} name="uploadInput" type="file" className="form-control-file btn btn-army"/>
+                                <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                             </fieldset>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                                <fieldset className="form-group">
-                                    <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
-                                </fieldset>
-                                <div className="form-group">
-                                    <select value={this.state.userUpdateRole} onChange={this.onChange} name="userUpdateRole" className="form-element custom">
-                                        <option value="">Please select a value.</option>
-                                        <option value="1">Customer</option>
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <select value={this.state.userUpdateIfActive} onChange={this.onChange} name="userUpdateIfActive" className="form-element custom">
-                                        <option value="">Please select a value.</option>
-                                        <option value="0">Account Inactive</option>
-                                        <option value="1">Account Active</option>
-                                    </select>
-                                </div>
-                                <fieldset className="form-group">
-                                    <input value={this.state.userUpdateName} onChange={this.onChange} name="userUpdateName" type="text" className="form-element" placeholder="Name"/>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <input value={this.state.userUpdateEmail} onChange={this.onChange} name="userUpdateEmail" type="email" className="form-element" placeholder="Email"/>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <input value={this.state.userUpdatePassword} onChange={this.onChange} name="userUpdatePassword" type="password" className="form-element" placeholder="Password"/>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <input value={this.state.userUpdateAddress} onChange={this.onChange} name="userUpdateAddress" type="text" className="form-element" placeholder="Address"/>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <input value={this.state.userUpdateCity} onChange={this.onChange} name="userUpdateCity" type="text" className="form-element" placeholder="City"/>
-                                </fieldset>
+                            <div className="form-group">
+                                <select value={this.state.userUpdateRole} onChange={this.onChange} name="userUpdateRole" className="form-element custom">
+                                    <option value="">Please select a value.</option>
+                                    <option value="1">Customer</option>
+                                </select>
                             </div>
+                            <div className="form-group">
+                                <select value={this.state.userUpdateIfActive} onChange={this.onChange} name="userUpdateIfActive" className="form-element custom">
+                                    <option value="">Please select a value.</option>
+                                    <option value="0">Account Inactive</option>
+                                    <option value="1">Account Active</option>
+                                </select>
+                            </div>
+                            <fieldset className="form-group">
+                                <input value={this.state.userUpdateName} onChange={this.onChange} name="userUpdateName" type="text" className="form-element" placeholder="Name"/>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <input value={this.state.userUpdateEmail} onChange={this.onChange} name="userUpdateEmail" type="email" className="form-element" placeholder="Email"/>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <input value={this.state.userUpdatePassword} onChange={this.onChange} name="userUpdatePassword" type="password" className="form-element" placeholder="Password"/>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <input value={this.state.userUpdateAddress} onChange={this.onChange} name="userUpdateAddress" type="text" className="form-element" placeholder="Address"/>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <input value={this.state.userUpdateCity} onChange={this.onChange} name="userUpdateCity" type="text" className="form-element" placeholder="City"/>
+                            </fieldset>
+                        </div>
+                        <div className="row">
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <div className="form-group">
                                     <select value={this.state.userUpdateState} onChange={this.onChange} name="userUpdateState" className="form-element custom">
@@ -169,9 +169,9 @@ class UpdateUser extends React.Component {
                                     <input value={this.state.userUpdateZip} onChange={this.onChange} name="userUpdateZip" type="text" className="form-element" placeholder="Zip"/>
                                 </fieldset>
                             </div>
-                            <button type="submit" className="btn btn-army">User Update</button>
-                        </form>
-                    </div>
+                        </div>
+                        <button type="submit" className="btn btn-army">User Update</button>
+                    </form>
                 </div>
             </div>
         )

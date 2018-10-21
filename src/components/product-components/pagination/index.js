@@ -53,8 +53,8 @@ class Pagination extends React.Component {
                     {
                         this.state.pages.map(page => 
                             page == this.props.pagination[0].currentPage
-                                ? <li key={page.toString()} className="active"><a onClick={() => this.onClick(page)}><strong>{page}</strong></a></li>
-                                : <li key={page.toString()}><a onClick={() => this.onClick(page)}>{page}</a></li>
+                                ? <li key={page.toString()} className="active"><a onClick={() => this.onClick(page)} className="btn btn-army"><strong>{page}</strong></a></li>
+                                : <li key={page.toString()} ><a onClick={() => this.onClick(page)} className="btn btn-army">{page}</a></li>
                         )
                     }
                 </ul>

@@ -146,11 +146,15 @@ class Products extends React.Component {
         if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 3) {
             return (
                 <div>
-                    <Navigation path="/products" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
+                    <Navigation
+                        path="/products"
+                        authenticated={this.props.authentication[0].authenticated}
+                        role={this.props.authentication[0].role}
+                    />
                     <div className="container">
-                        <div className="row space-top-20px space-bottom-50px">
+                        <div className="row margin-top-50px">
+                            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
                             <h2>Create Product</h2>
-                            <div className="col-lg-4 col-md-4 col-sm-12 col xs-24">
                                 <ProductList
                                     products={this.state.products}
                                     onView={this.onView}
@@ -163,7 +167,7 @@ class Products extends React.Component {
                                 }
                                 <UploadProducts />
                             </div>
-                            <div className="col-lg-8 col-md-8 col-sm-12 col xs-24">
+                            <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <ProductItem product={this.props.product}/>
                                 <UpdateProducts product={this.props.product}/>
                             </div>

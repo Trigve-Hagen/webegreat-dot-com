@@ -109,7 +109,7 @@ class UploadOrders extends React.Component {
                             this.props.cart.map(item =>
                                 <div className="row" key={item.id}>
                                     <div className="col-lg-3 col-md-3 col-sm-12 col-xs-24">
-                                        <img src={ `/img/products/${item.image}` } alt="Army Strong" className="img-responsive"/>
+                                        <img src={ `/img/products/${item.image}` } alt="Army Strong" className="img-fluid"/>
                                     </div>
                                     <div className="col-lg-9 col-md-9 col-sm-12 col-xs-24">
                                         <h4>{item.name}</h4>

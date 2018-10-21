@@ -19,23 +19,19 @@ class SearchBar extends React.Component {
         return (
             <div className="row space-top-20px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                    <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                            {
-                                (this.state.searchError) ? (
-                                    <label>{this.state.searchError}</label>
-                                ) : (null)
-                            }
-                            <form name="search" onSubmit={this.props.onSubmit} data-searchstring={this.state.searchString}>
-                                <div className="input-group">
-                                    <input value={this.state.searchString} onChange={this.onChange} type="text" name="searchString" className="form-element" placeholder="Search for..." />
-                                    <span className="input-group-btn">
-                                        <button className="btn btn-army" type="submit">Go!</button>
-                                    </span>
-                                </div>
-                            </form>
+                    {
+                        (this.state.searchError) ? (
+                            <label>{this.state.searchError}</label>
+                        ) : (null)
+                    }
+                    <form name="search" onSubmit={this.props.onSubmit} data-searchstring={this.state.searchString}>
+                        <div className="input-group mb-3">
+                            <input value={this.state.searchString} onChange={this.onChange} type="text" className="form-element" placeholder="Search for..." aria-label="Search for..." aria-describedby="button-addon2" />
+                            <div className="input-group-append">
+                                <button className="btn btn-army" type="submit" id="button-addon2">Go!</button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         )

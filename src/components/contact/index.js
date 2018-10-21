@@ -68,7 +68,7 @@ class Contact extends React.Component {
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                             <div className="row">
 								<div className="col-lg-4 col-md-4 col-sm-12 col-xs-24 margin-top-20px">
-                                <img src={ `/img/sniper.jpg` } alt="rifle range" className="img-responsive margin-center" />
+                                <img src={ `/img/sniper.jpg` } alt="rifle range" className="img-fluid margin-center" />
 								</div>
 								<div className="col-lg-8 col-md-8 col-sm-12 col-xs-24 margin-top-20px">
 									{
