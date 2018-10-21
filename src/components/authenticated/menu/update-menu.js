@@ -88,54 +88,52 @@ class UpdateMenu extends React.Component {
     render() {
         //this.props.resetMenu();
         return (
-			<div>
-                <h3>Menu Update</h3>
-                <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        {
-                            (this.state.menuUpdateError) ? (
-                                <label>{this.state.menuUpdateError}</label>
-                            ) : (null)
-                        }
-                        <form name="menuUpload" onSubmit={this.onSubmit}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                                <fieldset className="form-group">
-                                    <input value={this.state.menuUpdateName} onChange={this.onChange} name="menuUpdateName" type="text" className="form-element" placeholder="Menu Level Name"/>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <select value={this.state.menuUpdateLevel} onChange={this.onChange} name="menuUpdateLevel" className="form-element custom">
-                                        <option value="">Choose its menu level</option>
-                                        <option value="0">Level One</option>
-                                        <option value="1">Level Two</option>
-                                        <option value="2">Level Three</option>
-                                    </select>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <select value={this.state.menuUpdateParent} onChange={this.onChange} name="menuUpdateParent" className="form-element custom">
-                                        <option value="">Choose the parent level</option>
-                                        <option value="base">Base Level</option>
-                                        {
-                                            this.props.menuItems.filter(item => 
-                                                    item.level == 0 || item.level == 1 || item.level == 2 && !item.ifproduct).map(item =>
-                                                        <option key={item.id} value={item.name}>{item.name}</option>
-                                                )
-                                        }
-                                    </select>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <select value={this.state.menuUpdateIfProduct} onChange={this.onChange} name="menuUpdateIfProduct" className="form-element custom">
-                                        <option value="">Choose if product link or catagory</option>
-                                        <option value="0">Category</option>
-                                        <option value="1">Product Link</option>
-                                    </select>
-                                </fieldset>
-                                <fieldset className="form-group">
-                                    <textarea value={this.state.menuUpdateDescription} onChange={this.onChange} name="menuUpdateDescription" className="form-element" rows="3" placeholder="Description"/>
-                                </fieldset>
-                            </div>
-                            <button type="submit" className="btn btn-army">Menu Update</button>
-                        </form>
-                    </div>
+            <div className="row margin-bottom-50px">
+                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <h3>Menu Update</h3>
+                    {
+                        (this.state.menuUpdateError) ? (
+                            <label>{this.state.menuUpdateError}</label>
+                        ) : (null)
+                    }
+                    <form name="menuUpload" onSubmit={this.onSubmit}>
+                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <fieldset className="form-group">
+                                <input value={this.state.menuUpdateName} onChange={this.onChange} name="menuUpdateName" type="text" className="form-element" placeholder="Menu Level Name"/>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <select value={this.state.menuUpdateLevel} onChange={this.onChange} name="menuUpdateLevel" className="form-element custom">
+                                    <option value="">Choose its menu level</option>
+                                    <option value="0">Level One</option>
+                                    <option value="1">Level Two</option>
+                                    <option value="2">Level Three</option>
+                                </select>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <select value={this.state.menuUpdateParent} onChange={this.onChange} name="menuUpdateParent" className="form-element custom">
+                                    <option value="">Choose the parent level</option>
+                                    <option value="base">Base Level</option>
+                                    {
+                                        this.props.menuItems.filter(item => 
+                                                item.level == 0 || item.level == 1 || item.level == 2 && !item.ifproduct).map(item =>
+                                                    <option key={item.id} value={item.name}>{item.name}</option>
+                                            )
+                                    }
+                                </select>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <select value={this.state.menuUpdateIfProduct} onChange={this.onChange} name="menuUpdateIfProduct" className="form-element custom">
+                                    <option value="">Choose if product link or catagory</option>
+                                    <option value="0">Category</option>
+                                    <option value="1">Product Link</option>
+                                </select>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <textarea value={this.state.menuUpdateDescription} onChange={this.onChange} name="menuUpdateDescription" className="form-element" rows="3" placeholder="Description"/>
+                            </fieldset>
+                        </div>
+                        <button type="submit" className="btn btn-army">Menu Update</button>
+                    </form>
                 </div>
             </div>
         )

@@ -53,20 +53,23 @@ class UpdateSurvey extends React.Component {
 					});
                 }
 			});
-	}
+    }
+    
+    createMarkup() {
+        return {__html: this.props.post};
+    }
 
     render() {
         if(this.props.orders[0].surveyitems[0].comment) {
             let starString = '';
-            for(let i=0; i<this.props.orders[0].surveyitems[0].stars; i++) {
-                starString += <i className="fa fa-star fa-2x"></i>
+            for(let j=0; j<this.props.orders[0].surveyitems[0].stars; j++) {
+                starString += '<i class="fa fa-star fa-2x"></i>'
             }
-            console.log(starString);
             return (
                 <div className="margin-top-50px">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                            <p className="margin-bottom-5px">{starString}</p>
+                            <div dangerouslySetInnerHTML={{__html: starString}} />
                             <p className="margin-bottom-5px">{this.props.orders[0].surveyitems[0].comment}</p>
                             <p>
                                 {

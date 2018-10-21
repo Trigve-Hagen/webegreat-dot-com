@@ -112,16 +112,18 @@ class UpdateProfile extends React.Component {
                                     <input value={this.state.profileCity} onChange={this.onChange} type="text" className="form-element" name="profileCity" placeholder="City" />
                                 </div>
                             </div>
-                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-                                <div className="form-group">
-                                    <select value={this.state.profileState} onChange={this.onChange} className="form-element custom" name="profileState">
-                                        {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
-                                    </select>
+                            <div className="row">
+                                <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                                    <div className="form-group">
+                                        <select value={this.state.profileState} onChange={this.onChange} className="form-element custom" name="profileState">
+                                            {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-                                <div className="form-group">
-                                    <input value={this.state.profileZip} onChange={this.onChange} type="text" className="form-element" name="profileZip" placeholder="Zip" />
+                                <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                                    <div className="form-group">
+                                        <input value={this.state.profileZip} onChange={this.onChange} type="text" className="form-element" name="profileZip" placeholder="Zip" />
+                                    </div>
                                 </div>
                             </div>
                             <button type="submit" className="btn btn-army">Update Profile</button>

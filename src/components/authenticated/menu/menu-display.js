@@ -85,15 +85,15 @@ class MenuDisplay extends React.Component {
                                 <div className="menu-item">
                                     {
                                         menuString.map((level1, index) => 
-                                            <div key={index} className="menu-item"><h4>{level1.name}</h4><ul>
+                                            <div key={index} className="menu-item margin-bottom-5px"><h4>{level1.name}</h4><ul>
                                             {
                                                 level1.children.map((level2, index) =>
                                                     level2.iflink
-                                                        ? <li key={index}><a href={level2.link} onClick={this.props.onClick} data-linkname={level2.name}>{level2.name}</a></li>
-                                                        : <li key={index}>{level2.name}<ul>
+                                                        ? <li key={index} className="margin-bottom-5px"><a href={level2.link} onClick={this.props.onClick} data-linkname={level2.name}>{level2.name}</a></li>
+                                                        : <li key={index} className="margin-bottom-5px">{level2.name}<ul>
                                                             {
                                                                 level2.children.map((level3, index) =>
-                                                                    <li key={index}><a href={level3.link} onClick={this.props.onClick} data-linkname={level3.name}>{level3.name}</a></li>
+                                                                    <li key={index} className="margin-bottom-5px"><a href={level3.link} onClick={this.props.onClick} data-linkname={level3.name}>{level3.name}</a></li>
                                                                 )
                                                             }
                                                         </ul></li>
