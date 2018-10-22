@@ -58,6 +58,14 @@ a, a:active, a:focus {
   padding-top: 20px;
 }
 
+.padding-bottom-20px {
+  padding-bottom: 20px;
+}
+
+.padding-20px {
+  padding: 20px;
+}
+
 .margin-center {
   margin: 0 auto;
 }
@@ -65,6 +73,10 @@ a, a:active, a:focus {
 .margin-top-bottom-zero {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.margin-left-10px {
+  margin-left: 10px;
 }
 
 .margin-bottom-50px {
@@ -78,6 +90,11 @@ a, a:active, a:focus {
 .margin-bottom-5px {
   margin-bottom: 5px;
 }
+
+.margin-bottom-10px {
+  margin-bottom: 10px;
+}
+
 .margin-top-50px {
   margin-top: 20px;
 }
@@ -116,6 +133,11 @@ a, a:active, a:focus {
 
 .bg-dark {
   background-color: #101010 !important;
+}
+
+.product-listing {
+  padding-bottom: 20px;
+  margin-left: 20px;
 }
 
 .footer-para-text {
@@ -367,6 +389,10 @@ textarea.form-element {
   padding-left:20px;
 }
 
+.five-o-clock-shadow {
+  box-shadow: 1px 3px 6px #333333;
+}
+
 .display-all-products:hover {
   color: #ffffff;
   border: 1px solid #ffffff;
@@ -377,8 +403,7 @@ textarea.form-element {
   background-color: #a99671;
   border: 2px dashed #3a3320;
   border-radius: 5px;
-  padding-top: 10px;
-  box-shadow: 2px 6px 12px #333333;
+  padding: 20px;
 }
 
 .menu-item ul {
@@ -421,8 +446,10 @@ textarea.form-element {
     left: 10;
   }
 }
-@media (min-width: 992px) {
-
+@media (max-width: 576px) {
+  .menu-background {
+    margin: 20px;
+  }
 }
 @media (min-width: 1200px) {
 
