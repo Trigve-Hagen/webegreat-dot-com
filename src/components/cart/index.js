@@ -102,7 +102,6 @@ class Cart extends React.Component {
                 </div>
             )
         } else {
-            let total = 0;
             sort(this.props.cart).map( item => {
                 total += parseFloat(item.price) * parseInt(item.quantity);
             });

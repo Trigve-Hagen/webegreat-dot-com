@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Pagination from '../../product-components/pagination';
+import Pagination from '../../pagination';
+import config from '../../../config/config';
 
 class UserList extends React.Component {
     constructor(props) {
@@ -13,7 +14,11 @@ class UserList extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <Pagination />
+                        <Pagination
+                            database="users"
+                            perPage={config.per_page}
+                            token={this.props.authentication[0].token}
+                        />
                         <ul className="ul-styles">
                             {
                                 this.props.users.map(user => 
@@ -25,7 +30,11 @@ class UserList extends React.Component {
                                 )
                             }
                         </ul>
-                        <Pagination />
+                        <Pagination
+                            database="users"
+                            perPage={config.per_page}
+                            token={this.props.authentication[0].token}
+                        />
                     </div>
                 </div>
             </div>

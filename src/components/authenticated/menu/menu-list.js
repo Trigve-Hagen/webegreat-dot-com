@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Pagination from '../../product-components/pagination';
+import Pagination from '../../pagination';
+import config from '../../../config/config';
 
 class MenuList extends React.Component {
     constructor(props) {
@@ -13,19 +14,35 @@ class MenuList extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <Pagination />
+                        <Pagination
+                            database="frontmenu"
+                            perPage={config.per_page}
+                            token={this.props.authentication[0].token}
+                        />
                         <ul className="ul-styles">
                             {
                                 this.props.menuItems.map(menuItem => 
                                     <li key={menuItem.id}> 
                                         {menuItem.name} 
-                                        <a href="#" data-menuid={menuItem.id} onClick={this.props.onView}> View</a>  
-                                        <a href="#" data-menuid={menuItem.id} onClick={this.props.onDelete}> Delete</a> 
+                                        <a
+                                            href="#"
+                                            data-menuid={menuItem.id}
+                                            onClick={this.props.onView}
+                                        > View</a>  
+                                        <a
+                                            href="#"
+                                            data-menuid={menuItem.id}
+                                            onClick={this.props.onDelete}
+                                        > Delete</a> 
                                     </li>
                                 )
                             }
                         </ul>
-                        <Pagination />
+                        <Pagination
+                            database="frontmenu"
+                            perPage={config.per_page}
+                            token={this.props.authentication[0].token}
+                        />
                     </div>
                 </div>
             </div>

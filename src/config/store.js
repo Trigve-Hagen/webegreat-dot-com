@@ -2,7 +2,7 @@ import { createStore, combineReducers } from 'redux';
 import cartReducer from '../components/cart/reducer';
 import authenticationReducer from '../components/authentication/reducer'
 import productReducer from '../components/authenticated/products/reducer';
-import paginationReducer from '../components/product-components/pagination/reducer';
+import paginationReducer from '../components/pagination/reducer';
 import avatarReducer from '../components/authenticated/profile/reducer';
 import menuReducer from '../components/authenticated/menu/reducer';
 import searchReducer from '../components/search-bar/reducer';

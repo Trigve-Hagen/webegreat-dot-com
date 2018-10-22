@@ -859,11 +859,19 @@ app.post('/api/product/get-product', function(req, res) {
 });
 
 
-app.post('/api/product/pagination', function(req, res) {
+app.post('/api/database/pagination', function(req, res) {
     const { body } = req;
     const {
+        db,
         perPage
     } = body;
+
+    if(!db || !config.patterns.names.test(db)) {
+        return res.send({
+            success: false,
+            message: 'Database invalid or cannot be left empty.'
+        });
+    }
 
     if(!perPage || !config.patterns.numbers.test(perPage)) {
         return res.send({
@@ -872,21 +880,59 @@ app.post('/api/product/pagination', function(req, res) {
         });
     }
 
-    let countFrontProducts = "SELECT COUNT(??) FROM ??";
-    let countFrontProductsInserts = [
-        config.tables[0].table_fields[0].Field,
-        config.tables[0].table_name
+    let database = ''; let unitId = '';
+    switch(db) {
+        case 'products': 
+            database = config.tables[0].table_name;
+            unitId = config.tables[0].table_fields[0].Field;
+            break;
+        case 'userroles':
+            database = config.tables[1].table_name;
+            unitId = config.tables[1].table_fields[0].Field;
+            break;
+        case 'users':
+            database = config.tables[2].table_name;
+            unitId = config.tables[2].table_fields[0].Field;
+            break;
+        case 'usersessions':
+            database = config.tables[3].table_name;
+            unitId = config.tables[3].table_fields[0].Field;
+            break;
+        case 'paypal':
+            database = config.tables[4].table_name;
+            unitId = config.tables[4].table_fields[0].Field;
+            break;
+        case 'orders':
+            database = config.tables[5].table_name;
+            unitId = config.tables[5].table_fields[0].Field;
+            break;
+        case 'newsletter':
+            database = config.tables[6].table_name;
+            unitId = config.tables[6].table_fields[0].Field;
+            break;
+        case 'frontmenu':
+            database = config.tables[7].table_name;
+            unitId = config.tables[7].table_fields[0].Field;
+            break;
+        default: database = ''; unitId = ''; break;
+    }
+
+    let countDatabaseRows = "SELECT COUNT(??) FROM ??";
+    let countDatabaseRowsInserts = [
+        unitId,
+        database
     ];
-    countFrontProducts = mysql.format(countFrontProducts, countFrontProductsInserts);
-    //console.log(getUserIdSession);
-    connection.query(countFrontProducts, function (error, results, fields) {
+    countDatabaseRows = mysql.format(countDatabaseRows, countDatabaseRowsInserts);
+    //console.log(countDatabaseRows);
+    connection.query(countDatabaseRows, function (error, results, fields) {
         if(error) {
             return res.send({
                 success: false,
                 message: 'Server Error in count products for pagination.'
             });
         } else {
-            let pages = Math.ceil(results[0]['COUNT(`productid`)'] / perPage);
+            let pages = Math.ceil(results[0]['COUNT(`' + unitId + '`)'] / perPage);
+            console.log(results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
             return res.send({
                 success: true,
                 message: 'Success',

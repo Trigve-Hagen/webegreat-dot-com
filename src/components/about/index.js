@@ -33,7 +33,7 @@ class About extends React.Component {
                             <h2>If it seems brocken..</h2>
                             <p>For those who have signed up log out and log back in. I reload the whole site to test the install system and Arm system nearly everytime I update the code at github. If you are logged in and I do that the session that was created will not be there any more and your session will be invalid causing the forms to not work.</p>
                             <div className="embed-responsive embed-responsive-4by3 margin-top-20px">
-                                <iframe className="embed-responsive-item" src="https://www.youtube.com/embed/AKBLKkg5ikk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                <iframe className="embed-responsive-item" src="https://www.youtube.com/embed/AKBLKkg5ikk" frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen></iframe>
                             </div>
                         </div>
                         <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">

@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import config from '../../../config/config';
+import config from '../../config/config';
 
 class Pagination extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             pages: [],
-            perPage: 15,
             pagesError: ''
         }
 
@@ -15,20 +14,21 @@ class Pagination extends React.Component {
     }
 
     componentDidMount() {
-		fetch(config.site_url + '/api/product/pagination', {
+		fetch(config.site_url + '/api/database/pagination', {
             method: 'POST',
             headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				perPage: this.state.perPage
+                db: this.props.database,
+				perPage: this.props.perPage || 15
 			})
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
                     let range = [];
                     for(let i = 1; i <= json.pages; i++) range.push(i);
-                    //console.log(json.pages);
+                    console.log(json.pages);
                     this.setState({
                         pages: range,
                         pagesError: json.message

@@ -157,43 +157,48 @@ a, a:active, a:focus {
 .btn-army:focus,
 .btn-army.focus {
   color: #dddddd;
-  background-color: #333333;
-  border-color: #000000;
+  background-color: #101010;
+  border-color: #ffffff;
 }
 
 .btn-army:hover {
   color: #ffffff;
-  background-color: #333333;
-  border-color: #000000;
+  background-color: #101010;
+  border-color: #ffffff;
+}
+
+.pagination
+{
+    border-radius: 20px !important;
 }
 
 .pagination > li > a
 {
     background-color: transparent;
-    color: #000000;
 }
 
 .pagination > li > a:focus,
 .pagination > li > a:hover,
-.pagination > li > span:focus,
-.pagination > li > span:hover
 {
     color: #ffffff;
-    background-color: #333333;
-    border-color: #000000;
+    background-color: #101010;
+    border-color: #333333;
+    border-radius: 20px !important;
 }
 
 .pagination > .active > a
 {
     color: #ffffff;
-    background-color: #333333;
-    border: solid 1px #000000;
+    background-color: #101010;
+    border: solid 1px #333333;
+    border-radius: 20px !important;
 }
 
 .pagination > .active > a:hover
 {
-    background-color: #000000;
-    border: solid 1px #333333;
+    color: #ffffff;
+    background-color: #101010;
+    border: solid 1px #ffffff;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(135, 135, 136, 0.6);
           box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(135, 135, 136, 0.6);
 }
@@ -350,21 +355,51 @@ textarea.form-element {
 
 /* ----- Menu Styles ----- */
 
+.display-all-products {
+  background-color: #101010;
+  border: 1px solid #333333;
+  color: #efefef;
+  border-radius: 5px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  padding:10px;
+  padding-left:20px;
+}
+
+.display-all-products:hover {
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  text-decoration: none;
+}
+
+.menu-background {
+  background-color: #a99671;
+  border: 2px dashed #3a3320;
+  border-radius: 5px;
+  padding-top: 10px;
+  box-shadow: 2px 6px 12px #333333;
+}
+
 .menu-item ul {
   font-size: 16px;
   line-height: 30px;
   list-style-type: none;
   overflow: hidden;
   padding: 0px;
+  width: 100%;
 }
  
 .menu-item ul a {
-  margin-left: 20px;
-  color: #333333;
+  background-color: #101010;
+  border: 1px solid #333333;
+  color: #efefef;
+  border-radius: 5px;
   text-decoration: none;
   display: block;
-  width: 200px;
-  text-decoration: blink;
+  width: 100%;
+  padding:10px;
+  padding-left:20px;
 }
  
 /*li Styles
@@ -374,7 +409,7 @@ textarea.form-element {
  
 .menu-item li a:hover {
   color: #ffffff;
-  text-shadow: 1px 3px 6px #777777;
+  border: 1px solid #ffffff;
 }
 
 /* ----- About Animations ----- */

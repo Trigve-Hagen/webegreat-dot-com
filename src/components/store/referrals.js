@@ -1,7 +1,7 @@
 import React from 'react';
 import config from '../../config/config';
 import { convertTime } from '../utils/helpers';
-import pagination from '../product-components/pagination';
+import Pagination from '../pagination';
 
 class Referrals extends React.Component {
     constructor(props) {

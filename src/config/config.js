@@ -1,6 +1,8 @@
 module.exports = {
   //site_url: 'https://webegreat.com',
   site_url: 'http://localhost:4000',
+
+  per_page: 10,
   
   fallback_folder_name: '',
 

@@ -80,7 +80,7 @@ class UploadProducts extends React.Component {
 
     render() {
         return (
-			<div class="row margin-bottom-50px">
+			<div className="row margin-bottom-50px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                     <h3>Product Upload</h3>
                     {
