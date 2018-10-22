@@ -401,8 +401,8 @@ textarea.form-element {
 
 .menu-background {
   background-color: #a99671;
-  border: 2px dashed #3a3320;
-  border-radius: 5px;
+  border-radius: 2px;
+  box-shadow: 1px 3px 6px #333333;
   padding: 20px;
 }
 
@@ -426,6 +426,11 @@ textarea.form-element {
   padding:10px;
   padding-left:20px;
 }
+
+.referrals-mobile {
+  margin-left: 15px;
+  margin-right: 15px;
+}
  
 /*li Styles
 .menu-item li {
@@ -447,8 +452,8 @@ textarea.form-element {
   }
 }
 @media (max-width: 576px) {
-  .menu-background {
-    margin: 20px;
+  .menu-mobile {
+    margin-bottom: 20px;
   }
 }
 @media (min-width: 1200px) {

@@ -69,7 +69,7 @@ class Referrals extends React.Component {
     render() {
         if(this.state.referrals.length > 0) {
             return (
-                <div className="margin-top-20px margin-bottom-50px">
+                <div className="margin-top-20px margin-bottom-50px referrals-mobile">
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24 text-center menu-background">
                             {

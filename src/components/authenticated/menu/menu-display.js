@@ -73,7 +73,7 @@ class MenuDisplay extends React.Component {
         });
         //console.log(menuString);
         return (
-            <div className="row">
+            <div className="row menu-mobile">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
                     <div className="menu-background">
                         <nav>
