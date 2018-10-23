@@ -75,36 +75,34 @@ class MenuDisplay extends React.Component {
         return (
             <div className="row menu-mobile">
                 <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                    <div className="menu-background">
-                        <nav>
-                            <div className="menu-item">
-                                <h3>Army Strong</h3>
-                                <a href="#" onClick={this.props.onClick} data-linkname="all" className="display-all-products margin-top-20px margin-bottom-20px">Display All Products</a>
-                            </div>
-                            <div className="menu-item">
-                                {
-                                    menuString.map((level1, index) => 
-                                        <div key={index} className="menu-item">
-                                        <h4 className="margin-bottom-5px">{level1.name}</h4><ul>
-                                        {
-                                            level1.children.map((level2, index) =>
-                                                level2.iflink
-                                                    ? <li key={index} className="margin-bottom-5px"><a href={level2.link} onClick={this.props.onClick} data-linkname={level2.name}>{level2.name}</a></li>
-                                                    : <li key={index} className="margin-bottom-5px">{level2.name}<ul>
-                                                        {
-                                                            level2.children.map((level3, index) =>
-                                                                <li key={index} className="margin-bottom-5px"><a href={level3.link} onClick={this.props.onClick} data-linkname={level3.name}>{level3.name}</a></li>
-                                                            )
-                                                        }
-                                                    </ul></li>
-                                            )
-                                        }
-                                        </ul></div>
-                                    )
-                                }
-                            </div>
-                        </nav>
-                    </div>
+                    <nav>
+                        <div className="menu-item">
+                            <h3>Army Strong</h3>
+                            <a href="#" onClick={this.props.onClick} data-linkname="all" className="display-all-products margin-top-20px margin-bottom-20px">Display All Products</a>
+                        </div>
+                        <div className="menu-item">
+                            {
+                                menuString.map((level1, index) => 
+                                    <div key={index} className="menu-item">
+                                    <h4 className="margin-bottom-5px">{level1.name}</h4><ul>
+                                    {
+                                        level1.children.map((level2, index) =>
+                                            level2.iflink
+                                                ? <li key={index} className="margin-bottom-5px"><a href={level2.link} onClick={this.props.onClick} data-linkname={level2.name}>{level2.name}</a></li>
+                                                : <li key={index} className="margin-bottom-5px">{level2.name}<ul>
+                                                    {
+                                                        level2.children.map((level3, index) =>
+                                                            <li key={index} className="margin-bottom-5px"><a href={level3.link} onClick={this.props.onClick} data-linkname={level3.name}>{level3.name}</a></li>
+                                                        )
+                                                    }
+                                                </ul></li>
+                                        )
+                                    }
+                                    </ul></div>
+                                )
+                            }
+                        </div>
+                    </nav>
                 </div>
             </div>
         )

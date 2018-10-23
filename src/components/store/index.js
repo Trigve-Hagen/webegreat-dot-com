@@ -78,6 +78,7 @@ class Home extends React.Component {
     }
 
     render() {
+        console.log(this.props.visibility[0].visibility);
         //this.props.resetProduct();
         return (
             <div>

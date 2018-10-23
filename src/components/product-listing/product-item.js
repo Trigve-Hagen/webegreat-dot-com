@@ -3,7 +3,7 @@ import AddButton from '../product-components/add-button';
 import RemoveButton from '../product-components/remove-button';
 
 export default function ProductItem(props) {
-    return <div className="menu-background margin-bottom-20px">
+    return <div className="row margin-bottom-20px">
                 <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <img
                         alt={ props.product.name }

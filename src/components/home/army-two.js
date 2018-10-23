@@ -25,9 +25,8 @@ class ArmyTwo extends React.Component {
                     className="img-fluid"
                     style={{
                         position: "absolute",
-                        left: this.state.animate ? 100 : -600,
+                        left: this.state.animate ? 0 : -600,
                         top: this.state.animate ? 100 : 100,
-                        rotate: this.state.animate ? 45 : 0,
                         transition: 'all 3s',
                     }}
                 />
