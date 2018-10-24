@@ -16,6 +16,9 @@ class Home extends React.Component {
             currentPage: 1,
             loadProductError: '',
             searchString: 'all',
+            windowHeight: 0,
+            footerHeight: 0,
+            menuHeight: 0,
             products: []
         }
         this.onClick = this.onClick.bind(this);
@@ -34,7 +37,15 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-		this.searchProducts(this.state.searchString)
+        this.searchProducts(this.state.searchString);
+        let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+        let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
+        let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
+        this.setState({
+            windowHeight: windowHeight,
+            footerHeight: footerHeight,
+            menuHeight: menuHeight
+        });
     }
 
     searchProducts(searchString) {
@@ -78,8 +89,8 @@ class Home extends React.Component {
     }
 
     render() {
-        console.log(this.props.visibility[0].visibility);
         //this.props.resetProduct();
+        let containerHeight = this.state.windowHeight - (this.state.menuHeight + this.state.footerHeight);
         return (
             <div>
                 <Navigation
@@ -87,17 +98,26 @@ class Home extends React.Component {
                     authenticated={this.props.authentication[0].authenticated}
                     role={this.props.authentication[0].role}
                 />
-                <div className="container">
+                <div
+                    className="container"
+                    style={{
+                        minHeight: containerHeight + 'px'
+                    }}
+                >
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12">
                             <SearchBar onSubmit={this.onSubmit}/>
                         </div>
                         <div className="col-lg-4 col-md-4 col-sm-12">
-                            <MenuDisplay onClick={this.onClick}/>
+                            {
+                                this.props.visibility[0].visibility == 1
+                                    ? <MenuDisplay onClick={this.onClick}/>
+                                    : (<div></div>)
+                            }
                         </div>
                         <div className="col-lg-8 col-md-8 col-sm-12">
                             {
-                                this.props.visibility[0].visibility
+                                this.props.visibility[0].visibility == 1
                                     ? <ProductListing products={this.state.products}/>
                                     : <h3>No products yet.</h3>
                             } 
@@ -105,7 +125,11 @@ class Home extends React.Component {
                     </div>
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12">
-                            <Referrals authenticated={this.props.authentication[0].authenticated} />
+                            {
+                                this.props.visibility[0].visibility == 1
+                                    ? <Referrals authenticated={this.props.authentication[0].authenticated} />
+                                    : (<div></div>)
+                            }
                         </div>
                     </div>
                 </div>

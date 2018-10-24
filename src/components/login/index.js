@@ -12,10 +12,24 @@ class Login extends React.Component {
 			loginEmail: '',
             loginPassword: '',
             loginError: '',
+            windowHeight: 0,
+            footerHeight: 0,
+            menuHeight: 0,
             loginRedirect: false
 		}
 		this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+        let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
+        let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
+        this.setState({
+            windowHeight: windowHeight,
+            footerHeight: footerHeight,
+            menuHeight: menuHeight
+        });
     }
 
     onChange(e) {
@@ -55,15 +69,21 @@ class Login extends React.Component {
     }
 
     render() {
+        let containerHeight = this.state.windowHeight - (this.state.menuHeight + this.state.footerHeight);
         if(this.state.loginRedirect) return <Redirect to='/profile' />;
         return (
             <div>
                 <Navigation path="/login" />
-                <div className="container">
-                    <div className="row margin-top-20px margin-bottom-50px">
+                <div
+                    className="container"
+                    style={{
+                        minHeight: containerHeight + 'px'
+                    }}
+                >
+                    <div className="row">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-							<h1>Login</h1>
-							<div className="row">
+							<h1 className="margin-top-20px">Login</h1>
+							<div className="row margin-bottom-50px">
                                 <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
                                 </div>
                                 <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">

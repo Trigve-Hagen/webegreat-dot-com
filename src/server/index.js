@@ -932,7 +932,7 @@ app.post('/api/database/pagination', function(req, res) {
             });
         } else {
             let pages = Math.ceil(results[0]['COUNT(`' + unitId + '`)'] / perPage);
-            console.log(results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
+            //console.log(results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
             return res.send({
                 success: true,
                 message: 'Success',
@@ -1644,7 +1644,7 @@ app.post('/api/avatar/get-avatar', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    console.log(getUserIdSession);
+    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -1659,7 +1659,7 @@ app.post('/api/avatar/get-avatar', function(req, res) {
                 results[0]['user_id']
             ];
             getUserAvatar = mysql.format(getUserAvatar, getUserAvatarInserts);
-            console.log(getUserAvatar);
+            //console.log(getUserAvatar);
             connection.query(getUserAvatar, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -1731,7 +1731,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                 message: 'Server Error in get userid update avatar.'
             });
         } else {
-            console.log(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`);
+            //console.log(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`);
             if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`)) {
                 fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`, (err) => {
                     if (err) {
@@ -2245,6 +2245,65 @@ app.post('/api/profile/update-password', function(req, res) {
                     }
                 });
             }
+        }
+    });
+});
+
+app.post('/api/account/get-visibility', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid get visibility.'
+            });
+        } else {
+            let getVisibility = "SELECT ?? FROM ?? WHERE ?? = ?";
+            let getVisibilityInserts = [
+                config.tables[2].table_fields[8].Field,
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                results[0]['user_id']
+            ];
+
+            getVisibility = mysql.format(getVisibility, getVisibilityInserts);
+            //console.log(getVisibility);
+            connection.query(getVisibility, function (error, result, fields) {
+                if(error) {
+                    //console.log("Error: in Register New User: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get visibility'
+                    });
+                } else {
+                    // do results here
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        visibility: result[0]['store_visible']
+                    });
+                }
+            });
         }
     });
 });
@@ -3055,7 +3114,7 @@ app.post('/api/roles/upload', (req, res, next) => {
                     state, zip 
                 ];
                 insertUserIfNonExists = mysql.format(insertUserIfNonExists, inserts);
-                console.log(insertUserIfNonExists);
+                //console.log(insertUserIfNonExists);
                 connection.query(insertUserIfNonExists, function (err, result, fields) {
                     if(err) {
                         //console.log("Error: in Register New User: " + err);

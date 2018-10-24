@@ -45,7 +45,7 @@ class Footer extends React.Component {
 
     render() {
         return (
-            <div className="navbar navbar-dark bg-dark">
+            <div className="navbar navbar-dark bg-dark webegreat-footer">
                 <div className="container margin-bottom-50px">
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                         <p className="footer-para-text">© 2018 - Site Built By Trigve Hagen</p>

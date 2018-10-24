@@ -5,8 +5,14 @@ import { connect } from 'react-redux';
 function ProductListing(props) {
     //console.log(props.products);
     if(props.products.length == 0) {
-        return <div className="margin-bottom-50px">
-                    <h3>There are no products yet.</h3>
+        return <div className="row">
+                    <div className="col-lg-12 col-md-12 col-sm-12">
+                        <div className="row margin-bottom-50px">
+                            <div className="col-lg-12 col-md-12 col-sm-12">
+                                <h3>There are no products yet.</h3>
+                            </div>
+                        </div>
+                    </div>
                 </div>
     } else {
         return <div className="row">

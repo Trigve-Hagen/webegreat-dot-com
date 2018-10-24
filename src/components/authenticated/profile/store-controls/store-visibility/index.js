@@ -7,22 +7,47 @@ class StoreVisibility extends React.Component {
         super(props);
         this.state = {
             visibilityError: '',
-            visibility: '',
-            selectedId: this.props.visibility[0].visibility
+            visibility: this.props.visibility[0].visibility
         }
-        this.onChange = this.dropdownChanged.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    dropdownChanged(e){
-        this.setState({ selectedId: e.target.value });
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    componentDidMount() {
+        fetch(config.site_url + '/api/account/get-visibility', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+					this.setState({
+                        visibilityError: json.message,
+                        visibility: json.visibility
+                    });
+                    this.props.updateVisibility({ visibility: json.visibility });
+				} else {
+                    this.setState({
+						visibilityError: json.message
+					});
+                }
+			});
     }
 
 	onSubmit(e) {
+        console.log(this.state.visibility);
         e.preventDefault();
 
         const data = new FormData();
-            data.append('visibility', this.state.visibility.value);
+            data.append('visibility', this.state.visibility);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/profile/update-visibility', {
@@ -59,7 +84,13 @@ class StoreVisibility extends React.Component {
                         <form className="storeVisibility" onSubmit={this.onSubmit}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <div className="form-group">
-                                    <select ref={ (ref) => { this.state.visibility = ref; }} value={this.selectedId} onChange={this.dropdownChanged.bind(this)} className="form-element custom">
+                                    <select
+                                        value={this.state.visibility}
+                                        onChange={this.onChange}
+                                        name="visibility"
+                                        className="form-element custom"
+                                    >
+                                        <option value="">Please select a value.</option>
                                         <option value="0">Store is not visiblity in front.</option>
                                         <option value="1">Store is visible in front.</option>
                                     </select>

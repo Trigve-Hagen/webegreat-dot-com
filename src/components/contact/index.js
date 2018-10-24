@@ -11,10 +11,25 @@ class Contact extends React.Component {
             contactError: '',
             contactName: '',
             contactEmail: '',
-            contactMessage: '',
+			contactMessage: '',
+			windowHeight: 0,
+            footerHeight: 0,
+            menuHeight: 0
         }
         this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+	}
+
+	componentDidMount() {
+		//console.log(window.innerHeight + ", " + window.clientHeight + ", " + window.height)
+        let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+        let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
+        let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
+        this.setState({
+            windowHeight: windowHeight,
+            footerHeight: footerHeight,
+            menuHeight: menuHeight
+		});
 	}
 
 	onChange(e) {
@@ -60,13 +75,19 @@ class Contact extends React.Component {
 	}
 
     render() {
+		let containerHeight = this.state.windowHeight - (this.state.menuHeight + this.state.footerHeight);
         return (
             <div>
                 <Navigation path="/contact" />
-                <div className="container">
-                    <div className="row margin-top-20px margin-bottom-50px">
+                <div
+                    className="container"
+                    style={{
+                        minHeight: containerHeight + 'px'
+                    }}
+                >
+                    <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                            <div className="row">
+                            <div className="row margin-top-20px margin-bottom-50px">
 								<div className="col-lg-4 col-md-4 col-sm-12 col-xs-24 margin-top-20px">
                                 <img src={ `/img/sniper.jpg` } alt="rifle range" className="img-fluid margin-center" />
 								</div>

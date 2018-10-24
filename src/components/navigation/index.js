@@ -24,7 +24,7 @@ class Navigation extends React.Component {
         else if(authenticated && role == 3) fragment = <Admin path={path} />;
         else fragment = <Front path={path} />
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark webegreat-menu">
                 <a className="navbar-brand" href="/">React</a>
                 <button
                     className="navbar-toggler"

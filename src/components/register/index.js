@@ -13,12 +13,26 @@ class Register extends React.Component {
 			registerError: '',
 			registerName: '',
 			registerEmail: '',
-			registerPassword: ''
+			registerPassword: '',
+			windowHeight: 0,
+            footerHeight: 0,
+            menuHeight: 0
 		}
 
 		this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 	}
+
+	componentDidMount() {
+        let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+        let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
+        let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
+        this.setState({
+            windowHeight: windowHeight,
+            footerHeight: footerHeight,
+            menuHeight: menuHeight
+        });
+    }
 
 	onChange(e) {
 		this.setState({ [e.target.name]: e.target.value });
@@ -62,18 +76,24 @@ class Register extends React.Component {
 	}
 
     render() {
+		let containerHeight = this.state.windowHeight - (this.state.menuHeight + this.state.footerHeight);
 		if(this.state.redirect) return <Redirect to='/profile' />
         return (
 			<div>
 				<Navigation path="/register" />
-				<div className="container">
-					<div className="row margin-top-20px margin-bottom-50px">
-						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-							<h1>Register</h1>
-							<div className="row">
-								<div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
+				<div
+                    className="container"
+                    style={{
+                        minHeight: containerHeight + 'px'
+                    }}
+                >
+					<div className="row">
+						<div className="col-lg-12 col-md-12 col-sm-12">
+							<h1 className="margin-top-20px">Register</h1>
+							<div className="row margin-bottom-50px">
+								<div className="col-lg-2 col-md-2 col-sm-12">
 								</div>
-								<div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+								<div className="col-lg-8 col-md-8 col-sm-12">
 									{
 										(this.state.registerError) ? (
 											<label>{this.state.registerError}</label>
@@ -92,7 +112,7 @@ class Register extends React.Component {
 										<button type="submit" className="btn btn-army">Register</button>
 									</form>
 								</div>
-								<div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
+								<div className="col-lg-2 col-md-2 col-sm-12">
 								</div>
 							</div>
 						</div>
