@@ -17,7 +17,6 @@ class Cancel extends React.Component {
     }
 
     componentDidMount() {
-		//console.log(window.innerHeight + ", " + window.clientHeight + ", " + window.height)
         let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
         let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
         let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
@@ -26,16 +25,13 @@ class Cancel extends React.Component {
             footerHeight: footerHeight,
             menuHeight: menuHeight
 		});
-	}
-
-    componentDidMount() {
 		fetch(config.site_url + '/api/paypal/cancel', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                paymentId: this.state.paypalPaymentId
+                paymentId: this.props.match.params.id
 			})
 		}).then(res => res.json())
 			.then(json => {
@@ -53,6 +49,7 @@ class Cancel extends React.Component {
 
     render() {
         let containerHeight = this.state.windowHeight - (this.state.menuHeight + this.state.footerHeight);
+        console.log(containerHeight);
         return (
             <div>
                 <Navigation path="/cancel" authenticated={this.props.authentication[0].authenticated}/>
@@ -62,15 +59,19 @@ class Cancel extends React.Component {
                         minHeight: containerHeight + 'px'
                     }}
                 >
-                    <div className="row margin-top-20px margin-bottom-50px">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                            <h4>Please come back and shop with us again.</h4>
-                            <p>There is a 100% money back guarantee if for any reason you are not satisfied with your products. Just return the item in the condition you received it to<br /><br /><h4>Returns</h4><br />13066 Paddy Creek Ln<br />Lodi, CA 95240.</p>
-                            {
-                                (this.state.paypalCancelError) ? (
-                                    <label>{this.state.paypalCancelError}</label>
-                                ) : (null)
-                            }
+                    <div className="row">
+                        <div className="col-lg-12 col-md-12 col-sm-12">
+                            <div className="row margin-top-20px margin-bottom-50px">
+								<div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    {
+                                        (this.state.paypalCancelError) ? (
+                                            <label>{this.state.paypalCancelError}</label>
+                                        ) : (null)
+                                    }
+                                    <h4>Please come back and shop with us again.</h4>
+                                    <p>There is a 100% money back guarantee if for any reason you are not satisfied with your products. Just return the item in the condition you received it to<br /><br />Returns<br />Webegreat<br />13066 Paddy Creek Ln<br />Lodi, CA 95240.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

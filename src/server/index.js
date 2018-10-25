@@ -2594,65 +2594,83 @@ app.post('/api/cart/call-paypal', function(req, res) {
                             }
                         });
                     });
-                    //console.log(util.inspect(paypalItems, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
-                    let cancelUrl = urlConfig.site_url + config.paypal_urls.cancel;
-                    let successUrl = urlConfig.site_url + config.paypal_urls.success;
-                    let create_payment_json = {
-                        "intent": "sale",
-                        "payer": {
-                            "payment_method": "paypal"
-                        },
-                        "redirect_urls": {
-                            "return_url": successUrl,
-                            "cancel_url": cancelUrl
-                        },
-                        "transactions": [
-                            {
-                                "item_list": {
-                                    "items": paypalItems
-                                },
-                                "amount": {
-                                    "currency": "USD",
-                                    "total": total
-                                },
-                                "description": "This is the payment description."
-                            }
-                        ]
-                    };
-                    //console.log(util.inspect(create_payment_json, {showHidden: false, depth: null}));
-                    paypal.payment.create(create_payment_json, function (error, payment) {
-                        if (error) {
+                    let getLastOrderId = "SELECT MAX(??) FROM ??";
+                    let getLastOrderIdInserts = [
+                        config.tables[5].table_fields[0].Field,
+                        config.tables[5].table_name
+                    ];
+                    getLastOrderId = mysql.format(getLastOrderId, getLastOrderIdInserts);
+                    //console.log(getLastOrderId);
+                    connection.query(getLastOrderId, function (error, maxIdResults, fields) {
+                        if(error) {
+                            //console.log("Error: in Register New User: " + err);
                             return res.send({
                                 success: false,
-                                message: 'Error: You most likely forgot to upload your Paypal client id and secret or: ' + error
+                                message: 'Server Error in get last order id'
                             });
                         } else {
-                            
-                            let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?)";
-                            let insertOrderInserts = [
-                                config.tables[5].table_name, results[0]['user_id'],
-                                myDate, myDate, name, email, address, city, state, zip,
-                                proids, numofs, prices, payment.id, itemsString
-                            ];
-                            insertOrder = mysql.format(insertOrder, insertOrderInserts);
-                            //console.log(insertOrder);
-                            connection.query(insertOrder, function (error, result, fields) {
-                                if(error) {
-                                    //console.log("Error: in Register New User: " + err);
+                            let newTransid = maxIdResults[0]['MAX(`orderid`)'] + 1;
+                            //console.log(util.inspect(paypalItems, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
+                            let cancelUrl = "http://localhost:3000" + config.paypal_urls.cancel + '/' + newTransid;
+                            let successUrl = "http://localhost:3000" + config.paypal_urls.success;
+                            let create_payment_json = {
+                                "intent": "sale",
+                                "payer": {
+                                    "payment_method": "paypal"
+                                },
+                                "redirect_urls": {
+                                    "return_url": successUrl,
+                                    "cancel_url": cancelUrl
+                                },
+                                "transactions": [
+                                    {
+                                        "item_list": {
+                                            "items": paypalItems
+                                        },
+                                        "amount": {
+                                            "currency": "USD",
+                                            "total": total
+                                        },
+                                        "description": "This is the payment description."
+                                    }
+                                ]
+                            };
+                            //console.log(util.inspect(create_payment_json, {showHidden: false, depth: null}));
+                            paypal.payment.create(create_payment_json, function (error, payment) {
+                                if (error) {
                                     return res.send({
                                         success: false,
-                                        message: 'Server Error in insert order call paypal.'
+                                        message: 'Error: You most likely forgot to upload your Paypal client id and secret or: ' + error
                                     });
                                 } else {
-                                    //console.log(payment.id);
-                                    for(let i=0; i<payment.links.length; i++) {
-                                        if(payment.links[i].rel === 'approval_url') {
+                                    
+                                    let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?)";
+                                    let insertOrderInserts = [
+                                        config.tables[5].table_name, results[0]['user_id'],
+                                        myDate, myDate, name, email, address, city, state, zip,
+                                        proids, numofs, prices, payment.id, itemsString
+                                    ];
+                                    insertOrder = mysql.format(insertOrder, insertOrderInserts);
+                                    //console.log(payment);
+                                    connection.query(insertOrder, function (error, result, fields) {
+                                        if(error) {
+                                            //console.log("Error: in Register New User: " + err);
                                             return res.send({
-                                                success: true,
-                                                url: payment.links[i].href
+                                                success: false,
+                                                message: 'Server Error in insert order call paypal.'
                                             });
+                                        } else {
+                                            //console.log(payment.id);
+                                            for(let i=0; i<payment.links.length; i++) {
+                                                if(payment.links[i].rel === 'approval_url') {
+                                                    return res.send({
+                                                        success: true,
+                                                        url: payment.links[i].href
+                                                    });
+                                                }
+                                            }
                                         }
-                                    }
+                                    });
                                 }
                             });
                         }
@@ -2753,17 +2771,24 @@ app.post('/api/paypal/success', function(req, res) {
     });
 });
 
-app.get('/api/paypal/cancel', function(req, res) {
+app.post('/api/paypal/cancel', function(req, res) {
     const { body } = req;
     const {
         paymentId
     } = body;
 
-    let updateOrder = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
+    if(!paymentId || !config.patterns.names.test(paymentId)) {
+        return res.send({
+            success: false,
+            message: 'Invalid paymentId or paymentId is empty.'
+        });
+    }
+
+    let updateOrder = "UPDATE ?? SET ?? = 2 WHERE ?? = ?";
     let updateOrderInserts = [
         config.tables[5].table_name,
         config.tables[5].table_fields[14].Field,
-        config.tables[5].table_fields[13].Field,
+        config.tables[5].table_fields[0].Field,
         paymentId
     ];
     updateOrder = mysql.format(updateOrder, updateOrderInserts);
@@ -2773,12 +2798,12 @@ app.get('/api/paypal/cancel', function(req, res) {
             //console.log("Error: in Register New User: " + err);
             return res.send({
                 success: false,
-                message: 'Server Error in Paypal /success loadOrder'
+                message: 'Server Error in Paypal /cancel loadOrder'
             });
         } else {
             return res.send({
                 success: true,
-                message: 'Server Error in Paypal /success loadOrder'
+                message: 'Your order has been successfully canceled.'
             });
         }
     });

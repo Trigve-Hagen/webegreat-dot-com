@@ -63,7 +63,7 @@ import( /* webpackChunkName: 'application' */ './App')
                             <Route exact path="/merchant-orders" component={MerchantOrders}/>
                             <Route exact path="/products" component={Products}/>
                             <Route exact path="/success" component={Success}/>
-                            <Route exact path="/cancel" component={Cancel}/>
+                            <Route exact path="/cancel/:id" component={Cancel}/>
                             <Route exact path="/menu" component={Menu}/>
                             <Route exact path="/roles" component={Roles}/>
                             <Route component={NotFound}/>
