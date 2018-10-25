@@ -14,7 +14,7 @@ module.exports = {
         password: 'password'
     },
     patterns: {
-        names: /^[\w\s.&$_-]+$/i,
+        names: /^[\w\s.&$!-]+$/i,
         numbers: /^[0-9]+$/,
         emails: /^[\w.]+@[\w.]+.[A-Za-z]{2,}$/,
         passwords: /^[\w\W]+$/

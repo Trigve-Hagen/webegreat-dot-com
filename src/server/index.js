@@ -2588,8 +2588,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
                                     "currency": "USD",
                                     "quantity": parseInt(itemObj.quantity),
                                 });
-                                if(objCount == itemIds.length - 1) itemsString += product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2);
-                                else itemsString += "&" + product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2);
+                                if(objCount == itemIds.length - 1) itemsString += product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2) + "_" + product['managed_stock'];
+                                else itemsString += "&" + product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2) + "_" + product['managed_stock'];
                                 objCount++;
                             }
                         });
@@ -2718,6 +2718,7 @@ app.post('/api/paypal/success', function(req, res) {
                 message: 'Server Error in Paypal /success loadOrder'
             });
         } else {
+            let proids = results[0]['product_ids'].split("_");
             let numofs = results[0]['number_ofs'].split("_");
             let price = results[0]['prices'].split("_");
             let total = 0;
@@ -2740,6 +2741,50 @@ app.post('/api/paypal/success', function(req, res) {
                     console.log(error.response);
                     throw error;
                 } else {
+                    for(let i=0; i<proids.length; i++) {
+                        let getProductItem = "SELECT * FROM ?? WHERE ?? = ?";
+                        let getProductItemInserts = [
+                            config.tables[0].table_name,
+                            config.tables[0].table_fields[0].Field,
+                            proids[i]
+                        ];
+                        getProductItem = mysql.format(getProductItem, getProductItemInserts);
+                        //console.log(getProductItem);
+                        connection.query(getProductItem, function (error, getProductResults, fields) {
+                            if(error) {
+                                console.log("Error: No item in database: " + error);
+                                return res.send({
+                                    success: false,
+                                    message: 'Server Error in Paypal /success update product, No item in database'
+                                });
+                            } else {
+                                if(getProductResults[0][config.tables[0].table_fields[10].Field] == 1) {
+                                    let newStock = parseInt(getProductResults[0][config.tables[0].table_fields[9].Field]) - parseInt(numofs[i]);
+                                    let updateProductStock = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+                                    let updateProductStockInserts = [
+                                        config.tables[0].table_name,
+                                        config.tables[0].table_fields[9].Field,
+                                        newStock,
+                                        config.tables[0].table_fields[0].Field,
+                                        proids[i]
+                                    ];
+                                    updateProductStock = mysql.format(updateProductStock, updateProductStockInserts);
+                                    //console.log(updateProductStock);
+                                    connection.query(updateProductStock, function (error, updateProductResults, fields) {
+                                        if(error) {
+                                            console.log("Error in update product stock item: " + proids[i] + ", Error: " + error);
+                                            return res.send({
+                                                success: false,
+                                                message: 'Server Error in Paypal /success update product, Error in update product stock item'
+                                            });
+                                        } else {
+                                            console.log("Product stock item: " + proids[i] + " updated successfully");
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
                     let updateOrder = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
                     let updateOrderInserts = [
                         config.tables[5].table_name,
@@ -2748,7 +2793,7 @@ app.post('/api/paypal/success', function(req, res) {
                         paymentId
                     ];
                     updateOrder = mysql.format(updateOrder, updateOrderInserts);
-                    console.log(payment.payer.payer_info.shipping_address.recipient_name);
+                    //console.log(payment.payer.payer_info.shipping_address.recipient_name);
                     connection.query(updateOrder, function (error, results, fields) {
                         if(error) {
                             console.log("Error: in Paypal /success updateOrder: " + err);
