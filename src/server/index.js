@@ -2611,8 +2611,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
                         } else {
                             let newTransid = maxIdResults[0]['MAX(`orderid`)'] + 1;
                             //console.log(util.inspect(paypalItems, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
-                            let cancelUrl = "http://localhost:3000" + config.paypal_urls.cancel + '/' + newTransid;
-                            let successUrl = "http://localhost:3000" + config.paypal_urls.success;
+                            let cancelUrl = urlConfig.site_url + config.paypal_urls.cancel + '/' + newTransid;
+                            let successUrl = urlConfig.site_url + config.paypal_urls.success;
                             let create_payment_json = {
                                 "intent": "sale",
                                 "payer": {
