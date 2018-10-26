@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import Footer from '../../footer';
 import UploadOrders from './upload-orders';
+import Pagination from '../../pagination';
 import OrderList from './order-list';
 import OrderItem from './order-item';
 import config from '../../../config/config';
@@ -14,22 +15,25 @@ class MerchantOrders extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            perPage: 15,
+            perPage: config.per_page,
+            currentPage: this.props.pagination[0].currentPage,
             loadOrdersError: '',
-            orders: []
+            orders: [],
+            pages: []
         }
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onChangePagination = this.onChangePagination.bind(this);
     }
 
-    componentDidMount() {
-		fetch(config.site_url + '/api/morders/all', {
+    fetchMerchantOrders() {
+        fetch(config.site_url + '/api/morders/all', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				currentPage: this.props.pagination[0].currentPage,
+				currentPage: this.state.currentPage,
                 perPage: this.state.perPage,
                 token: this.props.authentication[0].token
 			})
@@ -95,6 +99,38 @@ class MerchantOrders extends React.Component {
 			});
     }
 
+    fetchPages() {
+        fetch(config.site_url + '/api/database/pagination', {
+            method: 'POST',
+            headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                db: "orders",
+				perPage: this.state.perPage
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.pages; i++) range.push(i);
+                    this.setState({
+                        pages: range,
+                        loadProductError: json.message
+					});
+				} else {
+                    this.setState({
+                        loadProductError: json.message
+					});
+                }
+			});
+    }
+    
+    componentDidMount() {
+        this.fetchPages();
+        this.fetchMerchantOrders();
+    }
+
     getOrderObject(orderId) {
         let obj={};
         this.state.orders.map(order => {
@@ -116,6 +152,19 @@ class MerchantOrders extends React.Component {
             }
         });
         return obj;
+    }
+
+    onChangePagination(e) {
+        console.log( e.target.dataset.currentpage );
+        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
+            this.setState({ currentPage: this.props.pagination[0].currentPage });
+            this.fetchPages();
+            this.fetchMerchantOrders();
+        }
     }
 
     onView(e) {
@@ -197,10 +246,22 @@ class MerchantOrders extends React.Component {
                         <div className="row margin-top-20px margin-bottom-50px">
                             <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
                                 <h2>Merchant Orders</h2>
-                                <OrderList
-                                    orders={this.state.orders}
-                                    onView={this.onView}
-                                    onDelete={this.onDelete}
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
+                                />
+                                    <OrderList
+                                        orders={this.state.orders}
+                                        onView={this.onView}
+                                        onDelete={this.onDelete}
+                                    />
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
                                 />
                                 {
                                     (this.state.loadOrdersError) ? (
@@ -238,6 +299,9 @@ function mapDispatchToProps(dispatch) {
         },
         resetMOrders: (value) => {
             dispatch({ type: 'RESET_MORDERS', payload: value})
+        },
+        updatePagination: (value) => {
+            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }

@@ -103,6 +103,12 @@ function sendMail(mailOptions) {
     });
 }
 
+function validateImageUpload(file) {
+    let ext = ['.gif', '.jpg', '.jpeg', '.png'];
+    console.log(file);
+    return true;
+}
+
 /*
  ************************ Registration && Signup ***********************
  ***********************************************************************
@@ -863,7 +869,8 @@ app.post('/api/database/pagination', function(req, res) {
     const { body } = req;
     const {
         db,
-        perPage
+        perPage,
+        token
     } = body;
 
     if(!db || !config.patterns.names.test(db)) {
@@ -905,6 +912,60 @@ app.post('/api/database/pagination', function(req, res) {
         case 'orders':
             database = config.tables[5].table_name;
             unitId = config.tables[5].table_fields[0].Field;
+            if(token) {
+                let user = config.tables[5].table_fields[1].Field;
+                if(!config.patterns.numbers.test(token)) {
+                    return res.send({
+                        success: false,
+                        message: 'Token invalid or cannot be left empty.'
+                    });
+                } else {
+                    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+                    let userIdInserts = [
+                        config.tables[3].table_fields[1].Field,
+                        config.tables[3].table_name,
+                        config.tables[3].table_fields[0].Field,
+                        token
+                    ];
+                    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+                    //console.log(getUserIdSession);
+                    connection.query(getUserIdSession, function (error, results, fields) {
+                        if(error) {
+                            return res.send({
+                                success: false,
+                                message: 'Server Error in get userid.'
+                            });
+                        } else {
+                            let countDatabaseRows = "SELECT COUNT(??) FROM ?? WHERE ?? = ?";
+                            let countDatabaseRowsInserts = [
+                                unitId,
+                                database,
+                                user,
+                                results[0]['user_id']
+                            ];
+                            countDatabaseRows = mysql.format(countDatabaseRows, countDatabaseRowsInserts);
+                            //console.log("Here again?" + countDatabaseRows);
+                            connection.query(countDatabaseRows, function (error, results, fields) {
+                                if(error) {
+                                    return res.send({
+                                        success: false,
+                                        message: 'Server Error in count corders for pagination.'
+                                    });
+                                } else {
+                                    let pages = Math.ceil(results[0]['COUNT(`' + unitId + '`)'] / perPage);
+
+                                    //console.log("Here again?" + results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
+                                    return res.send({
+                                        success: true,
+                                        message: 'Success',
+                                        pages: pages
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            }
             break;
         case 'newsletter':
             database = config.tables[6].table_name;
@@ -916,30 +977,32 @@ app.post('/api/database/pagination', function(req, res) {
             break;
         default: database = ''; unitId = ''; break;
     }
-
-    let countDatabaseRows = "SELECT COUNT(??) FROM ??";
-    let countDatabaseRowsInserts = [
-        unitId,
-        database
-    ];
-    countDatabaseRows = mysql.format(countDatabaseRows, countDatabaseRowsInserts);
-    //console.log(countDatabaseRows);
-    connection.query(countDatabaseRows, function (error, results, fields) {
-        if(error) {
-            return res.send({
-                success: false,
-                message: 'Server Error in count products for pagination.'
-            });
-        } else {
-            let pages = Math.ceil(results[0]['COUNT(`' + unitId + '`)'] / perPage);
-            //console.log(results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
-            return res.send({
-                success: true,
-                message: 'Success',
-                pages: pages
-            });
-        }
-    });
+    if(!token) {
+        let countDatabaseRows = "SELECT COUNT(??) FROM ??";
+        let countDatabaseRowsInserts = [
+            unitId,
+            database
+        ];
+        countDatabaseRows = mysql.format(countDatabaseRows, countDatabaseRowsInserts);
+        //console.log(countDatabaseRows);
+        connection.query(countDatabaseRows, function (error, results, fields) {
+            if(error) {
+                return res.send({
+                    success: false,
+                    message: 'Server Error in count products for pagination.'
+                });
+            } else {
+                let pages = Math.ceil(results[0]['COUNT(`' + unitId + '`)'] / perPage);
+                //console.log("Here again?")
+                //console.log(results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
+                return res.send({
+                    success: true,
+                    message: 'Success',
+                    pages: pages
+                });
+            }
+        });
+    }
 });
 
 app.post('/api/product/delete-product', function(req, res) {
@@ -1067,6 +1130,8 @@ app.post('/api/product/front', function(req, res) {
         currentPage,
         searchString
     } = body;
+
+    console.log(perPage);
     
     if(!perPage || !config.patterns.numbers.test(perPage)) {
         return res.send({
@@ -1112,7 +1177,7 @@ app.post('/api/product/front', function(req, res) {
                     config.tables[0].table_name,
                     config.tables[0].table_fields[7].Field,
                     start, perPage
-                    );
+                );
             } else {
                 let stringParamas = searchString.split(" ");
                 getFrontProducts = "SELECT * FROM ?? WHERE "
@@ -1127,8 +1192,8 @@ app.post('/api/product/front', function(req, res) {
                 getFrontProducts += "ORDER BY ?? DESC LIMIT ?, ?";
                 //console.log(getFrontProducts);
             }
-            //console.log(getFrontProducts);
             getFrontProducts = mysql.format(getFrontProducts, getFrontProductInserts);
+            console.log(getFrontProducts);
             connection.query(getFrontProducts, function (err, result, fields) {
                 if(err) {
                     console.log("Error: in Register New User: " + err);
@@ -1165,7 +1230,7 @@ app.post('/api/product/upload', function(req, res) {
         token
     } = body;
     
-    if (!req.files) {
+    if (!req.files || !validateImageUpload(req.files)) {
         return res.send({
             success: false,
             message: 'No file was uploaded.'
@@ -3057,9 +3122,12 @@ app.post('/api/roles/users', function(req, res) {
                 message: 'Server error in get userid user list roles.'
             });
         } else {
-            let userList = "SELECT * FROM ??";
+            let start = (currentPage-1)*perPage;
+            let userList = "SELECT * FROM ?? ORDER BY ?? DESC LIMIT ?, ?";
             let userListInserts = [
-                config.tables[2].table_name
+                config.tables[2].table_name,
+                config.tables[2].table_fields[0].Field,
+                start, perPage
             ];
             userList = mysql.format(userList, userListInserts);
             connection.query(userList, function (error, result, fields) {
@@ -3708,9 +3776,12 @@ app.post('/api/morders/all', function(req, res) {
                 message: 'Server error in get userid user list orders.'
             });
         } else {
-            let orderList = "SELECT * FROM ??";
+            let start = (currentPage-1)*perPage;
+            let orderList = "SELECT * FROM ?? ORDER BY ?? DESC LIMIT ?, ?";
             let orderListInserts = [
-                config.tables[5].table_name
+                config.tables[5].table_name,
+                config.tables[5].table_fields[0].Field,
+                start, perPage
             ];
             orderList = mysql.format(orderList, orderListInserts);
             //console.log(orderList);
@@ -4011,11 +4082,14 @@ app.post('/api/corders/all', function(req, res) {
                 message: 'Server error in get userid corders list.'
             });
         } else {
-            let orderList = "SELECT * FROM ?? WHERE ?? = ?";
+            let start = (currentPage-1)*perPage;
+            let orderList = "SELECT * FROM ?? WHERE ?? = ? ORDER BY ?? DESC LIMIT ?, ?";
             let orderListInserts = [
                 config.tables[5].table_name,
                 config.tables[5].table_fields[1].Field,
-                results[0]['user_id']
+                results[0]['user_id'],
+                config.tables[5].table_fields[0].Field,
+                start, perPage
             ];
             orderList = mysql.format(orderList, orderListInserts);
             //console.log(orderList);
@@ -4028,11 +4102,19 @@ app.post('/api/corders/all', function(req, res) {
                     });
                 } else {
                     // do results here
-                    return res.send({
-                        success: true,
-                        message: 'Success',
-                        orders: result
-                    });
+                    //console.log(result);
+                    if(result) {
+                        return res.send({
+                            success: true,
+                            message: 'Success',
+                            orders: result
+                        });
+                    } else {
+                        return res.send({
+                            success: true,
+                            message: 'No orders yet.'
+                        });
+                    }
                 }
             });
         }

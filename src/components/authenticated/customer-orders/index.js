@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import Footer from '../../footer';
 import UploadSurvey from './upload-survey';
+import Pagination from '../../pagination';
 import OrderList from './order-list';
 import OrderItem from './order-item';
 import config from '../../../config/config';
@@ -13,15 +14,18 @@ class CustomerOrders extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            perPage: 15,
+            perPage: config.per_page,
+            currentPage: this.props.pagination[0].currentPage,
             loadOrdersError: '',
-            orders: []
+            orders: [],
+            pages: []
         }
         this.onView = this.onView.bind(this);
+        this.onChangePagination = this.onChangePagination.bind(this);
     }
 
-    componentDidMount() {
-		fetch(config.site_url + '/api/corders/all', {
+    fetchOrders() {
+        fetch(config.site_url + '/api/corders/all', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -92,6 +96,41 @@ class CustomerOrders extends React.Component {
 			});
     }
 
+    fetchPages() {
+        fetch(config.site_url + '/api/database/pagination', {
+            method: 'POST',
+            headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                db: "orders",
+                token: this.props.authentication[0].token,
+				perPage: this.state.perPage
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    if(json.pages) {
+                        let range = [];
+                        for(let i = 1; i <= json.pages; i++) range.push(i);
+                        this.setState({
+                            pages: range,
+                            loadProductError: json.message
+                        });
+                    }
+				} else {
+                    this.setState({
+                        loadProductError: json.message
+					});
+                }
+			});
+    }
+    
+    componentDidMount() {
+        this.fetchPages();
+		this.fetchOrders();
+    }
+
     getOrderObject(orderId) {
         let obj={};
         this.state.orders.map(order => {
@@ -115,6 +154,18 @@ class CustomerOrders extends React.Component {
         return obj;
     }
 
+    onChangePagination(e) {
+        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
+            this.setState({ currentPage: this.props.pagination[0].currentPage });
+            this.fetchOrders();
+            this.fetchPages();
+        }
+    }
+
     onView(e) {
         this.props.updateCOrders(this.getOrderObject(e.target.dataset.orderid));
     }
@@ -127,17 +178,29 @@ class CustomerOrders extends React.Component {
                     <div className="container">
                         <div className="row margin-top-20px margin-bottom-50px">
                             <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
-                                <h3>Customer Orders Page</h3>
-                                <OrderList
-                                    orders={this.state.orders}
-                                    onView={this.onView}
-                                    onDelete={this.onDelete}
-                                />
+                                <h3>Customer Orders</h3>
                                 {
                                     (this.state.loadOrdersError) ? (
                                         <label>{this.state.loadOrdersError}</label>
                                     ) : (null)
                                 }
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
+                                />
+                                    <OrderList
+                                        orders={this.state.orders}
+                                        onView={this.onView}
+                                        onDelete={this.onDelete}
+                                    />
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
+                                />
                             </div>
                             <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
                                 <OrderItem order={this.props.corders} />
@@ -167,6 +230,9 @@ function mapDispatchToProps(dispatch) {
         },
         resetCOrders: (value) => {
             dispatch({ type: 'RESET_CORDERS', payload: value})
+        },
+        updatePagination: (value) => {
+            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }

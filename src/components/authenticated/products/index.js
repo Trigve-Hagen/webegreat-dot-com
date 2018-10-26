@@ -6,6 +6,7 @@ import Footer from '../../footer';
 import UploadProducts from './upload-products';
 import UpdateProducts from './update-products';
 import ProductItem from './product-item';
+import Pagination from '../../pagination';
 import ProductList from './product-list';
 import config from '../../../config/config';
 
@@ -15,20 +16,23 @@ class Products extends React.Component {
         this.state = {
             perPage: 2,
             loadProductError: '',
-            products: []
+            currentPage: this.props.pagination[0].currentPage,
+            products: [],
+            pages: []
         }
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onChangePagination = this.onChangePagination.bind(this);
     }
 
-    componentDidMount() {
-		fetch(config.site_url + '/api/product/front', {
+    fetchProducts() {
+        fetch(config.site_url + '/api/product/front', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				currentPage: this.props.pagination[0].currentPage,
+				currentPage: this.state.currentPage,
                 perPage: this.state.perPage,
                 searchString: "all"
 			})
@@ -62,6 +66,39 @@ class Products extends React.Component {
 			});
     }
 
+    fetchPages() {
+        fetch(config.site_url + '/api/database/pagination', {
+            method: 'POST',
+            headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                db: "products",
+				perPage: this.state.perPage
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.pages; i++) range.push(i);
+                    console.log(json.pages);
+                    this.setState({
+                        pages: range,
+                        loadProductError: json.message
+					});
+				} else {
+                    this.setState({
+                        loadProductError: json.message
+					});
+                }
+			});
+    }
+
+    componentDidMount() {
+        this.fetchPages();
+        this.fetchProducts();
+    }
+
     getProductObject(productId) {
         let obj={};
         this.state.products.map(product => {
@@ -78,6 +115,18 @@ class Products extends React.Component {
             }
         });
         return obj;
+    }
+
+    onChangePagination(e) {
+        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
+            this.setState({ currentPage: this.props.pagination[0].currentPage });
+            this.fetchProducts();
+            this.fetchPages();
+        }
     }
 
     onView(e) {
@@ -155,10 +204,22 @@ class Products extends React.Component {
                         <div className="row margin-top-50px">
                             <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
                             <h2>Create Product</h2>
-                                <ProductList
-                                    products={this.state.products}
-                                    onView={this.onView}
-                                    onDelete={this.onDelete}
+                                <Pagination
+                                    pages={this.state.pages}
+                                    onChangePagination={this.onChangePagination}
+                                    currentPage={this.state.currentPage}
+                                    perPage={this.state.perPage}
+                                />
+                                    <ProductList
+                                        products={this.state.products}
+                                        onView={this.onView}
+                                        onDelete={this.onDelete}
+                                    />
+                                <Pagination
+                                    pages={this.state.pages}
+                                    onChangePagination={this.onChangePagination}
+                                    currentPage={this.state.currentPage}
+                                    perPage={this.state.perPage}
                                 />
                                 {
                                     (this.state.loadProductError) ? (
@@ -195,6 +256,9 @@ function mapDispatchToProps(dispatch) {
         },
         resetProduct: (value) => {
             dispatch({ type: 'RESET_PRODUCT', payload: value})
+        },
+        updatePagination: (value) => {
+            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }

@@ -5,6 +5,7 @@ import Navigation from '../../navigation';
 import Footer from '../../footer';
 import UploadUser from './upload-user';
 import UpdateUser from './update-user';
+import Pagination from '../../pagination';
 import UserList from './user-list';
 import UserItem from './user-item';
 import config from '../../../config/config';
@@ -14,14 +15,17 @@ class UserRoles extends React.Component {
         super(props);
         this.state = {
             loadUserError: '',
-            perPage: 15,
-            users: []
+            perPage: config.per_page,
+            currentPage: this.props.pagination[0].currentPage,
+            users: [],
+            pages: []
         }
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onChangePagination = this.onChangePagination.bind(this);
     }
-    
-    componentDidMount() {
+
+    fetchUsers() {
         fetch(config.site_url + '/api/roles/users', {
             method: 'POST',
             headers: {
@@ -29,13 +33,12 @@ class UserRoles extends React.Component {
             },
             body: JSON.stringify({
                 currentPage: this.props.pagination[0].currentPage,
-                perPage: this.state.perPage,
+                perPage: config.per_page,
                 token: this.props.authentication[0].token
             })
         }).then(res => res.json())
             .then(json => {
                 if(json.success) {
-                    
                     let arrayArgs = [];
                     //console.log(json.users);
                     for (let value of Object.values(json.users)) {
@@ -65,6 +68,38 @@ class UserRoles extends React.Component {
             });
     }
 
+    fetchPages() {
+        fetch(config.site_url + '/api/database/pagination', {
+            method: 'POST',
+            headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                db: "users",
+				perPage: this.state.perPage
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.pages; i++) range.push(i);
+                    this.setState({
+                        pages: range,
+                        loadProductError: json.message
+					});
+				} else {
+                    this.setState({
+                        loadProductError: json.message
+					});
+                }
+			});
+    }
+    
+    componentDidMount() {
+        this.fetchPages();
+        this.fetchUsers();
+    }
+
     getUserObject(userId) {
         let obj={};
         this.state.users.map(user => {
@@ -82,6 +117,18 @@ class UserRoles extends React.Component {
             }
         });
         return obj;
+    }
+
+    onChangePagination(e) {
+        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
+            this.setState({ currentPage: this.props.pagination[0].currentPage });
+            this.fetchUsers();
+            this.fetchPages();
+        }
     }
 
     onView(e) {
@@ -161,10 +208,22 @@ class UserRoles extends React.Component {
                                         <label>{this.state.loadUserError}</label>
                                     ) : (null)
                                 }
-                                <UserList
-                                    users={this.state.users}
-                                    onView={this.onView}
-                                    onDelete={this.onDelete}
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
+                                />
+                                    <UserList
+                                        users={this.state.users}
+                                        onView={this.onView}
+                                        onDelete={this.onDelete}
+                                    />
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
                                 />
                                 <UploadUser />
                             </div>
@@ -193,6 +252,9 @@ function mapDispatchToProps(dispatch) {
     return {
         updateRole: (value) => {
             dispatch({ type: 'UPDATE_ROLE', payload: value})
+        },
+        updatePagination: (value) => {
+            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }

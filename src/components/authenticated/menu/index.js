@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Navigation from '../../navigation';
 import Footer from '../../footer';
+import Pagination from '../../pagination';
 import MenuList from './menu-list';
 import UpdateMenu from './update-menu';
 import UploadMenu from './upload-menu';
@@ -15,14 +16,18 @@ class MenuMaker extends React.Component {
         super(props);
         this.state = {
             loadMenuError: '',
-            loadMenuItems: []
+            perPage: config.per_page,
+            currentPage: this.props.pagination[0].currentPage,
+            loadMenuItems: [],
+            pages: []
         }
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onChangePagination = this.onChangePagination.bind(this);
     }
 
-    componentDidMount() {
-		fetch(config.site_url + '/api/menu/front', {
+    fetchMenu() {
+        fetch(config.site_url + '/api/menu/front', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -57,6 +62,38 @@ class MenuMaker extends React.Component {
 			});
     }
 
+    fetchPages() {
+        fetch(config.site_url + '/api/database/pagination', {
+            method: 'POST',
+            headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                db: "frontmenu",
+				perPage: this.state.perPage
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.pages; i++) range.push(i);
+                    this.setState({
+                        pages: range,
+                        loadProductError: json.message
+					});
+				} else {
+                    this.setState({
+                        loadProductError: json.message
+					});
+                }
+			});
+    }
+
+    componentDidMount() {
+        this.fetchPages();
+		this.fetchMenu();
+    }
+
     getMenuObject(menuId) {
         let obj={};
         this.state.loadMenuItems.map(item => {
@@ -70,6 +107,18 @@ class MenuMaker extends React.Component {
             }
         });
         return obj;
+    }
+
+    onChangePagination(e) {
+        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
+            this.setState({ currentPage: this.props.pagination[0].currentPage });
+            this.fetchPages();
+            this.fetchMenu();
+        }
     }
 
     onView(e) {
@@ -141,10 +190,22 @@ class MenuMaker extends React.Component {
                                         <label>{this.state.loadMenuError}</label>
                                     ) : (null)
                                 }
-                                <MenuList
-                                    menuItems={this.state.loadMenuItems}
-                                    onView={this.onView}
-                                    onDelete={this.onDelete}
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
+                                />
+                                    <MenuList
+                                        menuItems={this.state.loadMenuItems}
+                                        onView={this.onView}
+                                        onDelete={this.onDelete}
+                                    />
+                                <Pagination
+                                    pages={this.state.pages}
+                                    perPage={this.state.perPage}
+                                    currentPage={this.state.currentPage}
+                                    onChangePagination={this.onChangePagination}
                                 />
                                 <UploadMenu menuItems={this.state.loadMenuItems}/>
                             </div>
@@ -168,6 +229,7 @@ class MenuMaker extends React.Component {
 function mapStateToProps(state) {
     return {
         menu: state.menu,
+        pagination: state.pagination,
         authentication: state.authentication
     }
 }
@@ -176,6 +238,9 @@ function mapDispatchToProps(dispatch) {
     return {
         updateMenu: (value) => {
             dispatch({ type: 'UPDATE_MENU', payload: value})
+        },
+        updatePagination: (value) => {
+            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }
