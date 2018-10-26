@@ -5,8 +5,8 @@ export default function Pagination(props) {
             {
                 props.pages.map(page => 
                     page == props.currentPage
-                        ? <li key={page.toString()} className="active"><a data-currentpage={page} onClick={props.onChangePagination} className="btn btn-army"><strong>{page}</strong></a></li>
-                        : <li key={page.toString()}><a data-currentpage={page} onClick={props.onChangePagination} className="btn btn-army">{page}</a></li>
+                        ? <li key={page} className="page-item active"><a className="page-link" data-currentpage={page} onClick={props.onChangePagination}><strong>{page}</strong></a></li>
+                        : <li key={page} className="page-item"><a className="page-link" data-currentpage={page} onClick={props.onChangePagination}>{page}</a></li>
                 )
             }
         </ul>

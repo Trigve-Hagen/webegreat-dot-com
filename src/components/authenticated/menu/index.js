@@ -17,7 +17,7 @@ class MenuMaker extends React.Component {
         this.state = {
             loadMenuError: '',
             perPage: config.per_page,
-            currentPage: this.props.pagination[0].currentPage,
+            currentPage: 1,
             loadMenuItems: [],
             pages: []
         }
@@ -110,12 +110,14 @@ class MenuMaker extends React.Component {
     }
 
     onChangePagination(e) {
-        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+        if(e.target.dataset.currentpage !== undefined) {
+            this.setState({ currentPage: e.target.dataset.currentpage });
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
-            this.setState({ currentPage: this.props.pagination[0].currentPage });
+        if(prevState.currentPage !== this.state.currentPage) {
+            this.setState({ currentPage: this.state.currentPage });
             this.fetchPages();
             this.fetchMenu();
         }
@@ -229,7 +231,6 @@ class MenuMaker extends React.Component {
 function mapStateToProps(state) {
     return {
         menu: state.menu,
-        pagination: state.pagination,
         authentication: state.authentication
     }
 }
@@ -238,9 +239,6 @@ function mapDispatchToProps(dispatch) {
     return {
         updateMenu: (value) => {
             dispatch({ type: 'UPDATE_MENU', payload: value})
-        },
-        updatePagination: (value) => {
-            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }

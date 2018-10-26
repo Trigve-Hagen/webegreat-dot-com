@@ -16,7 +16,7 @@ class MerchantOrders extends React.Component {
         super(props);
         this.state = {
             perPage: config.per_page,
-            currentPage: this.props.pagination[0].currentPage,
+            currentPage: 1,
             loadOrdersError: '',
             orders: [],
             pages: []
@@ -86,7 +86,6 @@ class MerchantOrders extends React.Component {
                             surveyitems: surveyItems
                         });
                     }
-                    console.log(arrayArgs.length);
 					this.setState({
                         loadOrdersError: json.message,
                         orders: arrayArgs
@@ -155,13 +154,14 @@ class MerchantOrders extends React.Component {
     }
 
     onChangePagination(e) {
-        console.log( e.target.dataset.currentpage );
-        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+        if(e.target.dataset.currentpage !== undefined) {
+            this.setState({ currentPage: e.target.dataset.currentpage });
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
-            this.setState({ currentPage: this.props.pagination[0].currentPage });
+        if(prevState.currentPage !== this.state.currentPage) {
+            this.setState({ currentPage: this.state.currentPage });
             this.fetchPages();
             this.fetchMerchantOrders();
         }
@@ -287,7 +287,6 @@ function mapStateToProps(state) {
     return {
         cart: state.cart,
         morders: state.morders,
-        pagination: state.pagination,
         authentication: state.authentication
     }
 }
@@ -299,9 +298,6 @@ function mapDispatchToProps(dispatch) {
         },
         resetMOrders: (value) => {
             dispatch({ type: 'RESET_MORDERS', payload: value})
-        },
-        updatePagination: (value) => {
-            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }

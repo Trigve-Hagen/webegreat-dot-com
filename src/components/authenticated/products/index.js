@@ -16,7 +16,7 @@ class Products extends React.Component {
         this.state = {
             perPage: 2,
             loadProductError: '',
-            currentPage: this.props.pagination[0].currentPage,
+            currentPage: 1,
             products: [],
             pages: []
         }
@@ -81,7 +81,6 @@ class Products extends React.Component {
 				if(json.success) {
                     let range = [];
                     for(let i = 1; i <= json.pages; i++) range.push(i);
-                    console.log(json.pages);
                     this.setState({
                         pages: range,
                         loadProductError: json.message
@@ -118,14 +117,16 @@ class Products extends React.Component {
     }
 
     onChangePagination(e) {
-        this.props.updatePagination({ currentPage: e.target.dataset.currentpage });
+        if(e.target.dataset.currentpage !== undefined) {
+            this.setState({ currentPage: e.target.dataset.currentpage });
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(prevState.currentPage !== this.props.pagination[0].currentPage) {
-            this.setState({ currentPage: this.props.pagination[0].currentPage });
-            this.fetchProducts();
+        if(prevState.currentPage !== this.state.currentPage) {
+            this.setState({ currentPage: this.state.currentPage });
             this.fetchPages();
+            this.fetchProducts();
         }
     }
 
@@ -244,7 +245,6 @@ class Products extends React.Component {
 function mapStateToProps(state) {
     return {
         product: state.product,
-        pagination: state.pagination,
         authentication: state.authentication
     }
 }
@@ -256,9 +256,6 @@ function mapDispatchToProps(dispatch) {
         },
         resetProduct: (value) => {
             dispatch({ type: 'RESET_PRODUCT', payload: value})
-        },
-        updatePagination: (value) => {
-            dispatch({ type: 'ADD_CURRENT_PAGE', payload: value})
         }
     }
 }
