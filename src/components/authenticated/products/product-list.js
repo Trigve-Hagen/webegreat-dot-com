@@ -1,7 +1,10 @@
 import React from 'react';
 
 export default function ProductList(props) {
-    return <ul className="ul-styles">
+    if(props.products == []) {
+        return <div><h3>There are no products yet.</h3></div>
+    } else {
+        return <ul className="ul-styles">
             {
                 props.products.map(product => 
                     <li key={product.id}> 
@@ -12,4 +15,5 @@ export default function ProductList(props) {
                 )
             }
         </ul>
+    }
 }

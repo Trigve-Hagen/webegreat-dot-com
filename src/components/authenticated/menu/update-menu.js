@@ -7,12 +7,12 @@ class UpdateMenu extends React.Component {
 		super(props);
 		this.state = {
             menuUpdateError: '',
-            menuUpdateId: this.props.menu[0].id,
-            menuUpdateName: this.props.menu[0].name,
-            menuUpdateLevel: this.props.menu[0].level,
-            menuUpdateParent: this.props.menu[0].parent,
-            menuUpdateIfProduct: this.props.menu[0].ifproduct,
-            menuUpdateDescription: this.props.menu[0].description
+            menuUpdateId: '',
+            menuUpdateName: '',
+            menuUpdateLevel: '',
+            menuUpdateParent: '',
+            menuUpdateIfProduct: '',
+            menuUpdateDescription: ''
 		}
         this.onChange= this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
@@ -24,14 +24,14 @@ class UpdateMenu extends React.Component {
 
     
     componentDidUpdate(nextProps) {
-        if(nextProps.menu[0].id !== this.props.menu[0].id) {
+        if(nextProps.menu.id !== this.props.menu.id) {
             this.setState({
-                menuUpdateId: this.props.menu[0].id,
-                menuUpdateName: this.props.menu[0].name,
-                menuUpdateLevel: this.props.menu[0].level,
-                menuUpdateParent: this.props.menu[0].parent,
-                menuUpdateIfProduct: this.props.menu[0].ifproduct,
-                menuUpdateDescription: this.props.menu[0].description
+                menuUpdateId: this.props.menu.id,
+                menuUpdateName: this.props.menu.name,
+                menuUpdateLevel: this.props.menu.level,
+                menuUpdateParent: this.props.menu.parent,
+                menuUpdateIfProduct: this.props.menu.ifproduct,
+                menuUpdateDescription: this.props.menu.description
             });
         }
     }
@@ -77,7 +77,6 @@ class UpdateMenu extends React.Component {
                     });
                     location.reload();
 				} else {
-                    //console.log(json.message);
                     this.setState({
 						menuUpdateError: json.message
 					});
@@ -86,7 +85,6 @@ class UpdateMenu extends React.Component {
 	}
 
     render() {
-        //this.props.resetMenu();
         return (
             <div className="row margin-bottom-50px">
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
@@ -142,20 +140,8 @@ class UpdateMenu extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        menu: state.menu,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateMenu: (value) => {
-            dispatch({ type: 'UPDATE_MENU', payload: value})
-        },
-        resetMenu: (value) => {
-            dispatch({ type: 'RESET_MENU', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateMenu);
+export default connect(mapStateToProps)(UpdateMenu);

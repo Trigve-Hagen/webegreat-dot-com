@@ -18,6 +18,7 @@ class MenuMaker extends React.Component {
             loadMenuError: '',
             perPage: config.per_page,
             currentPage: 1,
+            loadMenuItem: [],
             loadMenuItems: [],
             pages: []
         }
@@ -52,6 +53,7 @@ class MenuMaker extends React.Component {
                     //console.log(arrayArgs);
                     this.setState({
                         loadMenuError: json.message,
+                        loadMenuItem: arrayArgs[0],
                         loadMenuItems: arrayArgs
                     });
 				} else {
@@ -124,7 +126,7 @@ class MenuMaker extends React.Component {
     }
 
     onView(e) {
-        this.props.updateMenu(this.getMenuObject(e.target.dataset.menuid));
+        this.setState({ loadMenuItem: this.getMenuObject(e.target.dataset.menuid) });
     }
 
     onDelete(e) {
@@ -213,10 +215,10 @@ class MenuMaker extends React.Component {
                             </div>
                             <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
                                 <MenuDisplay menuItems={this.state.loadMenuItems} />
-                                <MenuItem menu={this.props.menu} />
+                                <MenuItem menu={this.state.loadMenuItem} />
                                 <UpdateMenu
                                     menuItems={this.state.loadMenuItems}
-                                    menu={this.props.menu}
+                                    menu={this.state.loadMenuItem}
                                 />
                             </div>
                         </div>
@@ -230,17 +232,8 @@ class MenuMaker extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        menu: state.menu,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateMenu: (value) => {
-            dispatch({ type: 'UPDATE_MENU', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MenuMaker)
+export default connect(mapStateToProps)(MenuMaker)

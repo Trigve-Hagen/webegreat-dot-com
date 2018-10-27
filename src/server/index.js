@@ -103,10 +103,38 @@ function sendMail(mailOptions) {
     });
 }
 
+function bufferToHex(buffer) {
+    return Array
+        .from (new Uint8Array (buffer))
+        .map (b => b.toString (16).padStart (2, "0"))
+        .join ("");
+}
+
 function validateImageUpload(file) {
-    let ext = ['.gif', '.jpg', '.jpeg', '.png'];
-    console.log(file);
-    return true;
+    let allowedImages = [
+        { ext: 'gif', magic: '47494638' },
+        { ext: 'jpg', magic: 'ffd8' },
+        { ext: 'png', magic: '89504e47' }
+    ];
+    let imageParts = file.file.name.split(".");
+    let mimeParts = file.file.mimetype.split("/");
+    console.log(mimeParts[1] + ", " + allowedImages[1].ext + " " + mimeParts[0]);
+    if(imageParts[1] == allowedImages[0].ext && mimeParts[1] == allowedImages[0].ext && mimeParts[0] == 'image' && mimeParts[1] == 'gif') {
+        console.log("Name and mime passed.");
+        let hexString = bufferToHex(file.file.data.slice(0, 4));
+        if(hexString.toString() == allowedImages[0].magic.toString()) return true;
+        else return false;
+    } else if((imageParts[1] == allowedImages[1].ext || 'jpeg') && (mimeParts[1] == allowedImages[1].ext || 'jpeg') && mimeParts[0] == 'image' && (mimeParts[1] == 'jpg' || 'jpeg')) {
+        console.log("Name and mime passed.");
+        let hexString = bufferToHex(file.file.data.slice(0, 2));
+        if(hexString.toString() == allowedImages[1].magic.toString()) return true;
+        else return false;
+    } else if (imageParts[1] == allowedImages[2].ext && mimeParts[1] == allowedImages[2].ext && mimeParts[0] == 'image' && mimeParts[1] == 'png') {
+        console.log("Name and mime passed.");
+        let hexString = bufferToHex(file.file.data.slice(0, 4));
+        if(hexString.toString() == allowedImages[2].magic.toString()) return true;
+        else return false;
+    } else return false;
 }
 
 /*
@@ -1287,10 +1315,17 @@ app.post('/api/product/upload', function(req, res) {
         token
     } = body;
     
-    if (!req.files || !validateImageUpload(req.files)) {
+    if (!req.files) {
         return res.send({
             success: false,
             message: 'No file was uploaded.'
+        });
+    }
+
+    if(!validateImageUpload(req.files)) {
+        return res.send({
+            success: false,
+            message: 'File is invalid.'
         });
     }
 

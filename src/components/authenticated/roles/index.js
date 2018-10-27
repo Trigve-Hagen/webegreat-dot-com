@@ -137,6 +137,7 @@ class UserRoles extends React.Component {
 
     onView(e) {
         this.setState({ user: this.getUserObject(e.target.dataset.userid) });
+        this.props.updateRole(this.getUserObject(e.target.dataset.userid));
     }
 
     onDelete(e) {
@@ -254,4 +255,15 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(UserRoles)
+function mapDispatchToProps(dispatch) {
+    return {
+        updateRole: (value) => {
+            dispatch({ type: 'UPDATE_ROLE', payload: value})
+        },
+        resetRole: (value) => {
+            dispatch({ type: 'RESET_ROLE', payload: value})
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserRoles)

@@ -1,7 +1,9 @@
 import React from 'react';
 
 export default function ProductItem(props) {
-    if(props.product != []) {
+    if(props.product == []) {
+        return <div><h3>There are no products yet.</h3></div>
+    } else {
         return <div className="row margin-top-20px">
             <div className="col-lg-3 col-md-3 col-sm-12">
                 <img
@@ -19,7 +21,5 @@ export default function ProductItem(props) {
                 </div>
             </div>
         </div>
-    } else {
-        return <div><h3>Not Items yet.</h3></div>
     }
 }

@@ -58,7 +58,7 @@ class UploadProducts extends React.Component {
     }
 
 	onSubmit(e) {
-		e.preventDefault();
+        e.preventDefault();
         
         const data = new FormData();
             data.append('file', this.state.uploadInput.files[0]);
