@@ -4,37 +4,69 @@ import config from '../../../config/config';
 
 class UpdateProducts extends React.Component {
     constructor(props) {
-		super(props);
+        super(props);
 		this.state = {
             proUpdateError: '',
-            proUpdateId: this.props.product[0].id,
-            proUpdateMenu: this.props.product[0].menu,
-            proUpdateName: this.props.product[0].name,
-            proUpdateSku: this.props.product[0].sku,
-            proUpdatePrice: this.props.product[0].price,
-            proUpdateStock: this.props.product[0].stock,
-            proUpdateIfManaged: this.props.product[0].ifmanaged,
-            proUpdateDescription: this.props.product[0].description,
+            proUpdateId: '',
+            proUpdateMenu: '',
+            proUpdateName: '',
+            proUpdateSku: '',
+            proUpdatePrice: '',
+            proUpdateStock: '',
+            proUpdateIfManaged: '',
+            proUpdateDescription: '',
             updateInput: '',
-            fileName: this.props.product[0].image.split(".")[0]
+            fileName: '',
+            links: []
         }
         this.onChange= this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
     }
 
+    componentDidMount() {
+        fetch(config.site_url + '/api/product/menulinks', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let arrayArgs = [];
+                    for (let value of Object.values(json.links)) {
+                        arrayArgs.push({
+                            id: value['menuid'],
+                            name: value['name']
+                        });
+                    }
+					this.setState({
+                        proUploadError: json.message,
+                        links: arrayArgs
+					});
+				} else {
+                    this.setState({
+						proUploadError: json.message
+					});
+                }
+			});
+    }
+
     componentDidUpdate(nextProps) {
-        if(nextProps.product[0].id !== this.props.product[0].id) {
+        if(nextProps.product.id !== this.props.product.id) {
             this.setState({
-                proUpdateId: this.props.product[0].id,
-                proUpdateMenu: this.props.product[0].menu,
-                proUpdateName: this.props.product[0].name,
-                proUpdateSku: this.props.product[0].sku,
-                proUpdatePrice: this.props.product[0].price,
-                proUpdateStock: this.props.product[0].stock,
-                proUpdateIfManaged: this.props.product[0].ifmanaged,
-                proUpdateDescription: this.props.product[0].description,
+                proUpdateId: this.props.product.id,
+                proUpdateMenu: this.props.product.menu,
+                proUpdateName: this.props.product.name,
+                proUpdateSku: this.props.product.sku,
+                proUpdatePrice: this.props.product.price,
+                proUpdateStock: this.props.product.stock,
+                proUpdateIfManaged: this.props.product.ifmanaged,
+                proUpdateDescription: this.props.product.description,
                 updateInput: '',
-                fileName: this.props.product[0].image.split(".")[0]
+                fileName: this.props.product.image.split(".")[0]
             });
         }
     }
@@ -49,8 +81,8 @@ class UpdateProducts extends React.Component {
         const data = new FormData();
             data.append('file', this.state.updateInput.files[0]);
             data.append('filename', this.state.fileName);
-            data.append('proid', this.props.product[0].id);
-            data.append('imagename', this.props.product[0].image);
+            data.append('proid', this.props.product.id);
+            data.append('imagename', this.props.product.image);
             data.append('menu', this.state.proUpdateMenu);
             data.append('name', this.state.proUpdateName);
             data.append('sku', this.state.proUpdateSku);
@@ -59,8 +91,6 @@ class UpdateProducts extends React.Component {
             data.append('stock', this.state.proUpdateStock);
             data.append('ifmanaged', this.state.proUpdateIfManaged);
             data.append('token', this.props.authentication[0].token);
-
-        //console.log("Description: "+this.state.proUpdateDescription);
 
 		fetch(config.site_url + '/api/product/update', {
             method: 'POST',
@@ -102,7 +132,6 @@ class UpdateProducts extends React.Component {
 	}
 
     render() {
-        //this.props.resetProduct();
         return (
                 <div className="row margin-top-20px margin-bottom-50px">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
@@ -120,9 +149,16 @@ class UpdateProducts extends React.Component {
                                 <fieldset className="form-group">
                                     <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>
-                                <fieldset className="form-group">
-                                    <input value={this.state.proUpdateMenu} onChange={this.onChange} name="proUpdateMenu" type="text" className="form-element" placeholder="Menu Place"/>
-                                </fieldset>
+                                <div className="form-group">
+                                    <select value={this.state.proUpdateMenu} onChange={this.onChange} name="proUpdateMenu" className="form-element custom">
+                                        <option value="">Please select a value.</option>
+                                        {
+                                            this.state.links.map(link =>
+                                                <option key={link.id} value={link.name}>{link.name}</option>
+                                            )
+                                        }
+                                    </select>
+                                </div>
                                 <fieldset className="form-group">
                                     <input value={this.state.proUpdateName} onChange={this.onChange} name="proUpdateName" type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>
@@ -156,20 +192,8 @@ class UpdateProducts extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        product: state.product,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        resetProduct: (value) => {
-            dispatch({ type: 'RESET_PRODUCT', payload: value})
-        },
-        updateProduct: (value) => {
-            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateProducts);
+export default connect(mapStateToProps)(UpdateProducts);

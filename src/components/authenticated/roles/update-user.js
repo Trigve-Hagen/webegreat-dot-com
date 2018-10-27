@@ -8,38 +8,38 @@ class UpdateUser extends React.Component {
 		this.state = {
             userUpdateError: '',
             userUpdateImage: '',
-            userUpdateId: this.props.role[0].id,
-            userUpdateRole: this.props.role[0].role,
-            userUpdateName: this.props.role[0].name,
-            userUpdateEmail: this.props.role[0].email,
-            userUpdateAddress: this.props.role[0].address,
-            userUpdateCity: this.props.role[0].city,
-            userUpdateState: this.props.role[0].state,
-            userUpdateZip: this.props.role[0].zip,
-            userUpdateIfActive: this.props.role[0].ifactive,
+            userUpdateId: '',
+            userUpdateRole: '',
+            userUpdateName: '',
+            userUpdateEmail: '',
+            userUpdateAddress: '',
+            userUpdateCity: '',
+            userUpdateState: '',
+            userUpdateZip: '',
+            userUpdateIfActive: '',
             userUpdatePassword: '',
             uploadInput: '',
-            fileName: this.props.role[0].image.split(".")[0]
+            fileName: ''
 		}
         this.onChange= this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
     }
     
     componentDidUpdate(nextProps) {
-        if(nextProps.role[0].id !== this.props.role[0].id) {
+        if(nextProps.user.id !== this.props.user.id) {
             this.setState({
-                userUpdateId: this.props.role[0].id,
-                userUpdateRole: this.props.role[0].role,
-                userUpdateName: this.props.role[0].name,
-                userUpdateImage: this.props.role[0].image,
-                userUpdateEmail: this.props.role[0].email,
-                userUpdateAddress: this.props.role[0].address,
-                userUpdateCity: this.props.role[0].city,
-                userUpdateState: this.props.role[0].state,
-                userUpdateZip: this.props.role[0].zip,
-                userUpdateIfActive: this.props.role[0].ifactive,
+                userUpdateId: this.props.user.id,
+                userUpdateRole: this.props.user.role,
+                userUpdateName: this.props.user.name,
+                userUpdateImage: this.props.user.image,
+                userUpdateEmail: this.props.user.email,
+                userUpdateAddress: this.props.user.address,
+                userUpdateCity: this.props.user.city,
+                userUpdateState: this.props.user.state,
+                userUpdateZip: this.props.user.zip,
+                userUpdateIfActive: this.props.user.ifactive,
                 updateInput: '',
-                fileName: this.props.role[0].image.split(".")[0]
+                fileName: this.props.user.image.split(".")[0]
             });
         }
     }
@@ -54,7 +54,7 @@ class UpdateUser extends React.Component {
         const data = new FormData();
             data.append('file', this.state.uploadInput.files[0]);
             data.append('filename', this.state.fileName);
-            data.append('id', this.props.role[0].id);
+            data.append('id', this.props.user.id);
             data.append('role', this.state.userUpdateRole);
             data.append('name', this.state.userUpdateName);
             data.append('email', this.state.userUpdateEmail);
@@ -180,20 +180,8 @@ class UpdateUser extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        role: state.role,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateRole: (value) => {
-            dispatch({ type: 'UPDATE_ROLE', payload: value})
-        },
-        resetRole: (value) => {
-            dispatch({ type: 'RESET_ROLE', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateUser);
+export default connect(mapStateToProps)(UpdateUser);

@@ -17,6 +17,7 @@ class UserRoles extends React.Component {
             loadUserError: '',
             perPage: config.per_page,
             currentPage: 1,
+            user: [],
             users: [],
             pages: []
         }
@@ -58,6 +59,7 @@ class UserRoles extends React.Component {
                     //console.log(arrayArgs);
                     this.setState({
                         loadUserError: json.message,
+                        user: arrayArgs[0],
                         users: arrayArgs
                     });
                 } else {
@@ -134,7 +136,7 @@ class UserRoles extends React.Component {
     }
 
     onView(e) {
-        this.props.updateRole(this.getUserObject(e.target.dataset.userid));
+        this.setState({ user: this.getUserObject(e.target.dataset.userid) });
     }
 
     onDelete(e) {
@@ -200,7 +202,11 @@ class UserRoles extends React.Component {
         if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 3) {
             return (
                 <div>
-                    <Navigation path="/roles" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
+                    <Navigation
+                        path="/roles"
+                        authenticated={this.props.authentication[0].authenticated}
+                        role={this.props.authentication[0].role}
+                    />
                     <div className="container">
                         <div className="row margin-top-50px margin-bottom-50px">
                             <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
@@ -230,8 +236,8 @@ class UserRoles extends React.Component {
                                 <UploadUser />
                             </div>
                             <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
-                                <UserItem user={this.props.role}/>
-                                <UpdateUser role={this.props.role}/>
+                                <UserItem user={this.state.user}/>
+                                <UpdateUser user={this.state.user}/>
                             </div>
                         </div>
                     </div>
@@ -244,17 +250,8 @@ class UserRoles extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        role: state.role,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateRole: (value) => {
-            dispatch({ type: 'UPDATE_ROLE', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserRoles)
+export default connect(mapStateToProps)(UserRoles)

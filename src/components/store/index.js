@@ -114,6 +114,11 @@ class Home extends React.Component {
                                     ? <MenuDisplay onClick={this.onClick}/>
                                     : (<div></div>)
                             }
+                            {
+                                this.props.visibility[0].visibility == 1
+                                    ? <Referrals authenticated={this.props.authentication[0].authenticated} />
+                                    : (<div></div>)
+                            }
                         </div>
                         <div className="col-lg-8 col-md-8 col-sm-12">
                             {
@@ -121,15 +126,6 @@ class Home extends React.Component {
                                     ? <ProductListing products={this.state.products}/>
                                     : <h3>No products yet.</h3>
                             } 
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12">
-                            {
-                                this.props.visibility[0].visibility == 1
-                                    ? <Referrals authenticated={this.props.authentication[0].authenticated} />
-                                    : (<div></div>)
-                            }
                         </div>
                     </div>
                 </div>

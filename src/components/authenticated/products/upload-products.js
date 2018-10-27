@@ -15,10 +15,42 @@ class UploadProducts extends React.Component {
             proUploadIfManaged: '',
             proUploadDescription: '',
             uploadInput: '',
-            fileName: ''
+            fileName: '',
+            links: []
 		}
         this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        fetch(config.site_url + '/api/product/menulinks', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let arrayArgs = [];
+                    for (let value of Object.values(json.links)) {
+                        arrayArgs.push({
+                            id: value['menuid'],
+                            name: value['name']
+                        });
+                    }
+					this.setState({
+                        proUploadError: json.message,
+                        links: arrayArgs
+					});
+				} else {
+                    this.setState({
+						proUploadError: json.message
+					});
+                }
+			});
     }
     
     onChange(e) {
@@ -96,9 +128,16 @@ class UploadProducts extends React.Component {
                             <fieldset className="form-group">
                                 <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                             </fieldset>
-                            <fieldset className="form-group">
-                                <input value={this.state.proUploadMenu} onChange={this.onChange} name="proUploadMenu" type="text" className="form-element" placeholder="Menu Place"/>
-                            </fieldset>
+                            <div className="form-group">
+                                <select value={this.state.proUploadMenu} onChange={this.onChange} name="proUploadMenu" className="form-element custom">
+                                    <option value="">Please select a value.</option>
+                                    {
+                                        this.state.links.map(link =>
+                                            <option key={link.id} value={link.name}>{link.name}</option>
+                                        )
+                                    }
+                                </select>
+                            </div>
                             <fieldset className="form-group">
                                 <input value={this.state.proUploadName} onChange={this.onChange} name="proUploadName" type="text" className="form-element" placeholder="Name"/>
                             </fieldset>

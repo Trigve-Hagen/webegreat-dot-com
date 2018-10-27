@@ -792,6 +792,63 @@ app.post('/api/menu/upload', function(req, res) {
  ***********************************************************************
  */
 
+
+app.post('/api/product/menulinks', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get session get menulinks.'
+            });
+        } else {
+            let getMenuLinksForSelect = "SELECT * FROM ?? WHERE ?? = ? AND ?? = 1";
+            let getMenuLinksForSelectInserts = [
+                config.tables[7].table_name,
+                config.tables[7].table_fields[1].Field,
+                results[0]['user_id'],
+                config.tables[7].table_fields[8].Field
+            ];
+            getMenuLinksForSelect = mysql.format(getMenuLinksForSelect, getMenuLinksForSelectInserts);
+            //console.log(getMenuLinksForSelect);
+            connection.query(getMenuLinksForSelect, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get product details.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        links: result
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.post('/api/product/get-product', function(req, res) {
     const { body } = req;
     const {

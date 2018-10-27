@@ -14,10 +14,11 @@ class Products extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            perPage: 2,
+            perPage: config.per_page,
             loadProductError: '',
             currentPage: 1,
             products: [],
+            product: [],
             pages: []
         }
         this.onView = this.onView.bind(this);
@@ -53,10 +54,10 @@ class Products extends React.Component {
                             description: value['description']
                         });
                     }
-                    //console.log(arrayArgs);
 					this.setState({
                         loadProductError: json.message,
-                        products: arrayArgs
+                        products: arrayArgs,
+                        product: arrayArgs[0]
 					});
 				} else {
                     this.setState({
@@ -131,7 +132,7 @@ class Products extends React.Component {
     }
 
     onView(e) {
-        this.props.updateProduct(this.getProductObject(e.target.dataset.productid));
+        this.setState({ product: this.getProductObject(e.target.dataset.productid) });
     }
 
     onDelete(e) {
@@ -192,7 +193,6 @@ class Products extends React.Component {
     }
 
     render() {
-        //this.props.resetProduct();
         if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 3) {
             return (
                 <div>
@@ -230,8 +230,8 @@ class Products extends React.Component {
                                 <UploadProducts />
                             </div>
                             <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <ProductItem product={this.props.product}/>
-                                <UpdateProducts product={this.props.product}/>
+                                <ProductItem product={this.state.product}/>
+                                <UpdateProducts product={this.state.product}/>
                             </div>
                         </div>
                     </div>
@@ -244,20 +244,8 @@ class Products extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        product: state.product,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateProduct: (value) => {
-            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
-        },
-        resetProduct: (value) => {
-            dispatch({ type: 'RESET_PRODUCT', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Products)
+export default connect(mapStateToProps)(Products)
