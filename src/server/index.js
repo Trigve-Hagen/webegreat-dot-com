@@ -1851,6 +1851,13 @@ app.post('/api/avatar/update-avatar', function(req, res) {
         });
     }
 
+    if(!validateImageUpload(req.files)) {
+        return res.send({
+            success: false,
+            message: 'File is invalid.'
+        });
+    }
+
     if(!token || !config.patterns.numbers.test(token)) {
         return res.send({
             success: false,
@@ -3632,6 +3639,12 @@ app.post('/api/roles/user-update', function(req, res) {
                             return res.send({
                                 success: false,
                                 message: 'Filename empty or Letters Numbers Spaces _ - and . allowed.'
+                            });
+                        }
+                        if(!validateImageUpload(req.files)) {
+                            return res.send({
+                                success: false,
+                                message: 'File is invalid.'
                             });
                         }
                         if(config.patterns.names.test(imgResults[0]['avatar'])) {
