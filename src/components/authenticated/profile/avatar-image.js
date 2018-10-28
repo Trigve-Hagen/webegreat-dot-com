@@ -47,34 +47,39 @@ class AvatarImage extends React.Component {
 
 	onSubmit(e) {
         e.preventDefault();
+        if(types.includes(this.state.avatarUploadInput.files[0].type)) {
+            if(this.state.avatarUploadInput.files[0].size < 249856) {
+                if(this.state.avatarUploadInput.files[0].size > 0) {
+                    const data = new FormData();
+                        data.append('file', this.state.avatarUploadInput.files[0]);
+                        data.append('filename', this.state.avatarFileName.value);
+                        data.append('token', this.props.authentication[0].token);
+                        data.append('imagename', this.props.avatar[0].avatar);
 
-        const data = new FormData();
-            data.append('file', this.state.avatarUploadInput.files[0]);
-            data.append('filename', this.state.avatarFileName.value);
-            data.append('token', this.props.authentication[0].token);
-            data.append('imagename', this.props.avatar[0].avatar);
-
-		fetch(config.site_url + '/api/avatar/update-avatar', {
-            method: 'POST',
-            body: data,
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
-                    console.log("Avatar update successfull.");
-                    this.props.updateAvatar({ avatar: json.avatar });
-					this.setState({
-                        avatarError: json.message,
-                        avatarId: jason.folderid,
-                        avatar: json.avatar,
-                        avatarUploadInput: '',
-                        avatarFileName: ''
-                    });
-				} else {
-                    this.setState({
-						avatarError: json.message
-					});
-                }
-			});
+                    fetch(config.site_url + '/api/avatar/update-avatar', {
+                        method: 'POST',
+                        body: data,
+                    }).then(res => res.json())
+                        .then(json => {
+                            if(json.success) {
+                                console.log("Avatar update successfull.");
+                                this.props.updateAvatar({ avatar: json.avatar });
+                                this.setState({
+                                    avatarError: json.message,
+                                    avatarId: jason.folderid,
+                                    avatar: json.avatar,
+                                    avatarUploadInput: '',
+                                    avatarFileName: ''
+                                });
+                            } else {
+                                this.setState({
+                                    avatarError: json.message
+                                });
+                            }
+                        });
+                    } else this.setState({ avatarError: 'File is less than 0 bytes.' });
+                } else this.setState({ avatarError: 'File is bigger than 244 KB.' });
+            } else this.setState({ avatarError: 'Invalid image type. Jpeg, jpg, gif or pngs allowed.' });
     }
 
     render() {

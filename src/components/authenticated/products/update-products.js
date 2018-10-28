@@ -75,9 +75,7 @@ class UpdateProducts extends React.Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-	onSubmit(e) {
-		e.preventDefault();
-        
+    submitUpdate() {
         const data = new FormData();
             data.append('file', this.state.updateInput.files[0]);
             data.append('filename', this.state.fileName);
@@ -86,18 +84,18 @@ class UpdateProducts extends React.Component {
             data.append('menu', this.state.proUpdateMenu);
             data.append('name', this.state.proUpdateName);
             data.append('sku', this.state.proUpdateSku);
-			data.append('description', this.state.proUpdateDescription);
+            data.append('description', this.state.proUpdateDescription);
             data.append('price', this.state.proUpdatePrice);
             data.append('stock', this.state.proUpdateStock);
             data.append('ifmanaged', this.state.proUpdateIfManaged);
             data.append('token', this.props.authentication[0].token);
 
-		fetch(config.site_url + '/api/product/update', {
+        fetch(config.site_url + '/api/product/update', {
             method: 'POST',
             body: data,
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
+        }).then(res => res.json())
+            .then(json => {
+                if(json.success) {
                     console.log("Successfull Product Update.");
                     this.props.updateProduct({
                         id: json.id,
@@ -111,7 +109,7 @@ class UpdateProducts extends React.Component {
                         image: json.image
                     });
                     let imagename = obj.image.split(".");
-					this.setState({
+                    this.setState({
                         proUpdateError: json.message,
                         proUpdateMenu: json.menu,
                         proUpdateName: json.name,
@@ -123,12 +121,29 @@ class UpdateProducts extends React.Component {
                         updateInput: '',
                         fileName: imagename[0]
                     });
-				} else {
+                } else {
                     this.setState({
-						proUpdateError: json.message
-					});
+                        proUpdateError: json.message
+                    });
                 }
-			});
+            });
+    }
+
+    submitWithImage() {
+        let types = [ 'image/jpeg', 'image/jpg', 'image/gif', 'image/png' ];
+        if(types.includes(this.state.updateInput.files[0].type)) {
+            if(this.state.updateInput.files[0].size < 249856) {
+                if(this.state.updateInput.files[0].size > 0) {
+                    this.submitUpdate();
+                } else this.setState({ proUpdateError: 'File is less than 0 bytes.' });
+            } else this.setState({ proUpdateError: 'File is bigger than 244 KB.' });
+        } else this.setState({ proUpdateError: 'Invalid image type. Jpeg, jpg, gif or pngs allowed.' });
+    }
+
+	onSubmit(e) {
+        e.preventDefault();
+        if(this.state.updateInput.files[0]) this.submitWithImage();
+        else this.submitUpdate();
 	}
 
     render() {
