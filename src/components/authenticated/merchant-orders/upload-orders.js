@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import config from '../../../config/config';
+import states from '../../../data/states';
 
 class UploadOrders extends React.Component {
     constructor(props) {
@@ -144,7 +145,7 @@ class UploadOrders extends React.Component {
                                 </fieldset>
                                     <div className="form-group">
                                         <select value={this.state.mordersUploadState} onChange={this.onChange} name="mordersUploadState" className="form-element custom">
-                                            {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                            {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                         </select>
                                     </div>
                                 <fieldset className="form-group">

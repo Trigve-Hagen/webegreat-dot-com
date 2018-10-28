@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import config from '../../../config/config';
+import states from '../../../data/states';
 
 class UpdateUser extends React.Component {
     constructor(props) {
@@ -160,7 +161,7 @@ class UpdateUser extends React.Component {
                             <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
                                 <div className="form-group">
                                     <select value={this.state.userUpdateState} onChange={this.onChange} name="userUpdateState" className="form-element custom">
-                                        {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                        {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                     </select>
                                 </div>
                             </div>

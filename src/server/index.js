@@ -9,15 +9,14 @@ const moment = require('moment');
 const fileUpload = require('express-fileupload');
 const paypal = require('paypal-rest-sdk');
 const nodemailer = require('nodemailer');
+const config = require('./config/mysqldbconfig');
 const urlConfig = require('../config/config');
+
 const app = express();
-/*app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});*/
+
+//console.log(util.inspect(token, {showHidden: false, depth: null}))
+
 let reqPath = path.join(__dirname, '../'); let imagePath = '';
-//console.log(reqPath.split(path.sep).indexOf("html"));
 if(reqPath.split(path.sep).indexOf("html") == -1) {
     imagePath = reqPath + 'assets';
 } else {
@@ -27,8 +26,6 @@ if(reqPath.split(path.sep).indexOf("html") == -1) {
         res.sendFile(path.join(reqPath, 'dist', 'index.html'));
     });
 }
-//console.log(imagePath);
-const config = require('./config/mysqldbconfig');
 
 let currentTimestamp = moment().unix();
 let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
@@ -111,27 +108,22 @@ function bufferToHex(buffer) {
 }
 
 function validateImageUpload(file) {
-    let allowedImages = [
-        { type: 'image/gif', ext: 'gif', magic: '47494638' },
-        { type: 'image/jpg', ext: 'jpg', magic: 'ffd8' },
-        { type: 'image/png', ext: 'png', magic: '89504e47' }
-    ];
     let imageParts = file.file.name.split(".");
     console.log(file);
-    if(imageParts[1] == allowedImages[0].ext && imageParts[1] == 'gif' && file.file.mimetype == allowedImages[0].type) {
+    if(imageParts[1] == urlConfig.allowed_images_magic[0].ext && imageParts[1] == 'gif' && file.file.mimetype == urlConfig.allowed_images_magic[0].type) {
         console.log("Name and mime passed.");
         let hexString = bufferToHex(file.file.data.slice(0, 4));
-        if(hexString.toString() == allowedImages[0].magic.toString()) return true;
+        if(hexString.toString() == urlConfig.allowed_images_magic[0].magic.toString()) return true;
         else return false;
-    } else if((imageParts[1] == allowedImages[1].ext || 'jpeg') && (imageParts[1] == 'jpg' || 'jpeg') && (file.file.mimetype == allowedImages[1].type || file.file.mimetype == 'image/jpeg')) {
+    } else if((imageParts[1] == urlConfig.allowed_images_magic[1].ext || 'jpeg') && (imageParts[1] == 'jpg' || 'jpeg') && (file.file.mimetype == urlConfig.allowed_images_magic[1].type || file.file.mimetype == 'image/jpeg')) {
         console.log("Name and mime passed.");
         let hexString = bufferToHex(file.file.data.slice(0, 2));
-        if(hexString.toString() == allowedImages[1].magic.toString()) return true;
+        if(hexString.toString() == urlConfig.allowed_images_magic[1].magic.toString()) return true;
         else return false;
-    } else if (imageParts[1] == allowedImages[2].ext && imageParts[1] == 'png' && file.file.mimetype == allowedImages[2].type) {
+    } else if (imageParts[1] == urlConfig.allowed_images_magic[3].ext && imageParts[1] == 'png' && file.file.mimetype == urlConfig.allowed_images_magic[3].type) {
         console.log("Name and mime passed.");
         let hexString = bufferToHex(file.file.data.slice(0, 4));
-        if(hexString.toString() == allowedImages[2].magic.toString()) return true;
+        if(hexString.toString() == urlConfig.allowed_images_magic[3].magic.toString()) return true;
         else return false;
     } else return false;
 }
@@ -171,9 +163,11 @@ app.post('/api/account/signup', (req, res, next) => {
     email = email.toLowerCase();
 
     let testForExistingUser = "SELECT * FROM ?? WHERE ?? = ?";
-    let inserts = [config.tables[2].table_name, config.tables[2].table_fields[4].Field, email];
+    let inserts = [
+        config.tables[2].table_name,
+        config.tables[2].table_fields[4].Field, email
+    ];
     testForExistingUser = mysql.format(testForExistingUser, inserts);
-    //console.log(testForExistingUser);
     connection.query(testForExistingUser, function (error, results, fields) {
         if(error) {
             testErrorsOnServer(testForExistingUser + ", " + error);
@@ -185,7 +179,6 @@ app.post('/api/account/signup', (req, res, next) => {
             });
         } else {
             if(results.length > 0) {
-                //console.log("Results: in SignIn: User Exists");
                 return res.send({
                     success: false,
                     message: 'User Exists',
@@ -199,10 +192,8 @@ app.post('/api/account/signup', (req, res, next) => {
                     myDate, myDate, name, email, generateHash(password)
                 ];
                 insertUserIfNonExists = mysql.format(insertUserIfNonExists, inserts);
-                //console.log(insertUserIfNonExists);
                 connection.query(insertUserIfNonExists, function (err, result, fields) {
                     if(err) {
-                        //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
                             message: 'Server error in register users insert',
@@ -248,7 +239,10 @@ app.post('/api/account/signup', (req, res, next) => {
                                                 } else {
                                                     //console.log(result.insertId);
                                                     var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                                                    var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
+                                                    var inserts = [
+                                                        config.tables[3].table_name,
+                                                        result.insertId, myDate, myDate
+                                                    ];
                                                     insertUserSession = mysql.format(insertUserSession, inserts);
                                                     connection.query(insertUserSession, function (error, results, fields) {
                                                         if(error) {
@@ -288,9 +282,8 @@ app.post('/api/account/signup', (req, res, next) => {
     });
 });
 
-app.post('/api/account/signup-complete', (req, res, next) => {
+/*app.post('/api/account/signup-complete', (req, res, next) => {
     const { body } = req;
-    const { password } = body;
     let { email } = body;
 
     if(!email || !config.patterns.emails.test(email)) {
@@ -303,16 +296,17 @@ app.post('/api/account/signup-complete', (req, res, next) => {
     email = email.toLowerCase();
 
     let updateIfActiveUser = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
-    let inserts = [config.tables[2].table_name, config.tables[2].table_fields[8].Field, config.tables[2].table_fields[4].Field, email];
+    let inserts = [
+        config.tables[2].table_name,
+        config.tables[2].table_fields[8].Field,
+        config.tables[2].table_fields[4].Field, email
+    ];
     updateIfActiveUser = mysql.format(updateIfActiveUser, inserts);
-    //console.log(updateIfActiveUser);
     connection.query(updateIfActiveUser, function (error, results, fields) {
         if(error) {
             return res.send({
                 success: false,
                 message: 'Server Error in check user exsists signin',
-                token: null,
-                id: null
             });
         } else {
             return res.send({
@@ -321,7 +315,7 @@ app.post('/api/account/signup-complete', (req, res, next) => {
             });
         }
     });
-});
+});*/
 
 app.post('/api/account/signin', (req, res, next) => {
     const { body } = req;
@@ -344,12 +338,13 @@ app.post('/api/account/signin', (req, res, next) => {
     email = email.toLowerCase();
 
     let testForExistingUser = "SELECT * FROM ?? WHERE ?? = ?";
-    let inserts = [config.tables[2].table_name, config.tables[2].table_fields[4].Field, email];
+    let inserts = [
+        config.tables[2].table_name,
+        config.tables[2].table_fields[4].Field, email
+    ];
     testForExistingUser = mysql.format(testForExistingUser, inserts);
-    //console.log(testForExistingUser);
     connection.query(testForExistingUser, function (error, results, fields) {
         if(error) {
-            testErrorsOnServer(testForExistingUser + ", "  + error);
             return res.send({
                 success: false,
                 message: 'Server Error in check user exsists signin',
@@ -359,15 +354,15 @@ app.post('/api/account/signin', (req, res, next) => {
         } else {
             if(results.length == 1) {
                 if(results[0].email == email && validatePassword(password, results[0].password)) {
-                    //currentTimestamp = moment().unix();//in seconds
-                    //let myDate = moment(currentTimestamp*1000).format("YYYY-MM-DD HH:mm:ss");
-
                     var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                    var inserts = [config.tables[3].table_name, results[0].userid, myDate, myDate];
+                    var inserts = [
+                        config.tables[3].table_name,
+                        results[0].userid,
+                        myDate, myDate
+                    ];
                     insertUserSession = mysql.format(insertUserSession, inserts);
                     connection.query(insertUserSession, function (error, result, fields) {
                         if(error) {
-                            //console.log("Error: in Register Session: " + error);
                             return res.send({
                                 success: false,
                                 message: 'Server Error in Register Session',
@@ -375,18 +370,16 @@ app.post('/api/account/signin', (req, res, next) => {
                                 id: null
                             });
                         } else {
-                            //console.log("Results: in SignIn: " + result);
                             return res.send({
                                 success: true,
                                 message: 'Successfull SignIn',
                                 token: result.insertId,
-                                role: results[0]['role']
+                                role: results[0][config.tables[2].table_fields[6].Field]
                             });
                         }
                     });
                 }
             } else {
-                //console.log("Results: in SignIn: Please Register");
                 return res.send({
                     success: false,
                     message: 'Please Register',
@@ -401,21 +394,20 @@ app.post('/api/account/signin', (req, res, next) => {
 app.post('/api/account/logout', (req, res, next) => {
     const { body } = req;
     const { token } = body;
-    //console.log(token+", here");
-    //console.log(util.inspect(token, {showHidden: false, depth: null}))
     let setLoggedOutSession = "UPDATE ?? SET ?? = 1 WHERE ?? = ?";
-    let inserts = [config.tables[3].table_name, config.tables[3].table_fields[4].Field, config.tables[3].table_fields[0].Field, token];
+    let inserts = [
+        config.tables[3].table_name,
+        config.tables[3].table_fields[4].Field,
+        config.tables[3].table_fields[0].Field, token
+    ];
     setLoggedOutSession = mysql.format(setLoggedOutSession, inserts);
-    //console.log(setLoggedOutSession);
     connection.query(setLoggedOutSession, function (error, result, fields) {
         if(error) {
-            //console.log("Error: in Register Session: " + error);
             return res.send({
                 success: false,
                 message: 'Server Error in log out Session'
             });
         } else {
-            //console.log("Results: in SignIn: " + result);
             return res.send({
                 success: true,
                 message: 'Successfull Logout'
@@ -424,7 +416,7 @@ app.post('/api/account/logout', (req, res, next) => {
     });
 });
 
-app.get('/api/account/verify', (req, res, next) => {
+/*app.get('/api/account/verify', (req, res, next) => {
     const { query } = req;
     const { token } = query;
 
@@ -435,7 +427,6 @@ app.get('/api/account/verify', (req, res, next) => {
         token, config.tables[3].table_fields[3].Field
     ];
     testForExistingSession = mysql.format(testForExistingSession, inserts);
-    //console.log(testForExistingUser);
     connection.query(testForExistingSession, function (error, results, fields) {
         if(error) {
             testErrorsOnServer(testForExistingSession + ", " + error);
@@ -452,7 +443,6 @@ app.get('/api/account/verify', (req, res, next) => {
                     message: 'Invalid Session. Please Sign In.'
                 });
             } else {
-                //console.log("Results: in SignIn: Please Register");
                 return res.send({
                     success: true,
                     message: 'Session Valid.'
@@ -460,7 +450,7 @@ app.get('/api/account/verify', (req, res, next) => {
             }
         }
     });
-});
+});*/
 
 /*
  ********************** Menu Upload && Update ***********************
@@ -572,7 +562,6 @@ app.post('/api/menu/update', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -597,16 +586,13 @@ app.post('/api/menu/update', function(req, res) {
             updateMenuInserts.push(config.tables[7].table_fields[1].Field);
             
             updateMenu = mysql.format(updateMenu, updateMenuInserts);
-            //console.log(ifproduct);
             connection.query(updateMenu, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server Error in menu update'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Your menu has been successfully updated.',
@@ -652,7 +638,6 @@ app.post('/api/menu/delete-item', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -666,10 +651,9 @@ app.post('/api/menu/delete-item', function(req, res) {
                 config.tables[7].table_fields[0].Field,
                 id,
                 config.tables[7].table_fields[1].Field,
-                results[0]['user_id'],
+                results[0][config.tables[3].table_fields[1].Field],
             ];
             deleteMenu = mysql.format(deleteMenu, deleteMenuInserts);
-            //console.log(deleteMenu);
             connection.query(deleteMenu, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -693,7 +677,6 @@ app.post('/api/menu/front', function(req, res) {
         config.tables[7].table_name
     ];
     getFrontMenu = mysql.format(getFrontMenu, getFrontMenuInserts);
-    //console.log(getFrontMenu);
     connection.query(getFrontMenu, function (err, result, fields) {
         if(err) {
             console.log("Error: in load all menu: " + err);
@@ -702,8 +685,6 @@ app.post('/api/menu/front', function(req, res) {
                 message: 'Server Error in load all menu.'
             });
         } else {
-            //console.log(result.length);
-            //console.log(util.inspect(result.length, {showHidden: false, depth: null}));
             return res.send({
                 success: true,
                 message: "Success",
@@ -785,14 +766,13 @@ app.post('/api/menu/upload', function(req, res) {
             var insertMenu = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?)";
             var insertMenuInserts = [
                 config.tables[7].table_name,
-                results[0]['user_id'], myDate, myDate, name,
+                results[0][config.tables[3].table_fields[1].Field],
+                myDate, myDate, name,
                 level, parent, description, ifproduct
             ];
             insertMenu = mysql.format(insertMenu, insertMenuInserts);
-            //console.log(insertMenu);
             connection.query(insertMenu, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server Error in upload menu'
@@ -841,7 +821,6 @@ app.post('/api/product/menulinks', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -853,11 +832,10 @@ app.post('/api/product/menulinks', function(req, res) {
             let getMenuLinksForSelectInserts = [
                 config.tables[7].table_name,
                 config.tables[7].table_fields[1].Field,
-                results[0]['user_id'],
+                results[0][config.tables[3].table_fields[1].Field],
                 config.tables[7].table_fields[8].Field
             ];
             getMenuLinksForSelect = mysql.format(getMenuLinksForSelect, getMenuLinksForSelectInserts);
-            //console.log(getMenuLinksForSelect);
             connection.query(getMenuLinksForSelect, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -905,7 +883,6 @@ app.post('/api/product/get-product', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -919,10 +896,9 @@ app.post('/api/product/get-product', function(req, res) {
                 config.tables[0].table_fields[0].Field,
                 id,
                 config.tables[0].table_fields[3].Field,
-                results[0]['user_id'],
+                results[0][config.tables[3].table_fields[1].Field],
             ];
             getProductById = mysql.format(getProductById, getProductByIdInserts);
-            //console.log(getProductById);
             connection.query(getProductById, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -933,14 +909,14 @@ app.post('/api/product/get-product', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Success',
-                        image: result[0]['image'],
-                        menu: result[0]['menu_location'],
-                        name: result[0]['name'],
-                        sku: result[0]['sku'],
-                        price: result[0]['price'],
-                        stock: result[0]['stock'],
-                        ifmanaged: result[0]['managed_stock'],
-                        description: result[0]['description']
+                        image: result[0][config.tables[0].table_fields[6].Field],
+                        menu: result[0][config.tables[0].table_fields[8].Field],
+                        name: result[0][config.tables[0].table_fields[4].Field],
+                        sku: result[0][config.tables[0].table_fields[11].Field],
+                        price: result[0][config.tables[0].table_fields[7].Field],
+                        stock: result[0][config.tables[0].table_fields[9].Field],
+                        ifmanaged: result[0][config.tables[0].table_fields[10].Field],
+                        description: result[0][config.tables[0].table_fields[5].Field]
                     });
                 }
             });
@@ -1012,7 +988,6 @@ app.post('/api/database/pagination', function(req, res) {
                         token
                     ];
                     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-                    //console.log(getUserIdSession);
                     connection.query(getUserIdSession, function (error, results, fields) {
                         if(error) {
                             return res.send({
@@ -1025,10 +1000,9 @@ app.post('/api/database/pagination', function(req, res) {
                                 unitId,
                                 database,
                                 user,
-                                results[0]['user_id']
+                                results[0][config.tables[3].table_fields[1].Field]
                             ];
                             countDatabaseRows = mysql.format(countDatabaseRows, countDatabaseRowsInserts);
-                            //console.log("Here again?" + countDatabaseRows);
                             connection.query(countDatabaseRows, function (error, results, fields) {
                                 if(error) {
                                     return res.send({
@@ -1037,8 +1011,6 @@ app.post('/api/database/pagination', function(req, res) {
                                     });
                                 } else {
                                     let pages = Math.ceil(results[0]['COUNT(`' + unitId + '`)'] / perPage);
-
-                                    //console.log("Here again?" + results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
                                     return res.send({
                                         success: true,
                                         message: 'Success',
@@ -1068,7 +1040,6 @@ app.post('/api/database/pagination', function(req, res) {
             database
         ];
         countDatabaseRows = mysql.format(countDatabaseRows, countDatabaseRowsInserts);
-        //console.log(countDatabaseRows);
         connection.query(countDatabaseRows, function (error, results, fields) {
             if(error) {
                 return res.send({
@@ -1077,8 +1048,6 @@ app.post('/api/database/pagination', function(req, res) {
                 });
             } else {
                 let pages = Math.ceil(results[0]['COUNT(`' + unitId + '`)'] / perPage);
-                //console.log("Here again?")
-                //console.log(results[0]['COUNT(`' + unitId + '`)'] + ", " + perPage + ", " + pages);
                 return res.send({
                     success: true,
                     message: 'Success',
@@ -1118,7 +1087,6 @@ app.post('/api/product/delete-product', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -1132,10 +1100,9 @@ app.post('/api/product/delete-product', function(req, res) {
                 config.tables[0].table_fields[0].Field,
                 id,
                 config.tables[0].table_fields[3].Field,
-                results[0]['user_id'],
+                results[0][config.tables[3].table_fields[1].Field],
             ];
             getProductToDeleteById = mysql.format(getProductToDeleteById, getProductToDeleteByIdInserts);
-            //console.log(getProductToDeleteById);
             connection.query(getProductToDeleteById, function (error, results, fields) {
                 if(error) {
                     return res.send({
@@ -1143,8 +1110,8 @@ app.post('/api/product/delete-product', function(req, res) {
                         message: 'Server Error in get product by id to delete.'
                     });
                 } else {
-                    if(urlExists(imagePath + `/img/products/${results[0]['image']}`)) {
-                        fs.unlink(imagePath + `/img/products/${results[0]['image']}`, (err) => {
+                    if(urlExists(imagePath + `/img/products/${results[0][config.tables[0].table_fields[6].Field]}`)) {
+                        fs.unlink(imagePath + `/img/products/${results[0][config.tables[0].table_fields[6].Field]}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -1157,10 +1124,9 @@ app.post('/api/product/delete-product', function(req, res) {
                                     config.tables[0].table_fields[0].Field,
                                     id,
                                     config.tables[0].table_fields[3].Field,
-                                    results[0]['user_id'],
+                                    results[0][config.tables[3].table_fields[1].Field],
                                 ];
                                 deleteProduct = mysql.format(deleteProduct, deleteProductInserts);
-                                //console.log(deleteProduct);
                                 connection.query(deleteProduct, function (error, result, fields) {
                                     if(error) {
                                         return res.send({
@@ -1183,10 +1149,9 @@ app.post('/api/product/delete-product', function(req, res) {
                             config.tables[0].table_fields[0].Field,
                             id,
                             config.tables[0].table_fields[3].Field,
-                            results[0]['user_id'],
+                            results[0][config.tables[3].table_fields[1].Field],
                         ];
                         deleteProduct = mysql.format(deleteProduct, deleteProductInserts);
-                        //console.log(deleteProduct);
                         connection.query(deleteProduct, function (error, result, fields) {
                             if(error) {
                                 return res.send({
@@ -1214,8 +1179,6 @@ app.post('/api/product/front', function(req, res) {
         currentPage,
         searchString
     } = body;
-
-    console.log(perPage);
     
     if(!perPage || !config.patterns.numbers.test(perPage)) {
         return res.send({
@@ -1242,7 +1205,6 @@ app.post('/api/product/front', function(req, res) {
         config.tables[0].table_name
     ];
     countFrontProducts = mysql.format(countFrontProducts, countFrontProductsInserts);
-    //console.log(getUserIdSession);
     connection.query(countFrontProducts, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -1251,8 +1213,6 @@ app.post('/api/product/front', function(req, res) {
             });
         } else {
             let start = (currentPage-1)*perPage;
-            //console.log(util.inspect(results[0]['COUNT(`productid`)'], {showHidden: false, depth: null}))
-            //console.log(start + ", Pages");
             let getFrontProducts = '';
             let getFrontProductInserts = [];
             if(searchString == "all") {
@@ -1266,7 +1226,6 @@ app.post('/api/product/front', function(req, res) {
                 let stringParamas = searchString.split(" ");
                 getFrontProducts = "SELECT * FROM ?? WHERE "
                 getFrontProductInserts.push(config.tables[0].table_name);
-                //console.log(stringParamas.length);
                 for(let i=0; i<stringParamas.length; i++) {
                     getFrontProductInserts.push(config.tables[0].table_fields[12].Field);
                     if(i == stringParamas.length - 1) getFrontProducts += `?? LIKE '%${stringParamas[i].toLowerCase()}%' `;
@@ -1274,21 +1233,15 @@ app.post('/api/product/front', function(req, res) {
                 }
                 getFrontProductInserts.push(config.tables[0].table_fields[7].Field, start, perPage);
                 getFrontProducts += "ORDER BY ?? DESC LIMIT ?, ?";
-                //console.log(getFrontProducts);
             }
             getFrontProducts = mysql.format(getFrontProducts, getFrontProductInserts);
-            console.log(getFrontProducts);
             connection.query(getFrontProducts, function (err, result, fields) {
                 if(err) {
-                    console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server Error in product upload'
                     });
                 } else {
-                    //jsonObj = {};
-                    //jsonObj['results'] = result;
-                    //console.log(util.inspect(jsonObj['results'], {showHidden: false, depth: null}));
                     return res.send({
                         success: true,
                         message: 'Success',
@@ -1303,7 +1256,6 @@ app.post('/api/product/front', function(req, res) {
 app.post('/api/product/upload', function(req, res) {
     const { body } = req;
     const {
-        allfiles,
         filename,
         menu,
         name,
@@ -1321,9 +1273,6 @@ app.post('/api/product/upload', function(req, res) {
             message: 'No file was uploaded.'
         });
     }
-
-    console.log(allfiles);
-    //console.log(util.inspect(files, {showHidden: false, depth: null}));
     
     if(!validateImageUpload(req.files)) {
         return res.send({
@@ -1405,7 +1354,6 @@ app.post('/api/product/upload', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -1425,45 +1373,43 @@ app.post('/api/product/upload', function(req, res) {
             let image = req.body.filename + ext;
 
             imageFile.mv(imagePath + `/img/products/${req.body.filename}${ext}`,
-                function(err) {
-                    if (err) {
-                        return res.send({
-                            success: false,
-                            message: 'Server error uploading image.'
-                        });
-                    } else {
-                        var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                        var insertProductInserts = [
-                            config.tables[0].table_name,
-                            myDate, myDate, results[0]['user_id'], name,
-                            description, image, price, menu, stock, ifmanaged, sku, metta
-                        ];
-                        insertProduct = mysql.format(insertProduct, insertProductInserts);
-                        //console.log(insertProduct);
-                        connection.query(insertProduct, function (error, result, fields) {
-                            if(error) {
-                                //console.log("Error: in Register New User: " + err);
-                                return res.send({
-                                    success: false,
-                                    message: 'Server Error in product upload'
-                                });
-                            } else {
-                                return res.send({
-                                    success: true,
-                                    message: 'Your Product has been successfully uploaded.',
-                                    id: result.insertId,
-                                    menu: menu,
-                                    name: name,
-                                    description: description,
-                                    price: price,
-                                    stock: stock,
-                                    ifmanaged: ifmanaged,
-                                    sku: sku,
-                                    image: image
-                                });
-                            }
-                        });    
-                    }
+            function(err) {
+                if (err) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error uploading image.'
+                    });
+                } else {
+                    var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    var insertProductInserts = [
+                        config.tables[0].table_name,
+                        myDate, myDate, results[0][config.tables[3].table_fields[1].Field], name,
+                        description, image, price, menu, stock, ifmanaged, sku, metta
+                    ];
+                    insertProduct = mysql.format(insertProduct, insertProductInserts);
+                    connection.query(insertProduct, function (error, result, fields) {
+                        if(error) {
+                            return res.send({
+                                success: false,
+                                message: 'Server Error in product upload'
+                            });
+                        } else {
+                            return res.send({
+                                success: true,
+                                message: 'Your Product has been successfully uploaded.',
+                                id: result.insertId,
+                                menu: menu,
+                                name: name,
+                                description: description,
+                                price: price,
+                                stock: stock,
+                                ifmanaged: ifmanaged,
+                                sku: sku,
+                                image: image
+                            });
+                        }
+                    });    
+                }
             });
         }
     });
@@ -1499,8 +1445,6 @@ app.post('/api/product/update', function(req, res) {
             message: 'Token invalid or cannot be left empty.'
         });
     }
-
-    //console.log(token + ", " + proid);
 
     if(config.patterns.names.test(name)) {
         updateObj.push({
@@ -1616,7 +1560,6 @@ app.post('/api/product/update', function(req, res) {
             token
         ];
         getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-        //console.log(getUserIdSession);
         connection.query(getUserIdSession, function (error, results, fields) {
             if(error) {
                 return res.send({
@@ -1669,21 +1612,18 @@ app.post('/api/product/update', function(req, res) {
                                                 updateProductInserts.push(element.content);
                                                 objCount++;
                                             });
-                                            updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
+                                            updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0][config.tables[3].table_fields[1].Field]}`;
                                             updateProductInserts.push(config.tables[0].table_fields[0].Field);
                                             updateProductInserts.push(config.tables[0].table_fields[3].Field);
                                             
                                             updateProduct = mysql.format(updateProduct, updateProductInserts);
-                                            //console.log(updateProduct);
                                             connection.query(updateProduct, function (error, result, fields) {
                                                 if(error) {
-                                                    //console.log("Error: in Register New User: " + err);
                                                     return res.send({
                                                         success: false,
                                                         message: 'Server Error in product update'
                                                     });
                                                 } else {
-                                                    // do results here
                                                     return res.send({
                                                         success: true,
                                                         message: 'Your Product has been successfully updated.',
@@ -1722,7 +1662,6 @@ app.post('/api/product/update', function(req, res) {
             token
         ];
         getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-        //console.log(getUserIdSession);
         connection.query(getUserIdSession, function (error, results, fields) {
             if(error) {
                 return res.send({
@@ -1742,22 +1681,18 @@ app.post('/api/product/update', function(req, res) {
                     updateProductInserts.push(element.content);
                     objCount++;
                 });
-                updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0]['user_id']}`;
+                updateProduct += `WHERE ?? = ${proid} AND ?? = ${results[0][config.tables[3].table_fields[1].Field]}`;
                 updateProductInserts.push(config.tables[0].table_fields[0].Field);
                 updateProductInserts.push(config.tables[0].table_fields[3].Field);
                 
                 updateProduct = mysql.format(updateProduct, updateProductInserts);
-                //console.log(updateProduct);
                 connection.query(updateProduct, function (error, result, fields) {
                     if(error) {
-                        //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
                             message: 'Server Error in product update no image'
                         });
                     } else {
-                        //console.log(util.inspect(result, {showHidden: false, depth: null}));
-                        //console.log("Here Result: " + result);
                         return res.send({
                             success: true,
                             message: 'Your Product has been successfully updated.',
@@ -1804,7 +1739,6 @@ app.post('/api/avatar/get-avatar', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -1816,10 +1750,9 @@ app.post('/api/avatar/get-avatar', function(req, res) {
             let getUserAvatarInserts = [
                 config.tables[2].table_name,
                 config.tables[2].table_fields[0].Field,
-                results[0]['user_id']
+                results[0][config.tables[3].table_fields[1].Field]
             ];
             getUserAvatar = mysql.format(getUserAvatar, getUserAvatarInserts);
-            //console.log(getUserAvatar);
             connection.query(getUserAvatar, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -1830,8 +1763,8 @@ app.post('/api/avatar/get-avatar', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Success',
-                        id: results[0]['user_id'],
-                        avatar: result[0]['avatar']
+                        id: results[0][config.tables[3].table_fields[1].Field],
+                        avatar: result[0][config.tables[2].table_fields[7].Field]
                     });
                 }
             });
@@ -1890,7 +1823,6 @@ app.post('/api/avatar/update-avatar', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -1898,9 +1830,8 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                 message: 'Server Error in get userid update avatar.'
             });
         } else {
-            //console.log(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`);
-            if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`)) {
-                fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${imagename}`, (err) => {
+            if(urlExists(imagePath + `/img/avatar/${uniqueId(results[0][config.tables[3].table_fields[1].Field])}/${imagename}`)) {
+                fs.unlink(imagePath + `/img/avatar/${uniqueId(results[0][config.tables[3].table_fields[1].Field])}/${imagename}`, (err) => {
                     if (err) {
                         return res.send({
                             success: false,
@@ -1918,7 +1849,7 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                         
                         let image = req.body.filename + ext;
                         let imageFile = req.files['file'];
-                        imageFile.mv(imagePath + `/img/avatar/${uniqueId(results[0]['user_id'])}/${req.body.filename}${ext}`,
+                        imageFile.mv(imagePath + `/img/avatar/${uniqueId(results[0][config.tables[3].table_fields[1].Field])}/${req.body.filename}${ext}`,
                             function(err) {
                                 if (err) {
                                     return res.send({
@@ -1932,24 +1863,21 @@ app.post('/api/avatar/update-avatar', function(req, res) {
                                         config.tables[2].table_fields[7].Field,
                                         image,
                                         config.tables[2].table_fields[0].Field,
-                                        results[0]['user_id']
+                                        results[0][config.tables[3].table_fields[1].Field]
                                     ];
                                     updateAvatar = mysql.format(updateAvatar, updateAvatarInserts);
-                                    //console.log(updateProduct);
                                     connection.query(updateAvatar, function (error, result, fields) {
                                         if(error) {
-                                            //console.log("Error: in Register New User: " + err);
                                             return res.send({
                                                 success: false,
                                                 message: 'Server Error in avatar update'
                                             });
                                         } else {
-                                            // do results here
                                             return res.send({
                                                 success: true,
                                                 message: 'Your Avatar has been successfully updated.',
                                                 avatar: image,
-                                                userid: results[0]['user_id']
+                                                userid: results[0][config.tables[3].table_fields[1].Field]
                                             });
                                         }
                                     });    
@@ -1988,7 +1916,6 @@ app.post('/api/account/get-account', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2000,10 +1927,9 @@ app.post('/api/account/get-account', function(req, res) {
             let getUserDetailsInserts = [
                 config.tables[2].table_name,
                 config.tables[2].table_fields[0].Field,
-                results[0]['user_id']
+                results[0][config.tables[3].table_fields[1].Field]
             ];
             getUserDetails = mysql.format(getUserDetails, getUserDetailsInserts);
-            //console.log(getUserDetails);
             connection.query(getUserDetails, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -2014,12 +1940,12 @@ app.post('/api/account/get-account', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Success',
-                        name: result[0]['name'],
-                        email: result[0]['email'],
-                        address: result[0]['shipping_address'],
-                        city: result[0]['shipping_city'],
-                        state: result[0]['shipping_state'],
-                        zip: result[0]['shipping_zip']
+                        name: result[0][config.tables[2].table_fields[3].Field],
+                        email: result[0][config.tables[2].table_fields[4].Field],
+                        address: result[0][config.tables[2].table_fields[9].Field],
+                        city: result[0][config.tables[2].table_fields[10].Field],
+                        state: result[0][config.tables[2].table_fields[11].Field],
+                        zip: result[0][config.tables[2].table_fields[12].Field]
                     });
                 }
             });
@@ -2140,7 +2066,6 @@ app.post('/api/profile/update-profile', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2160,20 +2085,17 @@ app.post('/api/profile/update-profile', function(req, res) {
                 updateProfileInserts.push(element.content);
                 objCount++;
             });
-            updateProfile += `WHERE ?? = ${results[0]['user_id']}`;
+            updateProfile += `WHERE ?? = ${results[0][config.tables[3].table_fields[1].Field]}`;
             updateProfileInserts.push(config.tables[2].table_fields[0].Field);
 
             updateProfile = mysql.format(updateProfile, updateProfileInserts);
-            //console.log(updateProfile);
             connection.query(updateProfile, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in update profile'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Your profile has been successfully updated.',
@@ -2211,7 +2133,6 @@ app.post('/api/account/get-paypal', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2223,10 +2144,9 @@ app.post('/api/account/get-paypal', function(req, res) {
             let getUserDetailsInserts = [
                 config.tables[4].table_name,
                 config.tables[4].table_fields[1].Field,
-                results[0]['user_id']
+                results[0][config.tables[3].table_fields[1].Field]
             ];
             getUserDetails = mysql.format(getUserDetails, getUserDetailsInserts);
-            //console.log(getUserDetails);
             connection.query(getUserDetails, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -2237,9 +2157,9 @@ app.post('/api/account/get-paypal', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Success',
-                        mode: result[0]['mode'],
-                        client: result[0]['client'],
-                        secret: result[0]['secret']
+                        mode: result[0][config.tables[4].table_fields[4].Field],
+                        client: result[0][config.tables[4].table_fields[5].Field],
+                        secret: result[0][config.tables[4].table_fields[6].Field]
                     });
                 }
             });
@@ -2292,7 +2212,6 @@ app.post('/api/profile/update-paypal', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2310,20 +2229,17 @@ app.post('/api/profile/update-paypal', function(req, res) {
                 config.tables[4].table_fields[6].Field,
                 secret,
                 config.tables[4].table_fields[1].Field,
-                results[0]['user_id']
+                results[0][config.tables[3].table_fields[1].Field]
             ];
 
             updatePaypal = mysql.format(updatePaypal, updatePaypalInserts);
-            //console.log(updatePaypal);
             connection.query(updatePaypal, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in update profile'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Your paypal profile has been successfully updated.'
@@ -2371,7 +2287,6 @@ app.post('/api/profile/update-password', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2391,20 +2306,17 @@ app.post('/api/profile/update-password', function(req, res) {
                     config.tables[2].table_fields[5].Field,
                     generateHash(password),
                     config.tables[2].table_fields[0].Field,
-                    results[0]['user_id']
+                    results[0][config.tables[3].table_fields[1].Field]
                 ];
 
                 updatePassword = mysql.format(updatePassword, updatePasswordInserts);
-                //console.log(updatePassword);
                 connection.query(updatePassword, function (error, result, fields) {
                     if(error) {
-                        //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
                             message: 'Server error in update profile'
                         });
                     } else {
-                        // do results here
                         return res.send({
                             success: true,
                             message: 'Your password has been successfully updated.'
@@ -2437,7 +2349,6 @@ app.post('/api/account/get-visibility', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2450,24 +2361,21 @@ app.post('/api/account/get-visibility', function(req, res) {
                 config.tables[2].table_fields[8].Field,
                 config.tables[2].table_name,
                 config.tables[2].table_fields[0].Field,
-                results[0]['user_id']
+                results[0][config.tables[3].table_fields[1].Field]
             ];
 
             getVisibility = mysql.format(getVisibility, getVisibilityInserts);
-            //console.log(getVisibility);
             connection.query(getVisibility, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in get visibility'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Success',
-                        visibility: result[0]['store_visible']
+                        visibility: result[0][config.tables[2].table_fields[8].Field]
                     });
                 }
             });
@@ -2504,7 +2412,6 @@ app.post('/api/profile/update-visibility', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -2518,20 +2425,17 @@ app.post('/api/profile/update-visibility', function(req, res) {
                 config.tables[2].table_fields[8].Field,
                 visibility,
                 config.tables[2].table_fields[0].Field,
-                results[0]['user_id']
+                results[0][config.tables[3].table_fields[1].Field]
             ];
 
             updateVisibility = mysql.format(updateVisibility, updateVisibilityInserts);
-            //console.log(updateVisibility);
             connection.query(updateVisibility, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in update visibility'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Your visibility has been successfully updated.',
@@ -2576,7 +2480,6 @@ app.post('/api/newsletter/registration', function(req, res) {
 
     ];
     insertNewsletter = mysql.format(insertNewsletter, insertNewsletterInserts);
-    //console.log(insertNewsletter);
     connection.query(insertNewsletter, function (error, result, fields) {
         if(error) {
             return res.send({
@@ -2584,7 +2487,6 @@ app.post('/api/newsletter/registration', function(req, res) {
                 message: 'Server error in register for newsletter'
             });
         } else {
-            // do results here
             return res.send({
                 success: true,
                 message: 'You successfully registered for our newsletter.'
@@ -2703,28 +2605,22 @@ app.post('/api/cart/call-paypal', function(req, res) {
         });
     }
 
-    //console.log(util.inspect(items, {showHidden: false, depth: null}));
-    //console.log("Products: " + products);
-
     let loadCredentials = "SELECT * FROM ?? LIMIT 1";
     let loadCredentialsInserts = [
         config.tables[4].table_name
     ];
     loadCredentials = mysql.format(loadCredentials, loadCredentialsInserts);
-    //console.log(loadCredentials);
     connection.query(loadCredentials, function (error, results, fields) {
         if(error) {
-            //console.log("Error: in Register New User: " + err);
             return res.send({
                 success: false,
                 message: 'Server Error in load credentials call paypal.'
             });
         } else {
-            //console.log(results[0]['client'] + ", " + results[0]['secret']);
             paypal.configure({
-                "mode": results[0]['mode'],
-                "client_id": results[0]['client'],
-                "client_secret": results[0]['secret']
+                "mode": results[0][config.tables[4].table_fields[4].Field],
+                "client_id": results[0][config.tables[4].table_fields[5].Field],
+                "client_secret": results[0][config.tables[4].table_fields[6].Field]
             });
 
             let loadProducts = "SELECT * FROM ??";
@@ -2732,31 +2628,27 @@ app.post('/api/cart/call-paypal', function(req, res) {
                 config.tables[0].table_name
             ];
             loadProducts = mysql.format(loadProducts, loadProductsInserts);
-            //console.log(loadProducts);
             connection.query(loadProducts, function (error, results, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server Error in load products call paypal.'
                     });
                 } else {
-                    //console.log(util.inspect(results, {showHidden: false, depth: null}));
                     let objCount = 0;
                     let paypalItems = []; let itemsString = '';
                     itemIds.forEach(itemObj => {
                         results.forEach(product => {
-                            //console.log(parseInt(id) + ", " + product['productid']);
-                            if(parseInt(itemObj.id) == product['productid']) {
+                            if(parseInt(itemObj.id) == product[config.tables[0].table_fields[0].Field]) {
                                 paypalItems.push({
-                                    "name": product['name'],
-                                    "sku": product['sku'],
-                                    "price": product['price'],
+                                    "name": product[config.tables[0].table_fields[4].Field],
+                                    "sku": product[config.tables[0].table_fields[11].Field],
+                                    "price": product[config.tables[0].table_fields[7].Field],
                                     "currency": "USD",
                                     "quantity": parseInt(itemObj.quantity),
                                 });
-                                if(objCount == itemIds.length - 1) itemsString += product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2) + "_" + product['managed_stock'];
-                                else itemsString += "&" + product['productid'] + "_" + product['name'] + "_" + product['sku'] + "_" + product['price'] + "_" + itemObj.quantity + "_" + product['image'] + "_" + product['stock'] + "_" + (parseInt(itemObj.quantity) * parseFloat(product['price'])).toFixed(2) + "_" + product['managed_stock'];
+                                if(objCount == itemIds.length - 1) itemsString += product[config.tables[0].table_fields[0].Field] + "_" + product[config.tables[0].table_fields[4].Field] + "_" + product[config.tables[0].table_fields[11].Field] + "_" + product[config.tables[0].table_fields[7].Field] + "_" + itemObj.quantity + "_" + product[config.tables[0].table_fields[6].Field] + "_" + product[config.tables[0].table_fields[9].Field] + "_" + (parseInt(itemObj.quantity) * parseFloat(product[config.tables[0].table_fields[7].Field])).toFixed(2) + "_" + product[config.tables[0].table_fields[10].Field];
+                                else itemsString += "&" + product[config.tables[0].table_fields[0].Field] + "_" + product[config.tables[0].table_fields[4].Field] + "_" + product[config.tables[0].table_fields[11].Field] + "_" + product[config.tables[0].table_fields[7].Field] + "_" + itemObj.quantity + "_" + product[config.tables[0].table_fields[6].Field] + "_" + product[config.tables[0].table_fields[9].Field] + "_" + (parseInt(itemObj.quantity) * parseFloat(product[config.tables[0].table_fields[7].Field])).toFixed(2) + "_" + product[config.tables[0].table_fields[10].Field];
                                 objCount++;
                             }
                         });
@@ -2767,17 +2659,15 @@ app.post('/api/cart/call-paypal', function(req, res) {
                         config.tables[5].table_name
                     ];
                     getLastOrderId = mysql.format(getLastOrderId, getLastOrderIdInserts);
-                    //console.log(getLastOrderId);
                     connection.query(getLastOrderId, function (error, maxIdResults, fields) {
                         if(error) {
-                            //console.log("Error: in Register New User: " + err);
                             return res.send({
                                 success: false,
                                 message: 'Server Error in get last order id'
                             });
                         } else {
-                            let newTransid = maxIdResults[0]['MAX(`orderid`)'] + 1;
-                            //console.log(util.inspect(paypalItems, {showHidden: false, depth: null})); "http://localhost:3000" urlConfig.site_url
+                            let newTransid = maxIdResults[0]['MAX(`' + config.tables[5].table_fields[0].Field + '`)'] + 1;
+                            // "http://localhost:3000" urlConfig.site_url
                             let cancelUrl = urlConfig.site_url + config.paypal_urls.cancel + '/' + newTransid;
                             let successUrl = urlConfig.site_url + config.paypal_urls.success;
                             let create_payment_json = {
@@ -2802,7 +2692,6 @@ app.post('/api/cart/call-paypal', function(req, res) {
                                     }
                                 ]
                             };
-                            //console.log(util.inspect(create_payment_json, {showHidden: false, depth: null}));
                             paypal.payment.create(create_payment_json, function (error, payment) {
                                 if (error) {
                                     return res.send({
@@ -2813,21 +2702,18 @@ app.post('/api/cart/call-paypal', function(req, res) {
                                     
                                     let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?)";
                                     let insertOrderInserts = [
-                                        config.tables[5].table_name, results[0]['user_id'],
+                                        config.tables[5].table_name, results[0][config.tables[0].table_fields[3].Field],
                                         myDate, myDate, name, email, address, city, state, zip,
                                         proids, numofs, prices, payment.id, itemsString
                                     ];
                                     insertOrder = mysql.format(insertOrder, insertOrderInserts);
-                                    //console.log(payment);
                                     connection.query(insertOrder, function (error, result, fields) {
                                         if(error) {
-                                            //console.log("Error: in Register New User: " + err);
                                             return res.send({
                                                 success: false,
                                                 message: 'Server Error in insert order call paypal.'
                                             });
                                         } else {
-                                            //console.log(payment.id);
                                             for(let i=0; i<payment.links.length; i++) {
                                                 if(payment.links[i].rel === 'approval_url') {
                                                     return res.send({
@@ -2876,18 +2762,16 @@ app.post('/api/paypal/success', function(req, res) {
         paymentId
     ];
     loadOrder = mysql.format(loadOrder, loadOrderInserts);
-    //console.log(loadOrder);
     connection.query(loadOrder, function (error, results, fields) {
         if(error) {
-            //console.log("Error: in Register New User: " + err);
             return res.send({
                 success: false,
                 message: 'Server Error in Paypal /success loadOrder'
             });
         } else {
-            let proids = results[0]['product_ids'].split("_");
-            let numofs = results[0]['number_ofs'].split("_");
-            let price = results[0]['prices'].split("_");
+            let proids = results[0][config.tables[5].table_fields[10].Field].split("_");
+            let numofs = results[0][config.tables[5].table_fields[11].Field].split("_");
+            let price = results[0][config.tables[5].table_fields[12].Field].split("_");
             let total = 0;
             for(let i=0; i<price.length; i++) {
                 total += numofs[i] * price[i];
@@ -2916,10 +2800,8 @@ app.post('/api/paypal/success', function(req, res) {
                             proids[i]
                         ];
                         getProductItem = mysql.format(getProductItem, getProductItemInserts);
-                        //console.log(getProductItem);
                         connection.query(getProductItem, function (error, getProductResults, fields) {
                             if(error) {
-                                console.log("Error: No item in database: " + error);
                                 return res.send({
                                     success: false,
                                     message: 'Server Error in Paypal /success update product, No item in database'
@@ -2936,10 +2818,8 @@ app.post('/api/paypal/success', function(req, res) {
                                         proids[i]
                                     ];
                                     updateProductStock = mysql.format(updateProductStock, updateProductStockInserts);
-                                    //console.log(updateProductStock);
                                     connection.query(updateProductStock, function (error, updateProductResults, fields) {
                                         if(error) {
-                                            console.log("Error in update product stock item: " + proids[i] + ", Error: " + error);
                                             return res.send({
                                                 success: false,
                                                 message: 'Server Error in Paypal /success update product, Error in update product stock item'
@@ -2960,10 +2840,8 @@ app.post('/api/paypal/success', function(req, res) {
                         paymentId
                     ];
                     updateOrder = mysql.format(updateOrder, updateOrderInserts);
-                    //console.log(payment.payer.payer_info.shipping_address.recipient_name);
                     connection.query(updateOrder, function (error, results, fields) {
                         if(error) {
-                            console.log("Error: in Paypal /success updateOrder: " + err);
                             return res.send({
                                 success: false,
                                 message: 'Server Error in Paypal /success updateOrder'
@@ -2974,7 +2852,6 @@ app.post('/api/paypal/success', function(req, res) {
                                 message: "Success",
                                 name: payment.payer.payer_info.shipping_address.recipient_name
                             });
-                            //return res.send("Success: " + JSON.stringify(payment));
                         }
                     });
                 }
@@ -3004,10 +2881,8 @@ app.post('/api/paypal/cancel', function(req, res) {
         paymentId
     ];
     updateOrder = mysql.format(updateOrder, updateOrderInserts);
-    //console.log(updateOrder);
     connection.query(updateOrder, function (error, results, fields) {
         if(error) {
-            //console.log("Error: in Register New User: " + err);
             return res.send({
                 success: false,
                 message: 'Server Error in Paypal /cancel loadOrder'
@@ -3096,7 +2971,6 @@ app.post('/api/roles/delete-user', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -3111,7 +2985,6 @@ app.post('/api/roles/delete-user', function(req, res) {
                 parseInt(id),
             ];
             getUserToDeleteById = mysql.format(getUserToDeleteById, getUserToDeleteByIdInserts);
-            console.log(getUserToDeleteById);
             connection.query(getUserToDeleteById, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -3119,8 +2992,8 @@ app.post('/api/roles/delete-user', function(req, res) {
                         message: 'Server Error in get user by id to delete.'
                     });
                 } else {
-                    if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${result[0]['image']}`)) {
-                        fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${result[0]['image']}`, (err) => {
+                    if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${result[0][config.tables[2].table_fields[7].Field]}`)) {
+                        fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${result[0][config.tables[2].table_fields[7].Field]}`, (err) => {
                             if (err) {
                                 return res.send({
                                     success: false,
@@ -3134,7 +3007,6 @@ app.post('/api/roles/delete-user', function(req, res) {
                                     parseInt(id)
                                 ];
                                 deleteUser = mysql.format(deleteUser, deleteUserInserts);
-                                //console.log(deleteUser);
                                 connection.query(deleteUser, function (error, result, fields) {
                                     if(error) {
                                         return res.send({
@@ -3158,7 +3030,6 @@ app.post('/api/roles/delete-user', function(req, res) {
                             parseInt(id)
                         ];
                         deleteUser = mysql.format(deleteUser, deleteUserInserts);
-                        //console.log(deleteProduct);
                         connection.query(deleteUser, function (error, result, fields) {
                             if(error) {
                                 return res.send({
@@ -3216,7 +3087,6 @@ app.post('/api/roles/users', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -3234,13 +3104,11 @@ app.post('/api/roles/users', function(req, res) {
             userList = mysql.format(userList, userListInserts);
             connection.query(userList, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in update profile'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Success',
@@ -3324,12 +3192,13 @@ app.post('/api/roles/upload', (req, res, next) => {
     email = email.toLowerCase();
 
     let testForExistingUser = "SELECT * FROM ?? WHERE ?? = ?";
-    let inserts = [config.tables[2].table_name, config.tables[2].table_fields[4].Field, email];
+    let inserts = [
+        config.tables[2].table_name,
+        config.tables[2].table_fields[4].Field, email
+    ];
     testForExistingUser = mysql.format(testForExistingUser, inserts);
-    //console.log(testForExistingUser);
     connection.query(testForExistingUser, function (error, results, fields) {
         if(error) {
-            //testErrorsOnServer(testForExistingUser + ", " + error);
             return res.send({
                 success: false,
                 message: 'Server Error in check user exsists signup.',
@@ -3338,7 +3207,6 @@ app.post('/api/roles/upload', (req, res, next) => {
             });
         } else {
             if(results.length > 0) {
-                //console.log("Results: in SignIn: User Exists");
                 return res.send({
                     success: false,
                     message: 'User Exists',
@@ -3354,10 +3222,8 @@ app.post('/api/roles/upload', (req, res, next) => {
                     state, zip 
                 ];
                 insertUserIfNonExists = mysql.format(insertUserIfNonExists, inserts);
-                //console.log(insertUserIfNonExists);
                 connection.query(insertUserIfNonExists, function (err, result, fields) {
                     if(err) {
-                        //console.log("Error: in Register New User: " + err);
                         return res.send({
                             success: false,
                             message: 'Server error in register users insert',
@@ -3401,13 +3267,14 @@ app.post('/api/roles/upload', (req, res, next) => {
                                                         id: null
                                                     });
                                                 } else {
-                                                    //console.log(result.insertId);
                                                     var insertUserSession = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, 0)";
-                                                    var inserts = [config.tables[3].table_name, result.insertId, myDate, myDate];
+                                                    var inserts = [
+                                                        config.tables[3].table_name,
+                                                        result.insertId, myDate, myDate
+                                                    ];
                                                     insertUserSession = mysql.format(insertUserSession, inserts);
                                                     connection.query(insertUserSession, function (error, results, fields) {
                                                         if(error) {
-                                                            //console.log("Error: in Register Session: " + error);
                                                             return res.send({
                                                                 success: false,
                                                                 message: 'Server error in register session insert',
@@ -3415,7 +3282,6 @@ app.post('/api/roles/upload', (req, res, next) => {
                                                                 id: null
                                                             });
                                                         } else {
-                                                            //console.log("Results: in SignIn: " + results);
                                                             return res.send({
                                                                 success: true,
                                                                 message: 'Successfull registration',
@@ -3478,7 +3344,6 @@ app.post('/api/roles/user-update', function(req, res) {
         });
     }
 
-    //console.log(token + ", " + id);
     if(config.patterns.names.test(name)) {
         updateObj.push({
             name: config.tables[2].table_fields[3].Field,
@@ -3613,7 +3478,6 @@ app.post('/api/roles/user-update', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -3629,7 +3493,6 @@ app.post('/api/roles/user-update', function(req, res) {
                 parseInt(id)
             ];
             getUserImage = mysql.format(getUserImage, getUserImageInserts);
-            //console.log(getUserImage);
             connection.query(getUserImage, function (error, imgResults, fields) {
                 if(error) {
                     return res.send({
@@ -3650,9 +3513,9 @@ app.post('/api/roles/user-update', function(req, res) {
                                 message: 'File is invalid.'
                             });
                         }
-                        if(config.patterns.names.test(imgResults[0]['avatar'])) {
-                            if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imgResults[0]['avatar']}`)) {
-                                fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imgResults[0]['avatar']}`, (err) => {
+                        if(config.patterns.names.test(imgResults[0][config.tables[2].table_fields[7].Field])) {
+                            if(urlExists(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imgResults[0][config.tables[2].table_fields[7].Field]}`)) {
+                                fs.unlink(imagePath + `/img/avatar/${uniqueId(parseInt(id))}/${imgResults[0][config.tables[2].table_fields[7].Field]}`, (err) => {
                                     if (err) {
                                         return res.send({
                                             success: false,
@@ -3700,16 +3563,13 @@ app.post('/api/roles/user-update', function(req, res) {
                                                     updateUserInserts.push(parseInt(id));
                                                     
                                                     updateUser = mysql.format(updateUser, updateUserInserts);
-                                                    //console.log(updateUser);
                                                     connection.query(updateUser, function (error, result, fields) {
                                                         if(error) {
-                                                            //console.log("Error: in Register New User: " + err);
                                                             return res.send({
                                                                 success: false,
                                                                 message: 'Server Error in user update'
                                                             });
                                                         } else {
-                                                            // do results here
                                                             return res.send({
                                                                 success: true,
                                                                 message: 'User successfully updated.',
@@ -3756,16 +3616,13 @@ app.post('/api/roles/user-update', function(req, res) {
                         updateUserInserts.push(parseInt(id));
                         
                         updateUser = mysql.format(updateUser, updateUserInserts);
-                        //console.log(updateUser);
                         connection.query(updateUser, function (error, result, fields) {
                             if(error) {
-                                //console.log("Error: in Register New User: " + err);
                                 return res.send({
                                     success: false,
                                     message: 'Server Error in user update'
                                 });
                             } else {
-                                // do results here
                                 return res.send({
                                     success: true,
                                     message: 'User successfully updated.',
@@ -3820,16 +3677,13 @@ app.post('/api/orders/referrals', function(req, res) {
         config.tables[5].table_name
     ];
     orderList = mysql.format(orderList, orderListInserts);
-    //console.log(orderList);
     connection.query(orderList, function (error, result, fields) {
         if(error) {
-            //console.log("Error: in Register New User: " + err);
             return res.send({
                 success: false,
                 message: 'Server error in update profile'
             });
         } else {
-            // do results here
             return res.send({
                 success: true,
                 message: 'Success',
@@ -3876,7 +3730,6 @@ app.post('/api/morders/all', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -3892,16 +3745,13 @@ app.post('/api/morders/all', function(req, res) {
                 start, perPage
             ];
             orderList = mysql.format(orderList, orderListInserts);
-            //console.log(orderList);
             connection.query(orderList, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in update profile'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Success',
@@ -3942,7 +3792,6 @@ app.post('/api/morders/items', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -3958,10 +3807,8 @@ app.post('/api/morders/items', function(req, res) {
                 config.tables[0].table_fields[0].Field,
             ];
             productList = mysql.format(productList, productListInserts);
-            //console.log(productList);
             connection.query(productList, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in get product list display order.'
@@ -4089,15 +3936,13 @@ app.post('/api/morders/upload', (req, res, next) => {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
                 success: false,
                 message: 'Server error in get userid create order.'
             });
-        } else {   
-            //console.log(result.insertId);
+        } else {
             var insertMerchantOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 0, '', ?)";
             var inserts = [
                 config.tables[5].table_name,
@@ -4106,10 +3951,8 @@ app.post('/api/morders/upload', (req, res, next) => {
                 proids, numofs, prices, orderitems
             ];
             insertMerchantOrder = mysql.format(insertMerchantOrder, inserts);
-            //console.log(insertMerchantOrder);
             connection.query(insertMerchantOrder, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register Session: " + error);
                     return res.send({
                         success: false,
                         message: 'Server error in create order',
@@ -4117,7 +3960,6 @@ app.post('/api/morders/upload', (req, res, next) => {
                         id: null
                     });
                 } else {
-                    //console.log("Results: in SignIn: " + results);
                     return res.send({
                         success: true,
                         message: 'Successfull order',
@@ -4182,7 +4024,6 @@ app.post('/api/corders/all', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -4195,22 +4036,18 @@ app.post('/api/corders/all', function(req, res) {
             let orderListInserts = [
                 config.tables[5].table_name,
                 config.tables[5].table_fields[1].Field,
-                results[0]['user_id'],
+                results[0][config.tables[3].table_fields[1].Field],
                 config.tables[5].table_fields[0].Field,
                 start, perPage
             ];
             orderList = mysql.format(orderList, orderListInserts);
-            //console.log(orderList);
             connection.query(orderList, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in get corders list'
                     });
                 } else {
-                    // do results here
-                    //console.log(result);
                     if(result) {
                         return res.send({
                             success: true,
@@ -4284,7 +4121,6 @@ app.post('/api/corders/survey', function(req, res) {
         token
     ];
     getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    //console.log(getUserIdSession);
     connection.query(getUserIdSession, function (error, results, fields) {
         if(error) {
             return res.send({
@@ -4302,16 +4138,13 @@ app.post('/api/corders/survey', function(req, res) {
             ];
 
             updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);
-            //console.log(updateSurvey);
             connection.query(updateSurvey, function (error, result, fields) {
                 if(error) {
-                    //console.log("Error: in Register New User: " + err);
                     return res.send({
                         success: false,
                         message: 'Server error in update survey'
                     });
                 } else {
-                    // do results here
                     return res.send({
                         success: true,
                         message: 'Your survey has been successfully updated.',

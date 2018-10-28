@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Navigation from '../navigation';
 import Footer from '../footer';
 import config from '../../config/config';
+import states from '../../data/states';
 
 const checkoutCheckout = {
     marginTop: '0px',
@@ -202,7 +203,7 @@ class Cart extends React.Component {
                                                 <div className="col-lg-6 col-md-6 col-sm-12">
                                                     <div className="form-group">
                                                         <select ref={ (ref) => { this.state.cartState = ref; }} className="form-element custom">
-                                                            {config.states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                                            {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                                         </select>
                                                     </div>
                                                 </div>

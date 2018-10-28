@@ -47,7 +47,11 @@ class AvatarImage extends React.Component {
 
 	onSubmit(e) {
         e.preventDefault();
-        if(types.includes(this.state.avatarUploadInput.files[0].type)) {
+        // WARNING in asset size limit:
+        // The following asset(s) exceed the recommended size limit (244 KiB).
+        // So 244 X 1024 = 249856 because (bytes / 1024).toFixed(3) + " KB";
+        // Please keep all images under 244KB of React recommended size limit.
+        if(config.allowed_images.includes(this.state.avatarUploadInput.files[0].type)) {
             if(this.state.avatarUploadInput.files[0].size < 249856) {
                 if(this.state.avatarUploadInput.files[0].size > 0) {
                     const data = new FormData();
