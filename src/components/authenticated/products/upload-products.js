@@ -59,55 +59,67 @@ class UploadProducts extends React.Component {
 
 	onSubmit(e) {
         e.preventDefault();
-        
-        const data = new FormData();
-            data.append('file', this.state.uploadInput.files[0]);
-            data.append('filename', this.state.fileName);
-            data.append('menu', this.state.proUploadMenu);
-            data.append('name', this.state.proUploadName);
-            data.append('sku', this.state.proUploadSku);
-			data.append('description', this.state.proUploadDescription);
-            data.append('price', this.state.proUploadPrice);
-            data.append('stock', this.state.proUploadStock);
-            data.append('ifmanaged', this.state.proUploadIfManaged);
-            data.append('token', this.props.authentication[0].token);
+        // WARNING in asset size limit:
+        // The following asset(s) exceed the recommended size limit (244 KiB).
+        // So 244 X 1024 = 249856 because (bytes / 1024).toFixed(3) + " KB";
 
-		fetch(config.site_url + '/api/product/upload', {
-            method: 'POST',
-            body: data,
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
-					console.log("Product upload successfull.");
-					this.props.updateProduct({
-                        id: json.id,
-                        menu : json.menu,
-                        name: json.name,
-                        sku: json.sku,
-                        price: json.price,
-                        stock: json.stock,
-                        ifmanaged: json.ifmanaged,
-                        description: json.description,
-                        image: json.image
-                    });
-					this.setState({
-                        proUploadError: json.message,
-                        proUploadMenu: '',
-                        proUploadName: '',
-                        proUploadSku: '',
-                        proUploadPrice: '',
-                        proUploadStock: '',
-                        proUploadIfManaged: '',
-                        proUploadDescription: '',
-                        uploadInput: '',
-                        fileName: ''
-                    });
-				} else {
-                    this.setState({
-						proUploadError: json.message
-					});
-                }
-			});
+        console.log(this.state.uploadInput.files);
+        let types = [ 'image/jpeg', 'image/jpg', 'image/gif', 'image/png' ];
+        if(types.includes(this.state.uploadInput.files[0].type)) {
+            if(this.state.uploadInput.files[0].size < 249856) {
+                if(this.state.uploadInput.files[0].size > 0) {
+                    const data = new FormData();
+                        data.append('allfiles', this.state.uploadInput.files);
+                        data.append('file', this.state.uploadInput.files[0]);
+                        data.append('filename', this.state.fileName);
+                        data.append('menu', this.state.proUploadMenu);
+                        data.append('name', this.state.proUploadName);
+                        data.append('sku', this.state.proUploadSku);
+                        data.append('description', this.state.proUploadDescription);
+                        data.append('price', this.state.proUploadPrice);
+                        data.append('stock', this.state.proUploadStock);
+                        data.append('ifmanaged', this.state.proUploadIfManaged);
+                        data.append('token', this.props.authentication[0].token);
+
+                    fetch(config.site_url + '/api/product/upload', {
+                        method: 'POST',
+                        body: data,
+                    }).then(res => res.json())
+                        .then(json => {
+                            if(json.success) {
+                                console.log("Product upload successfull.");
+                                this.props.updateProduct({
+                                    id: json.id,
+                                    menu : json.menu,
+                                    name: json.name,
+                                    sku: json.sku,
+                                    price: json.price,
+                                    stock: json.stock,
+                                    ifmanaged: json.ifmanaged,
+                                    description: json.description,
+                                    image: json.image
+                                });
+                                this.setState({
+                                    proUploadError: json.message,
+                                    proUploadMenu: '',
+                                    proUploadName: '',
+                                    proUploadSku: '',
+                                    proUploadPrice: '',
+                                    proUploadStock: '',
+                                    proUploadIfManaged: '',
+                                    proUploadDescription: '',
+                                    uploadInput: '',
+                                    fileName: ''
+                                });
+                            } else {
+                                this.setState({
+                                    proUploadError: json.message
+                                });
+                            }
+                        });
+                } else this.setState({ proUploadError: 'File is less than 0 bytes.' });
+            } else this.setState({ proUploadError: 'File is bigger than 244 KB.' });
+        } else this.setState({ proUploadError: 'Invalid image type. Jpeg, jpg, gif or pngs allowed.' });
 	}
 
     render() {

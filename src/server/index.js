@@ -111,30 +111,24 @@ function bufferToHex(buffer) {
 }
 
 function validateImageUpload(file) {
-    // possibly move to tmp then delete once we have the size.
-    //var stats = fs.statSync(file['file']);
-    //var fileSizeInBytes = stats["size"];
-    //var fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
-    console.log(fileSizeInMegabytes);
     let allowedImages = [
-        { ext: 'gif', magic: '47494638' },
-        { ext: 'jpg', magic: 'ffd8' },
-        { ext: 'png', magic: '89504e47' }
+        { type: 'image/gif', ext: 'gif', magic: '47494638' },
+        { type: 'image/jpg', ext: 'jpg', magic: 'ffd8' },
+        { type: 'image/png', ext: 'png', magic: '89504e47' }
     ];
     let imageParts = file.file.name.split(".");
-    let mimeParts = file.file.mimetype.split("/");
-    console.log(mimeParts[2] + ", " + allowedImages[2].ext + " " + mimeParts[0]);
-    if(imageParts[1] == allowedImages[0].ext && mimeParts[1] == allowedImages[0].ext && mimeParts[0] == 'image' && mimeParts[1] == 'gif') {
+    console.log(file);
+    if(imageParts[1] == allowedImages[0].ext && imageParts[1] == 'gif' && file.file.mimetype == allowedImages[0].type) {
         console.log("Name and mime passed.");
         let hexString = bufferToHex(file.file.data.slice(0, 4));
         if(hexString.toString() == allowedImages[0].magic.toString()) return true;
         else return false;
-    } else if((imageParts[1] == allowedImages[1].ext || 'jpeg') && (mimeParts[1] == allowedImages[1].ext || 'jpeg') && mimeParts[0] == 'image' && (mimeParts[1] == 'jpg' || 'jpeg')) {
+    } else if((imageParts[1] == allowedImages[1].ext || 'jpeg') && (imageParts[1] == 'jpg' || 'jpeg') && (file.file.mimetype == allowedImages[1].type || file.file.mimetype == 'image/jpeg')) {
         console.log("Name and mime passed.");
         let hexString = bufferToHex(file.file.data.slice(0, 2));
         if(hexString.toString() == allowedImages[1].magic.toString()) return true;
         else return false;
-    } else if (imageParts[1] == allowedImages[2].ext && mimeParts[1] == allowedImages[2].ext && mimeParts[0] == 'image' && mimeParts[1] == 'png') {
+    } else if (imageParts[1] == allowedImages[2].ext && imageParts[1] == 'png' && file.file.mimetype == allowedImages[2].type) {
         console.log("Name and mime passed.");
         let hexString = bufferToHex(file.file.data.slice(0, 4));
         if(hexString.toString() == allowedImages[2].magic.toString()) return true;
@@ -1309,6 +1303,7 @@ app.post('/api/product/front', function(req, res) {
 app.post('/api/product/upload', function(req, res) {
     const { body } = req;
     const {
+        allfiles,
         filename,
         menu,
         name,
@@ -1327,6 +1322,9 @@ app.post('/api/product/upload', function(req, res) {
         });
     }
 
+    console.log(allfiles);
+    //console.log(util.inspect(files, {showHidden: false, depth: null}));
+    
     if(!validateImageUpload(req.files)) {
         return res.send({
             success: false,
