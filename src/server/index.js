@@ -111,6 +111,11 @@ function bufferToHex(buffer) {
 }
 
 function validateImageUpload(file) {
+    // possibly move to tmp then delete once we have the size.
+    //var stats = fs.statSync(file['file']);
+    //var fileSizeInBytes = stats["size"];
+    //var fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+    console.log(fileSizeInMegabytes);
     let allowedImages = [
         { ext: 'gif', magic: '47494638' },
         { ext: 'jpg', magic: 'ffd8' },
@@ -118,7 +123,7 @@ function validateImageUpload(file) {
     ];
     let imageParts = file.file.name.split(".");
     let mimeParts = file.file.mimetype.split("/");
-    console.log(mimeParts[1] + ", " + allowedImages[1].ext + " " + mimeParts[0]);
+    console.log(mimeParts[2] + ", " + allowedImages[2].ext + " " + mimeParts[0]);
     if(imageParts[1] == allowedImages[0].ext && mimeParts[1] == allowedImages[0].ext && mimeParts[0] == 'image' && mimeParts[1] == 'gif') {
         console.log("Name and mime passed.");
         let hexString = bufferToHex(file.file.data.slice(0, 4));
