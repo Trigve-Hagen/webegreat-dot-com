@@ -146,21 +146,23 @@ class Cart extends React.Component {
                                 {
                                     sort(this.props.cart).map( item =>
                                         <div className="row margin-top-20px" key={item.id}>
-                                            <div className="col-lg-3 col-md-3 col-sm-3">
+                                            <div className="col-lg-2 col-md-2 col-sm-2">
                                                 <img src={ `/img/products/${item.image}` } alt={item.name} className="img-fluid margin-center" />
                                             </div>
-                                            <div className="col-lg-9 col-md-9 col-sm-9 padding-top-20px text-center">
-                                                <h3 className="zero-space-bottom">{item.name}</h3>
-                                                <p className="zero-space-top">{item.description}</p>
+                                            <div className="col-lg-10 col-md-10 col-sm-10 padding-top-20px text-center">
                                                 <div className="row margin-bottom-20px">
-                                                    <div className="col-lg-6 col-md-6 col-sm-12">
-                                                        <h2 className="zero-space-bottom">{item.quantity}</h2>
+                                                    <div className="col-lg-9 col-md-9 col-sm-9 text-left">
+                                                        <h4 className="zero-space-bottom">{item.name}</h4>
+                                                        <p className="zero-space-top zero-space-bottom">{item.description}</p>
+                                                        <p className="zero-space-top zero-space-bottom"><b>Sku:</b> {item.sku}</p>
+                                                        <p className="zero-space-top"><b>In Stock:</b> {item.stock}</p>
+                                                    </div>
+                                                    <div className="col-lg-3 col-md-3 col-sm-3">
+                                                        <h4 className="zero-space-bottom">{item.quantity}</h4>
                                                         <button onClick={() => this.props.addToCart(item)} className="btn btn-army">+</button>
                                                         <button onClick={() => this.props.removeFromCart(item)} className="btn btn-army margin-left-5px">-</button>
                                                         <button onClick={() => this.props.removeAllFromCart(item)} className="btn btn-army margin-left-5px">X</button>
-                                                    </div>
-                                                    <div className="col-lg-6 col-md-6 col-sm-12">
-                                                        <h2 className="zero-space-bottom">${ (item.price * item.quantity).toFixed(2) }</h2>
+                                                        <h4 className="zero-space-bottom">${ (item.price * item.quantity).toFixed(2) }</h4>
                                                         <p>Tax included</p>
                                                         
                                                     </div>
