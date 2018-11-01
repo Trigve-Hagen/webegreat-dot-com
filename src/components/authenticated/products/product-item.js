@@ -1,7 +1,8 @@
 import React from 'react';
 
 export default function ProductItem(props) {
-    if(props.product == []) {
+    console.log(props.product);
+    if(props.product === [] || props.product === undefined) {
         return <div><h3>There are no products yet.</h3></div>
     } else {
         return <div className="row margin-top-20px">

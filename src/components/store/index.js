@@ -97,6 +97,7 @@ class Home extends React.Component {
                     path="/"
                     authenticated={this.props.authentication[0].authenticated}
                     role={this.props.authentication[0].role}
+                    onClick={this.onClick}
                 />
                 <div
                     className="container"

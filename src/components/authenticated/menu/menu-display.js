@@ -25,14 +25,18 @@ class MenuDisplay extends React.Component {
 				if(json.success) {
                     let arrayArgs = [];
                     for (let value of Object.values(json.menuItems)) {
-                        arrayArgs.push({
-                            id: value['menuid'],
-                            name: value['name'],
-                            level: value['level'],
-                            parent: value['parent'],
-                            description: value['description'],
-                            ifproduct: value['if_product']
-                        });
+                        if(value['if_active'] == 1 && value['if_dropdown'] == 0) {
+                            arrayArgs.push({
+                                id: value['menuid'],
+                                name: value['name'],
+                                level: value['level'],
+                                parent: value['parent'],
+                                description: value['description'],
+                                ifproduct: value['if_product'],
+                                ifactive: value['if_active'],
+                                ifdropdown: value['if_dropdown']
+                            });
+                        }
                     }
                     //console.log(arrayArgs);
                     this.setState({

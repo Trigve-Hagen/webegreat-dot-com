@@ -47,7 +47,9 @@ class MenuMaker extends React.Component {
                             level: value['level'],
                             parent: value['parent'],
                             description: value['description'],
-                            ifproduct: value['if_product']
+                            ifproduct: value['if_product'],
+                            ifactive: value['if_active'],
+                            ifdropdown: value['if_dropdown']
                         });
                     }
                     //console.log(arrayArgs);
@@ -106,6 +108,8 @@ class MenuMaker extends React.Component {
                 obj.parent = item.parent;
                 obj.description = item.description;
                 obj.ifproduct = item.ifproduct;
+                obj.ifactive = item.ifactive;
+                obj.ifdropdown = item.ifdropdown;
             }
         });
         return obj;
@@ -154,7 +158,9 @@ class MenuMaker extends React.Component {
                                 level: item.level,
                                 parent: item.parent,
                                 description: item.description,
-                                ifproduct: item.ifproduct
+                                ifproduct: item.ifproduct,
+                                ifactive: item.ifactive,
+                                ifdropdown: item.ifdropdown
                             });
                         }
                     });
@@ -168,7 +174,9 @@ class MenuMaker extends React.Component {
                         level: arrayArgs[0].level,
                         parent: arrayArgs[0].parent,
                         description: arrayArgs[0].description,
-                        ifproduct: arrayArgs[0].ifproduct
+                        ifproduct: arrayArgs[0].ifproduct,
+                        ifactive: arrayArgs[0].ifactive,
+                        ifdropdown: arrayArgs[0].ifdropdown
                     });
                     location.reload();
 				} else {

@@ -11,7 +11,9 @@ class UploadMenu extends React.Component {
             menuUploadParent: '',
             menuUploadLevel: '',
             menuUploadIfProduct: '',
-            menuUploadDescription: ''
+            menuUploadDescription: '',
+            menuUploadIfActive: '',
+            menuUploadIfDropdown: '',
 		}
         this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
@@ -30,6 +32,8 @@ class UploadMenu extends React.Component {
             data.append('level', this.state.menuUploadLevel);
             data.append('description', this.state.menuUploadDescription);
             data.append('ifproduct', this.state.menuUploadIfProduct);
+            data.append('ifactive', this.state.menuUploadIfActive);
+            data.append('ifdropdown', this.state.menuUploadIfDropdown);
             data.append('token', this.props.authentication[0].token);
 
 		fetch(config.site_url + '/api/menu/upload', {
@@ -45,7 +49,9 @@ class UploadMenu extends React.Component {
                         parent: json.parent,
                         level: json.level,
                         description: json.description,
-                        ifproduct: json.ifproduct
+                        ifproduct: json.ifproduct,
+                        ifactive: json.ifactive,
+                        ifdropdown: json.ifdropdown
                     });
 					this.setState({
                         menuUploadError: json.message,
@@ -53,7 +59,9 @@ class UploadMenu extends React.Component {
                         menuUploadParent: '',
                         menuUploadLevel: '',
                         menuUploadIfProduct: '',
-                        menuUploadDescription: ''
+                        menuUploadDescription: '',
+                        menuUploadIfActive: '',
+                        menuUploadIfDropdown: ''
                     });
                     location.reload();
 				} else {
@@ -79,6 +87,20 @@ class UploadMenu extends React.Component {
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
                                 <fieldset className="form-group">
                                     <input value={this.state.menuUploadName} onChange={this.onChange} name="menuUploadName" type="text" className="form-element" placeholder="Menu Level Name"/>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <select value={this.state.menuUploadIfActive} onChange={this.onChange} name="menuUploadIfActive" className="form-element custom">
+                                        <option value="">Choose if visiblie in the front menu.</option>
+                                        <option value="0">Not Active</option>
+                                        <option value="1">Active</option>
+                                    </select>
+                                </fieldset>
+                                <fieldset className="form-group">
+                                    <select value={this.state.menuUploadIfDropdown} onChange={this.onChange} name="menuUploadIfDropdown" className="form-element custom">
+                                        <option value="">Choose menu type.</option>
+                                        <option value="0">In Verticle Menu</option>
+                                        <option value="1">In Dropdown Menu</option>
+                                    </select>
                                 </fieldset>
                                 <fieldset className="form-group">
                                     <select value={this.state.menuUploadLevel} onChange={this.onChange} name="menuUploadLevel" className="form-element custom">

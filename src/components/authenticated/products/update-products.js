@@ -55,19 +55,21 @@ class UpdateProducts extends React.Component {
     }
 
     componentDidUpdate(nextProps) {
-        if(nextProps.product.id !== this.props.product.id) {
-            this.setState({
-                proUpdateId: this.props.product.id,
-                proUpdateMenu: this.props.product.menu,
-                proUpdateName: this.props.product.name,
-                proUpdateSku: this.props.product.sku,
-                proUpdatePrice: this.props.product.price,
-                proUpdateStock: this.props.product.stock,
-                proUpdateIfManaged: this.props.product.ifmanaged,
-                proUpdateDescription: this.props.product.description,
-                updateInput: '',
-                fileName: this.props.product.image.split(".")[0]
-            });
+        if(this.props.product) {
+            if(nextProps.product.id !== this.props.product.id) {
+                this.setState({
+                    proUpdateId: this.props.product.id,
+                    proUpdateMenu: this.props.product.menu,
+                    proUpdateName: this.props.product.name,
+                    proUpdateSku: this.props.product.sku,
+                    proUpdatePrice: this.props.product.price,
+                    proUpdateStock: this.props.product.stock,
+                    proUpdateIfManaged: this.props.product.ifmanaged,
+                    proUpdateDescription: this.props.product.description,
+                    updateInput: '',
+                    fileName: this.props.product.image.split(".")[0]
+                });
+            }
         }
     }
 
@@ -97,18 +99,7 @@ class UpdateProducts extends React.Component {
             .then(json => {
                 if(json.success) {
                     console.log("Successfull Product Update.");
-                    this.props.updateProduct({
-                        id: json.id,
-                        menu: json.menu,
-                        name: json.name,
-                        sku: json.sku,
-                        price: json.price,
-                        stock: json.stock,
-                        ifmanaged: json.ifmanaged,
-                        description: json.description,
-                        image: json.image
-                    });
-                    let imagename = obj.image.split(".");
+                    let imagename = json.image.split(".");
                     this.setState({
                         proUpdateError: json.message,
                         proUpdateMenu: json.menu,

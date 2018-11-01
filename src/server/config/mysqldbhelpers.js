@@ -174,7 +174,7 @@ module.exports = function(database, config, connection, moment, fs, reqPath) {
                     `INSERT INTO ${element.table_name} VALUES(1, '${myDate}', '${myDate}', 321, 'Army Airborne T-Shirt', 'Grey t-shirt with Airborne image on front and American flag on sleeve.', 'airborne-shirt.png', '39.99', 'Tshirts', 100, 1, 'WBG-TS1', 'army airborne t-shirt wbg-ts1 grey t-shirt with airborne image on front and american flag on sleeve. 39.99 t-shirts');`,
                     `INSERT INTO ${element.table_name} VALUES(2, '${myDate}', '${myDate}', 321, 'Dont Tread on Me', 'American flag colored bearded skull on front of a black t-shirt with american flag on one sleeve and cross guns on the other.', 'black-shirt.png', '39.99', 'Tshirts', 100, 1, 'WBG-TS2', 'dont tread on me wbg-ts2 american flag colored bearded skull on front of a black t-shirt with american flag on one sleeve and cross guns on the other. 39.99 t-shirts');`,
                     `INSERT INTO ${element.table_name} VALUES(3, '${myDate}', '${myDate}', 321, 'Army Cologne', 'Smell and feel like a true warrior with the best cologne in the west.', 'cologne.png', '69.99', 'Cologne', 100, 1, 'WBG-C1', 'army cologne wbg-c1 smell and feel like a true warrior with the best cologne in the west. 69.99 cologne');`,
-                    `INSERT INTO ${element.table_name} VALUES(4, '${myDate}', '${myDate}', 321, 'Army Baseball Caps', 'Assortment of Army baseball caps for $12.99 each tax included.', 'hats.png', '12.99', 'Hats', 100, 1, 'WBG-H1', 'army baseball caps wbg-h1 assortment of army baseball caps for $12.99 each tax included. 12.99 baseball caps');`,
+                    `INSERT INTO ${element.table_name} VALUES(4, '${myDate}', '${myDate}', 321, 'Army Baseball Caps', 'Assortment of Army baseball caps for $12.99 each tax included.', 'army-caps.png', '12.99', 'Baseball Caps', 100, 1, 'WBG-H1', 'army baseball caps wbg-h1 assortment of army baseball caps for $12.99 each tax included. 12.99 baseball caps');`,
                     `INSERT INTO ${element.table_name} VALUES(5, '${myDate}', '${myDate}', 321, 'Swiss Army Watch and Knife Combo', 'Swiss Army quality service watch with knife combo for keeping time out in the field.', 'watch.png', '89.99', 'Watches', 100, 1, 'WBG-W1', 'swiss army watch and knife combo wbg-w1 swiss army quality service watch with knife combo for keeping time out in the field. 89.99 watches');`,
                 ];
                 products.forEach(insert => {
@@ -185,13 +185,15 @@ module.exports = function(database, config, connection, moment, fs, reqPath) {
             }
             if(element.table_name == 'h_frontmenu') {
                 const products = [
-                    `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Army Clothing', 0, 'base', 'Army airborne clothing and clothing accessories department.', 0);`,
-                    `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Army Hygiene', 0, 'base', 'Army airborne hygiene and hygiene accessories department.', 0);`,
-                    `INSERT INTO ${element.table_name} VALUES(3, 321, '${myDate}', '${myDate}', 'Army Gear', 0, 'base', 'Army airborne gear department.', 0);`,
-                    `INSERT INTO ${element.table_name} VALUES(4, 321, '${myDate}', '${myDate}', 'Cologne', 1, 'Army Hygiene', 'Army cologne department.', 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(5, 321, '${myDate}', '${myDate}', 'Shirts', 1, 'Army Clothing', 'Army airborne shirts department.', 0);`,
-                    `INSERT INTO ${element.table_name} VALUES(6, 321, '${myDate}', '${myDate}', 'T-shirts', 2, 'Shirts', 'Army airborne t-shirts department.', 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(7, 321, '${myDate}', '${myDate}', 'Watches', 1, 'Army Gear', 'Army airborne watches and watch accessories department.', 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Army Clothing', 0, 'base', 'Army airborne clothing and clothing accessories department.', 0, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Army Hygiene', 0, 'base', 'Army airborne hygiene and hygiene accessories department.', 0, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(3, 321, '${myDate}', '${myDate}', 'Army Gear', 0, 'base', 'Army airborne gear department.', 0, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(4, 321, '${myDate}', '${myDate}', 'Cologne', 1, 'Army Hygiene', 'Army cologne department.', 1, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(5, 321, '${myDate}', '${myDate}', 'Shirts', 1, 'Army Clothing', 'Army airborne shirts department.', 0, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(6, 321, '${myDate}', '${myDate}', 'T-shirts', 2, 'Shirts', 'Army airborne t-shirts department.', 1, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(7, 321, '${myDate}', '${myDate}', 'Watches', 1, 'Army Gear', 'Army airborne watches and watch accessories department.', 1, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(8, 321, '${myDate}', '${myDate}', 'Head Gear', 2, 'Army Clothing', 'Army head coverings department.', 0, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(9, 321, '${myDate}', '${myDate}', 'Baseball Caps', 2, 'Head Gear', 'Army baseball caps.', 1, 1, 1);`,
                 ];
                 products.forEach(insert => {
                     connection.query(insert, (error, results) => {

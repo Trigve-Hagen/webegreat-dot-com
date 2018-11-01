@@ -26,7 +26,7 @@ module.exports = {
         name: 'troops',
     },
     tables: [
-        {
+       {
             table_name: 'a_products', // 0
             table_fields: [
                 {
@@ -638,6 +638,23 @@ module.exports = {
                     Null: 'NOT NULL',
                     Key: '',
                     Default: null,
+                    Extra: ''
+                }
+                ,
+                {
+                    Field: 'if_active',
+                    Type: 'int(1)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT 0',
+                    Extra: ''
+                },
+                {
+                    Field: 'if_dropdown',
+                    Type: 'int(1)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT 1',
                     Extra: ''
                 }
             ]

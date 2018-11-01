@@ -465,6 +465,8 @@ app.post('/api/menu/update', function(req, res) {
         level,
         parent,
         ifproduct,
+        ifactive,
+        ifdropdown,
         description,
         token
     } = body;
@@ -508,6 +510,34 @@ app.post('/api/menu/update', function(req, res) {
             return res.send({
                 success: false,
                 message: 'Letters Numbers Spaces _ - and . allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(ifactive)) {
+        updateObj.push({
+            name: config.tables[7].table_fields[9].Field,
+            content: parseInt(ifactive)
+        });
+    } else {
+        if(ifactive != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
+            });
+        }
+    }
+
+    if(config.patterns.numbers.test(ifdropdown)) {
+        updateObj.push({
+            name: config.tables[7].table_fields[10].Field,
+            content: parseInt(ifdropdown)
+        });
+    } else {
+        if(ifdropdown != '') {
+            return res.send({
+                success: false,
+                message: 'Numbers allowed.'
             });
         }
     }
@@ -581,7 +611,7 @@ app.post('/api/menu/update', function(req, res) {
                 updateMenuInserts.push(element.content);
                 objCount++;
             });
-            updateMenu += `WHERE ?? = ${id} AND ?? = ${results[0]['user_id']}`;
+            updateMenu += `WHERE ?? = ${id} AND ?? = ${results[0][config.tables[3].table_fields[1].Field]}`;
             updateMenuInserts.push(config.tables[7].table_fields[0].Field);
             updateMenuInserts.push(config.tables[7].table_fields[1].Field);
             
@@ -601,6 +631,8 @@ app.post('/api/menu/update', function(req, res) {
                         level: level,
                         parent: parent,
                         ifproduct: ifproduct,
+                        ifactive: ifactive,
+                        ifdropdown: ifdropdown,
                         description: description,
                     });
                 }
@@ -702,6 +734,8 @@ app.post('/api/menu/upload', function(req, res) {
         parent,
         description,
         ifproduct,
+        ifactive,
+        ifdropdown,
         token
     } = body;
 
@@ -709,6 +743,20 @@ app.post('/api/menu/upload', function(req, res) {
         return res.send({
             success: false,
             message: 'Product name invalid or cannot be left empty.'
+        });
+    }
+
+    if(!ifactive || !config.patterns.numbers.test(ifactive)) {
+        return res.send({
+            success: false,
+            message: 'If active invalid or cannot be left empty.'
+        });
+    }
+
+    if(!ifdropdown || !config.patterns.numbers.test(ifdropdown)) {
+        return res.send({
+            success: false,
+            message: 'If dropdown invalid or cannot be left empty.'
         });
     }
 
@@ -763,12 +811,12 @@ app.post('/api/menu/upload', function(req, res) {
                 message: 'Server Error in get userid upload menu.'
             });
         } else {
-            var insertMenu = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?)";
+            var insertMenu = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             var insertMenuInserts = [
                 config.tables[7].table_name,
                 results[0][config.tables[3].table_fields[1].Field],
                 myDate, myDate, name,
-                level, parent, description, ifproduct
+                level, parent, description, ifproduct, ifactive, ifdropdown
             ];
             insertMenu = mysql.format(insertMenu, insertMenuInserts);
             connection.query(insertMenu, function (error, result, fields) {
@@ -786,6 +834,8 @@ app.post('/api/menu/upload', function(req, res) {
                         level: level,
                         parent: parent,
                         description: description,
+                        ifactive: ifactive,
+                        ifdropdown: ifdropdown,
                         ifproduct: ifproduct
                     });
                 }
@@ -813,42 +863,23 @@ app.post('/api/product/menulinks', function(req, res) {
         });
     }
 
-    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
-    let userIdInserts = [
-        config.tables[3].table_fields[1].Field,
-        config.tables[3].table_name,
-        config.tables[3].table_fields[0].Field,
-        token
+    let getMenuLinksForSelect = "SELECT * FROM ?? WHERE ?? = 1";
+    let getMenuLinksForSelectInserts = [
+        config.tables[7].table_name,
+        config.tables[7].table_fields[8].Field
     ];
-    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
-    connection.query(getUserIdSession, function (error, results, fields) {
+    getMenuLinksForSelect = mysql.format(getMenuLinksForSelect, getMenuLinksForSelectInserts);
+    connection.query(getMenuLinksForSelect, function (error, result, fields) {
         if(error) {
             return res.send({
                 success: false,
-                message: 'Server error in get session get menulinks.'
+                message: 'Server error in get product details.'
             });
         } else {
-            let getMenuLinksForSelect = "SELECT * FROM ?? WHERE ?? = ? AND ?? = 1";
-            let getMenuLinksForSelectInserts = [
-                config.tables[7].table_name,
-                config.tables[7].table_fields[1].Field,
-                results[0][config.tables[3].table_fields[1].Field],
-                config.tables[7].table_fields[8].Field
-            ];
-            getMenuLinksForSelect = mysql.format(getMenuLinksForSelect, getMenuLinksForSelectInserts);
-            connection.query(getMenuLinksForSelect, function (error, result, fields) {
-                if(error) {
-                    return res.send({
-                        success: false,
-                        message: 'Server error in get product details.'
-                    });
-                } else {
-                    return res.send({
-                        success: true,
-                        message: 'Success',
-                        links: result
-                    });
-                }
+            return res.send({
+                success: true,
+                message: 'Success',
+                links: result
             });
         }
     });
@@ -1361,54 +1392,71 @@ app.post('/api/product/upload', function(req, res) {
                 message: 'Server Error in get userid.'
             });
         } else {
-            let ext = '';
-            var splitRes = req.files.file.mimetype.split("/");
-            switch(splitRes[1]) {
-                case 'jpeg': ext = '.jpg'; break;
-                case 'jpg': ext = '.jpg'; break;
-                case 'png': ext = '.png'; break;
-                case 'gif': ext = '.gif'; break;
-            }
-            let imageFile = req.files['file'];
-            let image = req.body.filename + ext;
-
-            imageFile.mv(imagePath + `/img/products/${req.body.filename}${ext}`,
-            function(err) {
-                if (err) {
+            let getLastProductId = "SELECT MAX(??) FROM ??";
+            let getLastProductIdInserts = [
+                config.tables[0].table_fields[0].Field,
+                config.tables[0].table_name
+            ];
+            getLastProductId = mysql.format(getLastProductId, getLastProductIdInserts);
+            connection.query(getLastProductId, function (error, maxIdResults, fields) {
+                if(error) {
                     return res.send({
                         success: false,
-                        message: 'Server error uploading image.'
+                        message: 'Server Error in get last order id'
                     });
                 } else {
-                    var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    var insertProductInserts = [
-                        config.tables[0].table_name,
-                        myDate, myDate, results[0][config.tables[3].table_fields[1].Field], name,
-                        description, image, price, menu, stock, ifmanaged, sku, metta
-                    ];
-                    insertProduct = mysql.format(insertProduct, insertProductInserts);
-                    connection.query(insertProduct, function (error, result, fields) {
-                        if(error) {
+                    let newProductid = maxIdResults[0]['MAX(`' + config.tables[0].table_fields[0].Field + '`)'] + 1;
+                    let ext = '';
+                    var splitRes = req.files.file.mimetype.split("/");
+                    switch(splitRes[1]) {
+                        case 'jpeg': ext = '.jpg'; break;
+                        case 'jpg': ext = '.jpg'; break;
+                        case 'png': ext = '.png'; break;
+                        case 'gif': ext = '.gif'; break;
+                    }
+                    let imageFile = req.files['file'];
+                    let image = req.body.filename + "-" + newProductid + ext;
+                    //console.log(image);
+                    imageFile.mv(imagePath + `/img/products/${req.body.filename}-${newProductid}${ext}`,
+                    function(err) {
+                        if (err) {
                             return res.send({
                                 success: false,
-                                message: 'Server Error in product upload'
+                                message: 'Server error uploading image.'
                             });
                         } else {
-                            return res.send({
-                                success: true,
-                                message: 'Your Product has been successfully uploaded.',
-                                id: result.insertId,
-                                menu: menu,
-                                name: name,
-                                description: description,
-                                price: price,
-                                stock: stock,
-                                ifmanaged: ifmanaged,
-                                sku: sku,
-                                image: image
-                            });
+                            var insertProduct = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            var insertProductInserts = [
+                                config.tables[0].table_name,
+                                myDate, myDate, results[0][config.tables[3].table_fields[1].Field], name,
+                                description, image, price, menu, stock, ifmanaged, sku, metta
+                            ];
+                            insertProduct = mysql.format(insertProduct, insertProductInserts);
+                            //console.log(insertProduct);
+                            connection.query(insertProduct, function (error, result, fields) {
+                                if(error) {
+                                    return res.send({
+                                        success: false,
+                                        message: 'Server Error in product upload'
+                                    });
+                                } else {
+                                    return res.send({
+                                        success: true,
+                                        message: 'Your Product has been successfully uploaded.',
+                                        id: result.insertId,
+                                        menu: menu,
+                                        name: name,
+                                        description: description,
+                                        price: price,
+                                        stock: stock,
+                                        ifmanaged: ifmanaged,
+                                        sku: sku,
+                                        image: image
+                                    });
+                                }
+                            });    
                         }
-                    });    
+                    });
                 }
             });
         }
@@ -1585,14 +1633,14 @@ app.post('/api/product/update', function(req, res) {
                                     case 'gif': ext = '.gif'; break;
                                 }
                                 
-                                let image = req.body.filename + ext;
+                                let image = req.body.filename + "-" + proid + ext;
                                 if(config.patterns.names.test(image)) updateObj.push({
                                     name: config.tables[0].table_fields[6].Field,
                                     content: image
                                 });
 
                                 let imageFile = req.files['file'];
-                                imageFile.mv(imagePath + `/img/products/${req.body.filename}${ext}`,
+                                imageFile.mv(imagePath + `/img/products/${req.body.filename}-${proid}${ext}`,
                                     function(err) {
                                         if (err) {
                                             return res.send({
@@ -1686,6 +1734,7 @@ app.post('/api/product/update', function(req, res) {
                 updateProductInserts.push(config.tables[0].table_fields[3].Field);
                 
                 updateProduct = mysql.format(updateProduct, updateProductInserts);
+                console.log(updateProduct);
                 connection.query(updateProduct, function (error, result, fields) {
                     if(error) {
                         return res.send({
