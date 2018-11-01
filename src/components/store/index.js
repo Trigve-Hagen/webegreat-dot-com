@@ -94,7 +94,7 @@ class Home extends React.Component {
         return (
             <div>
                 <Navigation
-                    path="/"
+                    path="/store"
                     authenticated={this.props.authentication[0].authenticated}
                     role={this.props.authentication[0].role}
                     onClick={this.onClick}
