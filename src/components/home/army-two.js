@@ -1,4 +1,5 @@
 import React from 'react';
+import { relative } from 'path';
 
 class ArmyTwo extends React.Component {
     constructor(props) {
@@ -26,7 +27,7 @@ class ArmyTwo extends React.Component {
                     style={{
                         position: "absolute",
                         left: this.state.animate ? 0 : -600,
-                        top: this.state.animate ? 100 : 100,
+                        top: this.state.animate ? 290 : 100,
                         transition: 'all 3s',
                     }}
                 />

@@ -90,9 +90,9 @@ class Navigation extends React.Component {
                                 : <li className="nav-item"><NavLink className="nav-link" to='/store'>Store</NavLink></li>
                         }
                         {
-                            this.state.loadMenuItems !== []
-                                ? <Menu menu={this.state.loadMenuItems} onClick={this.onClick} path={path} />
-                                : null
+                            path === '/store' && this.state.loadMenuItems !== []
+                                ? <Menu menu={this.state.loadMenuItems} onClick={this.props.onClick} />
+                                : <div></div>
                         }
                         {
                             path === '/about'
