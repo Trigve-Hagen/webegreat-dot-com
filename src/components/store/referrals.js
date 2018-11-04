@@ -61,7 +61,7 @@ class Referrals extends React.Component {
     createStars(stars) {
         let starString = '';
         for(let j=0; j<stars; j++) {
-            starString += '<i class="fa fa-star fa-2x font-awesome-star"></i>'
+            starString += '<img src="/img/greenstar-md.png" style="max-width:50px" className="img-fluid"/>'
         }
         return {__html: starString};
     }

@@ -70,7 +70,7 @@ class Navigation extends React.Component {
         else fragment = <Front path={path} />
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark webegreat-menu">
-                <a className="navbar-brand" href="/">React</a>
+                <a className="navbar-brand" href="/">WebeGreat</a>
                 <button
                     className="navbar-toggler"
                     type="button"
@@ -99,11 +99,14 @@ class Navigation extends React.Component {
                                 ? <li className="nav-item active"><NavLink className="nav-link active" to='/about'>About</NavLink></li>
                                 : <li className="nav-item"><NavLink className="nav-link" to='/about'>About</NavLink></li>
                         }
+                        
+                    </ul>
+                    <ul className="navbar-nav mb-0">
                         {
                             count > 0
                                 ? path === '/cart'
-                                        ? <li className="nav-item active"><NavLink className="nav-link active" to='/cart'><i className="fa fa-cart-plus fa-spin fa-1x fa-fw"></i></NavLink></li>
-                                        : <li className="nav-item"><NavLink className="nav-link" to='/cart'><i className="fa fa-cart-plus fa-spin fa-1x fa-fw"></i><span></span></NavLink></li>
+                                        ? <li className="nav-item active"><NavLink className="nav-link active" to='/cart'><img src="/img/cart.png" style={{ maxWidth: '50px' }} className="img-fluid"/></NavLink></li>
+                                        : <li className="nav-item"><NavLink className="nav-link" to='/cart'><img src="/img/cart.png" style={{ maxWidth: '50px' }} className="img-fluid"/><span></span></NavLink></li>
                                 : null
                         }
                     </ul>

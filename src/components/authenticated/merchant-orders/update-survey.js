@@ -63,7 +63,7 @@ class UpdateSurvey extends React.Component {
         if(this.props.orders[0].surveyitems[0].comment) {
             let starString = '';
             for(let j=0; j<this.props.orders[0].surveyitems[0].stars; j++) {
-                starString += '<i class="fa fa-star fa-2x font-awesome-star"></i>'
+                starString += '<img src="/img/greenstar-md.png" style="max-width:50px" className="img-fluid"/>'
             }
             return (
                 <div className="mt-3">
