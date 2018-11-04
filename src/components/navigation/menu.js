@@ -8,9 +8,7 @@ class Menu extends React.Component {
             <React.Fragment>
 
                 <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" href="/store" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Menu
-                    </a>
+                    <a className="nav-link dropdown-toggle dropdown-toggle-split" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
 
                     <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         {
