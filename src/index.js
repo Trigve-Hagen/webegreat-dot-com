@@ -12,30 +12,14 @@ import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'video-react/dist/video-react.css';
-
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
 import 'font-awesome/css/font-awesome.min.css';
-
 import './index.css';
 
 import store from './config/store';
-import NotFound from './NotFound';
-
 import Home from './components/home';
-import Contact from './components/contact';
 
-import CustomerOrders from './components/authenticated/customer-orders';
-import MerchantOrders from './components/authenticated/merchant-orders';
-import Logout from './components/authenticated/logout';
-import Profile from './components/authenticated/profile';
-import Products from './components/authenticated/products';
-import Menu from './components/authenticated/menu';
-import Roles from './components/authenticated/roles';
-
-import Success from './components/paypal/success';
-import Cancel from  './components/paypal/cancel';
-import Signup from  './components/register/signup-complete';
 
 class DynamicImport extends Component {
     state = {
@@ -51,6 +35,46 @@ class DynamicImport extends Component {
         return this.props.children(this.state.component)
     }
 }
+
+const NotFound = (props) => (
+    <DynamicImport load={() => import('./NotFound')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Signup = (props) => (
+    <DynamicImport load={() => import('./components/register/signup-complete')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Success = (props) => (
+    <DynamicImport load={() => import('./components/paypal/success')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Cancel = (props) => (
+    <DynamicImport load={() => import('./components/paypal/cancel')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
 
 const Store = (props) => (
     <DynamicImport load={() => import('./components/store')}>
@@ -82,6 +106,16 @@ const Cart = (props) => (
     </DynamicImport>
 )
 
+const Contact = (props) => (
+    <DynamicImport load={() => import('./components/contact')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
 const Register = (props) => (
     <DynamicImport load={() => import('./components/register')}>
         {
@@ -94,6 +128,76 @@ const Register = (props) => (
 
 const Login = (props) => (
     <DynamicImport load={() => import('./components/login')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Logout = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/logout')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Roles = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/roles')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Profile = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/profile')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Products = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/products')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Menu = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/menu')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const CustomerOrders = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/customer-orders')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const MerchantOrders = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/merchant-orders')}>
         {
             (Component) => Component == null
                 ? <div></div>
