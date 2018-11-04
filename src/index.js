@@ -14,7 +14,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'video-react/dist/video-react.css';
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
-import 'font-awesome/css/font-awesome.min.css';
 import './index.css';
 
 import store from './config/store';
