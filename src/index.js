@@ -1,5 +1,5 @@
 import '@babel/polyfill';
-import React from 'react';
+import React, { Component } from 'react';
 import { render } from 'react-dom';
 //import registerServiceWorker from './registerServiceWorker';
 
@@ -23,12 +23,7 @@ import store from './config/store';
 import NotFound from './NotFound';
 
 import Home from './components/home';
-import Store from './components/store';
-import About from './components/about';
 import Contact from './components/contact';
-import Register from './components/register';
-import Login from './components/login';
-import Cart from './components/cart';
 
 import CustomerOrders from './components/authenticated/customer-orders';
 import MerchantOrders from './components/authenticated/merchant-orders';
@@ -41,6 +36,72 @@ import Roles from './components/authenticated/roles';
 import Success from './components/paypal/success';
 import Cancel from  './components/paypal/cancel';
 import Signup from  './components/register/signup-complete';
+
+class DynamicImport extends Component {
+    state = {
+        component: null
+    }
+    componentWillMount() {
+        this.props.load()
+            .then((mod) => this.setState(() => ({
+                component: mod.default
+            })))
+    }
+    render() {
+        return this.props.children(this.state.component)
+    }
+}
+
+const Store = (props) => (
+    <DynamicImport load={() => import('./components/store')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const About = (props) => (
+    <DynamicImport load={() => import('./components/about')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Cart = (props) => (
+    <DynamicImport load={() => import('./components/cart')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Register = (props) => (
+    <DynamicImport load={() => import('./components/register')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Login = (props) => (
+    <DynamicImport load={() => import('./components/login')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
 
 import( /* webpackChunkName: 'application' */ './App')
     .then(({ default: App }) =>

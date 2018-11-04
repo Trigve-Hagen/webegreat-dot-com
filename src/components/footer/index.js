@@ -49,7 +49,7 @@ class Footer extends React.Component {
                 <div className="container mb-4">
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                         <p className="footer-para-text mb-1">© 2018 - Site Built By Trigve Hagen</p>
-                        <p className="footer-para-text mt-1 mb-3">Trigve Hagen (209) 452-2699</p>
+                        <p className="footer-para-text mt-1 mb-3">Trigve Hagen (209)452-2699</p>
                         <p className="footer-para-text my-0">Laravel - <a
                                 href="http://arcsvcs.com"
                                 target="_blank"
@@ -108,10 +108,10 @@ class Footer extends React.Component {
                                 ) : (null)
                             }
                             <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.newsletterName = ref; }} type="text" style={inputText} name="newsletterName" className="form-element" style={{ borderColor: '#333333' }} placeholder="Name"/>
+                                <input ref={(ref) => { this.state.newsletterName = ref; }} type="text" style={inputText} name="newsletterName" className="form-element" style={{ borderColor: '#333333', color: '#ffffff' }} placeholder="Name"/>
                             </fieldset>
                             <fieldset className="form-group">
-                                <input ref={(ref) => { this.state.newsletterEmail = ref; }} type="email" style={inputText} name="newsletterEmail" className="form-element" style={{ borderColor: '#333333' }} placeholder="Email"/>
+                                <input ref={(ref) => { this.state.newsletterEmail = ref; }} type="email" style={inputText} name="newsletterEmail" className="form-element" style={{ borderColor: '#333333', color: '#ffffff' }} placeholder="Email"/>
                             </fieldset>
                             <button type="submit" className="btn btn-army" >Subscribe</button>
                         </form>

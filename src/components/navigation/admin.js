@@ -23,8 +23,8 @@ class Admin extends React.Component {
                     }
                     {
                         this.props.path === '/roles'
-                            ? <li className="nav-item active"><NavLink className="nav-link" to='/roles'>Roles</NavLink></li>
-                            : <li className="nav-item"><NavLink className="nav-link" to='/roles'>Roles</NavLink></li>
+                            ? <li className="nav-item active"><NavLink className="nav-link" to='/roles'>Users</NavLink></li>
+                            : <li className="nav-item"><NavLink className="nav-link" to='/roles'>Users</NavLink></li>
                     }
                     {
                         this.props.path === '/profile'
