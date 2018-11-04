@@ -105,16 +105,16 @@ class UploadOrders extends React.Component {
 			<div>
                 <h3>Order Upload</h3>
                 <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24 margin-top-20px margin-bottom-20px">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-3">
                         {
                             this.props.cart.map(item =>
                                 <div className="row" key={item.id}>
-                                    <div className="col-lg-3 col-md-3 col-sm-12 col-xs-24">
+                                    <div className="col-xl-3 col-lg-3 col-md-3 col-sm-12">
                                         <img src={ `/img/products/${item.image}` } alt="Army Strong" className="img-fluid"/>
                                     </div>
-                                    <div className="col-lg-9 col-md-9 col-sm-12 col-xs-24">
-                                        <h4 className="margin-bottom-5px">{item.name}</h4>
-                                        <p className="margin-bottom-5px">Quantity: {item.quantity}</p>
+                                    <div className="col-xl-9 col-lg-9 col-md-9 col-sm-12">
+                                        <h4 className="mb-1">{item.name}</h4>
+                                        <p className="mb-1">Quantity: {item.quantity}</p>
                                         <p>Price: {item.price}</p>
                                     </div>
                                 </div>
@@ -123,14 +123,14 @@ class UploadOrders extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         {
                             (this.state.mordersUploadError) ? (
                                 <label>{this.state.mordersUploadError}</label>
                             ) : (null)
                         }
                         <form name="userUpload" onSubmit={this.onSubmit}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <fieldset className="form-group">
                                     <input value={this.state.mordersUploadName} onChange={this.onChange} name="mordersUploadName" type="text" className="form-element" placeholder="Name"/>
                                 </fieldset>

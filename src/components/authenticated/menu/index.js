@@ -194,8 +194,8 @@ class MenuMaker extends React.Component {
                 <div>
                     <Navigation path="/menu" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
                     <div className="container">
-                        <div className="row margin-top-20px">
-                            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
+                        <div className="row mt-3">
+                            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
                                 <h2>Create Menu</h2>
                                 {
                                     (this.state.loadMenuError) ? (
@@ -221,7 +221,7 @@ class MenuMaker extends React.Component {
                                 />
                                 <UploadMenu menuItems={this.state.loadMenuItems}/>
                             </div>
-                            <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+                            <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <MenuDisplay menuItems={this.state.loadMenuItems} />
                                 <MenuItem menu={this.state.loadMenuItem} />
                                 <UpdateMenu

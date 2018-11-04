@@ -106,10 +106,10 @@ class Home extends React.Component {
                     }}
                 >
                     <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <SearchBar onSubmit={this.onSubmit}/>
                         </div>
-                        <div className="col-lg-4 col-md-4 col-sm-12">
+                        <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
                             {
                                 this.props.visibility[0].visibility == 1
                                     ? <MenuDisplay onClick={this.onClick}/>
@@ -121,7 +121,7 @@ class Home extends React.Component {
                                     : (<div></div>)
                             }
                         </div>
-                        <div className="col-lg-8 col-md-8 col-sm-12">
+                        <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                             {
                                 this.props.visibility[0].visibility == 1
                                     ? <ProductListing products={this.state.products}/>

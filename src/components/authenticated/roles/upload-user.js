@@ -81,19 +81,18 @@ class UploadUser extends React.Component {
 	}
 
     render() {
-        //this.props.resetRole();
         return (
 			<div>
                 <h3>User Upload</h3>
                 <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         {
                             (this.state.userUploadError) ? (
                                 <label>{this.state.userUploadError}</label>
                             ) : (null)
                         }
                         <form name="userUpload" onSubmit={this.onSubmit}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <div className="form-group">
                                     <select value={this.state.userUploadRole} onChange={this.onChange} name="userUploadRole" className="form-element custom">
                                         <option value="">Please select a value.</option>

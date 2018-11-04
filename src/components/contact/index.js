@@ -86,12 +86,12 @@ class Contact extends React.Component {
                     }}
                 >
                     <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
-                            <div className="row margin-top-20px margin-bottom-50px">
-								<div className="col-lg-4 col-md-4 col-sm-12 col-xs-24 margin-top-20px">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <div className="row my-3">
+								<div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 mt-3">
                                 <img src={ `/img/sniper.jpg` } alt="rifle range" className="img-fluid margin-center" />
 								</div>
-								<div className="col-lg-8 col-md-8 col-sm-12 col-xs-24 margin-top-20px">
+								<div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 mt-3">
 									{
 										(this.state.contactError) ? (
 											<label>{this.state.contactError}</label>

@@ -142,8 +142,8 @@ class UpdateProducts extends React.Component {
 
     render() {
         return (
-                <div className="row margin-top-20px margin-bottom-50px">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                <div className="row mt-3">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         <h3>Product Update</h3>
                         {
                             (this.state.proUpdateError) ? (
@@ -154,7 +154,7 @@ class UpdateProducts extends React.Component {
                             <fieldset className="form-group">
                                 <input ref={(ref) => { this.state.updateInput = ref; }} type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <fieldset className="form-group">
                                     <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>

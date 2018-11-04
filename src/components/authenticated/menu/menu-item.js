@@ -5,13 +5,13 @@ export default function MenuItem(props) {
         return <div><h4>No menu items uploaded.</h4></div>
     } else {
         return <div className="row">
-                <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24 text-center">
-                    <h3 className="margin-bottom-5px">{props.menu.name}</h3>
+                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 text-center">
+                    <h3 className="mb-1">{props.menu.name}</h3>
                     <p>{props.menu.description}</p>
                 </div>
-                <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24 text-center">
-                    <h3 className="margin-bottom-5px">Level: {props.menu.level}</h3>
-                    <p className="margin-bottom-5px">Parent: {props.menu.parent}</p>
+                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 text-center">
+                    <h3 className="mb-1">Level: {props.menu.level}</h3>
+                    <p className="mb-1">Parent: {props.menu.parent}</p>
                     <p>If Product Link:
                         {
                             props.menu.ifproduct

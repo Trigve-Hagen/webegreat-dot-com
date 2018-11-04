@@ -76,15 +76,15 @@ class UploadMenu extends React.Component {
         return (
 			<div>
                 <h3>Menu Upload</h3>
-                <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                <div className="row mb-3">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         {
                             (this.state.menuUploadError) ? (
                                 <label>{this.state.menuUploadError}</label>
                             ) : (null)
                         }
                         <form name="menuUpload" onSubmit={this.onSubmit}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <fieldset className="form-group">
                                     <input value={this.state.menuUploadName} onChange={this.onChange} name="menuUploadName" type="text" className="form-element" placeholder="Menu Level Name"/>
                                 </fieldset>

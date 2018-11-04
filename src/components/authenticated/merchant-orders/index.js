@@ -243,8 +243,8 @@ class MerchantOrders extends React.Component {
                         role={this.props.authentication[0].role}
                     />
                     <div className="container">
-                        <div className="row margin-top-20px margin-bottom-50px">
-                            <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
+                        <div className="row my-3">
+                            <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <h2>Merchant Orders</h2>
                                 <Pagination
                                     pages={this.state.pages}
@@ -270,7 +270,7 @@ class MerchantOrders extends React.Component {
                                 }
                                 <UploadOrders cart={this.props.cart} orders={this.props.morders}/>
                             </div>
-                            <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
+                            <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <OrderItem order={this.props.morders} />
                                 <UpdateSurvey orders={this.props.morders} /> 
                             </div>

@@ -85,17 +85,6 @@ class UploadProducts extends React.Component {
                         .then(json => {
                             if(json.success) {
                                 console.log("Product upload successfull.");
-                                this.props.updateProduct({
-                                    id: json.id,
-                                    menu : json.menu,
-                                    name: json.name,
-                                    sku: json.sku,
-                                    price: json.price,
-                                    stock: json.stock,
-                                    ifmanaged: json.ifmanaged,
-                                    description: json.description,
-                                    image: json.image
-                                });
                                 this.setState({
                                     proUploadError: json.message,
                                     proUploadMenu: '',
@@ -121,8 +110,8 @@ class UploadProducts extends React.Component {
 
     render() {
         return (
-			<div className="row margin-bottom-50px">
-                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+			<div className="row mb-3">
+                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <h3>Product Upload</h3>
                     {
                         (this.state.proUploadError) ? (
@@ -133,7 +122,7 @@ class UploadProducts extends React.Component {
                         <fieldset className="form-group">
                             <input ref={(ref) => { this.state.uploadInput = ref; }} type="file" className="form-control-file btn btn-army"/>
                         </fieldset>
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <fieldset className="form-group">
                                 <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                             </fieldset>
@@ -180,20 +169,9 @@ class UploadProducts extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        product: state.product,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateProduct: (value) => {
-            dispatch({ type: 'UPDATE_PRODUCT', payload: value})
-        },
-        resetProduct: (value) => {
-            dispatch({ type: 'RESET_PRODUCT', payload: value})
-        }
-    }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(UploadProducts);
+export default connect(mapStateToProps)(UploadProducts);

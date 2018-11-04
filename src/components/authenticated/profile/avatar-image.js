@@ -93,12 +93,12 @@ class AvatarImage extends React.Component {
         return (
             <div>
                 <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         <img src={ `/img/avatar/${avatarUrl}/${this.state.avatarImage}` } alt="Army Strong" className="img-fluid"/>
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         <h3>Avatar Upload</h3>
                         {
                             (this.state.avatarError) ? (
@@ -109,7 +109,7 @@ class AvatarImage extends React.Component {
                             <fieldset className="form-group">
                                 <input ref={(ref) => { this.state.avatarUploadInput = ref; }} type="file" className="form-control-file btn btn-army"/>
                             </fieldset>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <fieldset className="form-group">
                                     <input ref={(ref) => { this.state.avatarFileName = ref; }} type="text" className="form-element" placeholder="desired-name-of-file" />
                                 </fieldset>

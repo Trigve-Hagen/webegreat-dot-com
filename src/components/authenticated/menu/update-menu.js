@@ -85,8 +85,8 @@ class UpdateMenu extends React.Component {
 
     render() {
         return (
-            <div className="row margin-bottom-50px">
-                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+            <div className="row mb-3">
+                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <h3>Menu Update</h3>
                     {
                         (this.state.menuUpdateError) ? (
@@ -94,7 +94,7 @@ class UpdateMenu extends React.Component {
                         ) : (null)
                     }
                     <form name="menuUpload" onSubmit={this.onSubmit}>
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <fieldset className="form-group">
                                 <input value={this.state.menuUpdateName} onChange={this.onChange} name="menuUpdateName" type="text" className="form-element" placeholder="Menu Level Name"/>
                             </fieldset>

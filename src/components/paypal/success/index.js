@@ -68,8 +68,8 @@ class Success extends React.Component {
                 >
                     <div className="row">
                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                            <div className="row margin-top-20px margin-bottom-20px">
-                                <div className="col-lg-12 col-md-12 col-sm-12">
+                            <div className="row my-3">
+                                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <h4>Thank you {this.state.paypalSuccessResults} for shopping with us.</h4>
                                     <p>Please allow up to 6 weeks for shipping.</p>
                                     {
@@ -80,27 +80,25 @@ class Success extends React.Component {
                                     {
                                         sort(this.props.cart).map( item =>
                                             <div className="row" key={item.id}>
-                                                <div className="col-lg-12 col-md-12 col-sm-12">
-                                                    <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                                                        <img
-                                                            src={ `/img/products/${item.image}` }
-                                                            alt={item.name}
-                                                            className="img-fluid"
-                                                        />
-                                                    </div>
-                                                    <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8">
-                                                        <h3 className="zero-space-bottom">{item.name}</h3>
-                                                        <p className="zero-space-bottom">{item.description}</p>
-                                                        <h4>{item.quantity} @ ${ item.price * item.quantity }</h4>
-                                                    </div>
+                                                <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                                    <img
+                                                        src={ `/img/products/${item.image}` }
+                                                        alt={item.name}
+                                                        className="img-fluid"
+                                                    />
+                                                </div>
+                                                <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                                                    <h4 className="zero-space-bottom">{item.name}</h4>
+                                                    <p className="zero-space-bottom">{item.description}</p>
+                                                    <h4>{item.quantity} @ ${ item.price * item.quantity }</h4>
                                                 </div>
                                             </div>
                                         )
                                     }
                                 </div>
                             </div>
-                            <div className="row margin-bottom-50px">
-                                <div className="col-lg-12 col-md-12 col-sm-12">
+                            <div className="row mb-3">
+                                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <h4>Please come back and<br />shop with us again.</h4>
                                     <p>There is a 100% money back garuntee if for any reason you are not satisfied with your products. Just return the item in the condition you recieved it to<br /><br />Returns<br />Webegreat<br />13066 Paddy Creek Ln<br />Lodi, CA 95240.</p>
                                 </div>

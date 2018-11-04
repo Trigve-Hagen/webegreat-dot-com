@@ -60,8 +60,8 @@ class Cancel extends React.Component {
                     }}
                 >
                     <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12">
-                            <div className="row margin-top-20px margin-bottom-50px">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <div className="row my-3">
 								<div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     {
                                         (this.state.paypalCancelError) ? (

@@ -65,14 +65,14 @@ class UploadSurvey extends React.Component {
 			<div>
                 <h4>Please tell us about you experience.</h4>
                 <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         {
                             (this.state.cordersSurveyUploadError) ? (
                                 <label>{this.state.cordersSurveyUploadError}</label>
                             ) : (null)
                         }
                         <form name="cSurveyUpload" onSubmit={this.onSubmit}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <div className="form-group">
                                     <select value={this.state.cordersSurveyUploadStars} onChange={this.onChange} name="cordersSurveyUploadStars" className="form-element custom">
                                         <option value="">Please rate our service.</option>

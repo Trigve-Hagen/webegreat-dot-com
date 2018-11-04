@@ -49,8 +49,8 @@ class UpdatePassword extends React.Component {
     render() {
         return (
             <div>
-                <div className="row margin-top-20px">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                <div className="row mt-3">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         <h3>Update Password</h3>
                         {
                             (this.state.passwordError) ? (
@@ -58,7 +58,7 @@ class UpdatePassword extends React.Component {
                             ) : (null)
                         }
                         <form className="updatePassword" onSubmit={this.onSubmit}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <div className="form-group">
                                     <input value={this.state.password} onChange={this.onChange} type="password" className="form-element" name="password" placeholder="Password" />
                                 </div>

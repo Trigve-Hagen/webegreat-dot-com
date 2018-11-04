@@ -177,8 +177,8 @@ class CustomerOrders extends React.Component {
                 <div>
                     <Navigation path="/customer-orders" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
                     <div className="container">
-                        <div className="row margin-top-20px margin-bottom-50px">
-                            <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
+                        <div className="row my-3">
+                            <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <h3>Customer Orders</h3>
                                 {
                                     (this.state.loadOrdersError) ? (
@@ -203,7 +203,7 @@ class CustomerOrders extends React.Component {
                                     onChangePagination={this.onChangePagination}
                                 />
                             </div>
-                            <div className="col-lg-6 col-md-6 col-sm-12 col xs-24">
+                            <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <OrderItem order={this.props.corders} />
                                 <UploadSurvey cart={this.props.cart} orders={this.props.corders}/>
                             </div>

@@ -69,8 +69,8 @@ class Referrals extends React.Component {
     render() {
         if(this.state.referrals.length > 0) {
             return (
-                <div className="row margin-top-20px margin-bottom-50px">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24 text-center">
+                <div className="row my-1">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 text-center">
                         {
                             (this.state.loadReferralsError) ? (
                                 <label>{this.state.loadReferralsError}</label>
@@ -78,10 +78,10 @@ class Referrals extends React.Component {
                         }
                         {
                             this.state.referrals.map((referral, index) =>
-                                <div className="referrals margin-bottom-20px" key={index}>
+                                <div className="referrals" key={index}>
                                 <p>On {convertTime(referral.date)} {referral.name} ordered {referral.products} and gave WeBeGreat.com</p>
                                     <div dangerouslySetInnerHTML={this.createStars(referral.stars)} />
-                                    <p className="margin-bottom-5px">"{referral.comment}"</p>
+                                    <p>"{referral.comment}"</p>
                                 </div>
                             )
                         }

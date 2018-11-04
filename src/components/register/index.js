@@ -88,12 +88,12 @@ class Register extends React.Component {
                     }}
                 >
 					<div className="row">
-						<div className="col-lg-12 col-md-12 col-sm-12">
-							<h1 className="margin-top-20px">Register</h1>
-							<div className="row margin-bottom-50px">
-								<div className="col-lg-2 col-md-2 col-sm-12">
+						<div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+							<h1 className="mt-3">Register</h1>
+							<div className="row mb-3">
+								<div className="col-xl-2 col-lg-2 col-md-2 col-sm-12">
 								</div>
-								<div className="col-lg-8 col-md-8 col-sm-12">
+								<div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
 									{
 										(this.state.registerError) ? (
 											<label>{this.state.registerError}</label>
@@ -112,7 +112,7 @@ class Register extends React.Component {
 										<button type="submit" className="btn btn-army">Register</button>
 									</form>
 								</div>
-								<div className="col-lg-2 col-md-2 col-sm-12">
+								<div className="col-xl-2 col-lg-2 col-md-2 col-sm-12">
 								</div>
 							</div>
 						</div>

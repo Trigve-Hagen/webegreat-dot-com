@@ -113,7 +113,7 @@ class UpdateUser extends React.Component {
     render() {
         return (
             <div className="row">
-                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <h3>User Update</h3>
                     {
                         (this.state.userUpdateError) ? (
@@ -124,7 +124,7 @@ class UpdateUser extends React.Component {
                         <fieldset className="form-group">
                             <input ref={(ref) => { this.state.uploadInput = ref; }} name="uploadInput" type="file" className="form-control-file btn btn-army"/>
                         </fieldset>
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <fieldset className="form-group">
                                 <input value={this.state.fileName} onChange={this.onChange} name="fileName" type="text" className="form-element" placeholder="desired-name-of-file" />
                             </fieldset>
@@ -158,14 +158,14 @@ class UpdateUser extends React.Component {
                             </fieldset>
                         </div>
                         <div className="row">
-                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                            <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div className="form-group">
                                     <select value={this.state.userUpdateState} onChange={this.onChange} name="userUpdateState" className="form-element custom">
                                         {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                     </select>
                                 </div>
                             </div>
-                            <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
+                            <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <fieldset className="form-group">
                                     <input value={this.state.userUpdateZip} onChange={this.onChange} name="userUpdateZip" type="text" className="form-element" placeholder="Zip"/>
                                 </fieldset>

@@ -6,8 +6,7 @@ import config from '../../config/config';
 import states from '../../data/states';
 
 const checkoutCheckout = {
-    marginTop: '0px',
-    marginBottom: '25px'
+    marginTop: '0px'
 }
 
 function sort(items) {
@@ -116,7 +115,7 @@ class Cart extends React.Component {
                         }}
                     >
                         <div className="row">
-                            <div className="col-lg-12 col-md-12 col-sm-12 margin-top-50px margin-bottom-50px">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-3">
                                 <h3>The cart is empty.</h3>
                             </div>
                         </div>
@@ -145,24 +144,24 @@ class Cart extends React.Component {
                             <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 {
                                     sort(this.props.cart).map( item =>
-                                        <div className="row margin-top-20px" key={item.id}>
-                                            <div className="col-lg-2 col-md-2 col-sm-2">
+                                        <div className="row mt-3" key={item.id}>
+                                            <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                                                 <img src={ `/img/products/${item.image}` } alt={item.name} className="img-fluid margin-center" />
                                             </div>
-                                            <div className="col-lg-10 col-md-10 col-sm-10 padding-top-20px text-center">
-                                                <div className="row margin-bottom-20px">
-                                                    <div className="col-lg-9 col-md-9 col-sm-9 text-left">
-                                                        <h4 className="zero-space-bottom">{item.name}</h4>
-                                                        <p className="zero-space-top zero-space-bottom">{item.description}</p>
-                                                        <p className="zero-space-top zero-space-bottom"><b>Sku:</b> {item.sku}</p>
-                                                        <p className="zero-space-top"><b>In Stock:</b> {item.stock}</p>
+                                            <div className="col-xl-10 col-lg-10 col-md-10 col-sm-12 pt-3 text-center">
+                                                <div className="row mb-3">
+                                                    <div className="col-xl-9 col-lg-9 col-md-9 col-sm-12 text-left">
+                                                        <h4 className="mb-0">{item.name}</h4>
+                                                        <p className="my-0">{item.description}</p>
+                                                        <p className="my-0"><b>Sku:</b> {item.sku}</p>
+                                                        <p className="mt-0"><b>In Stock:</b> {item.stock}</p>
                                                     </div>
-                                                    <div className="col-lg-3 col-md-3 col-sm-3">
-                                                        <h4 className="zero-space-bottom">{item.quantity}</h4>
+                                                    <div className="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                                                        <h4 className="mt-0">{item.quantity}</h4>
                                                         <button onClick={() => this.props.addToCart(item)} className="btn btn-army">+</button>
-                                                        <button onClick={() => this.props.removeFromCart(item)} className="btn btn-army margin-left-5px">-</button>
-                                                        <button onClick={() => this.props.removeAllFromCart(item)} className="btn btn-army margin-left-5px">X</button>
-                                                        <h4 className="zero-space-bottom">${ (item.price * item.quantity).toFixed(2) }</h4>
+                                                        <button onClick={() => this.props.removeFromCart(item)} className="btn btn-army ml-1">-</button>
+                                                        <button onClick={() => this.props.removeAllFromCart(item)} className="btn btn-army ml-1">X</button>
+                                                        <h4 className="mb-0">${ (item.price * item.quantity).toFixed(2) }</h4>
                                                         <p>Tax included</p>
                                                         
                                                     </div>
@@ -171,23 +170,23 @@ class Cart extends React.Component {
                                         </div>
                                     )
                                 }
-                                <div className="row margin-top-20px margin-bottom-20px">
-                                    <div className="col-lg-6 col-md-6 col-sm-12">
+                                <div className="row my-3">
+                                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                                         <h2 style={checkoutCheckout}>Checkout</h2>
                                     </div>
-                                    <div className="col-lg-6 col-md-6 col-sm-12">
+                                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                                         <h2 className="margin-top-bottom-zero text-right">Total: ${total.toFixed(2)}</h2>
                                     </div>
                                 </div>
-                                <div className="row margin-top-50px margin-bottom-50px">
-                                    <div className="col-lg-6 col-md-6 col-sm-12">
+                                <div className="row my-3">
+                                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                         {
                                             (this.state.cartError) ? (
                                                 <label>{ this.state.cartError }</label>
                                             ) : (null)
                                         }
                                         <form name="cartForm" onSubmit={this.onSubmit}>
-                                            <div className="col-lg-12 col-md-12 col-sm-12">
+                                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <div className="form-group">
                                                     <input ref={(ref) => { this.state.cartName = ref; }} type="text" className="form-element" id="cartName" placeholder="Full Name" />
                                                 </div>
@@ -201,26 +200,26 @@ class Cart extends React.Component {
                                                     <input ref={(ref) => { this.state.cartCity = ref; }} type="text" className="form-element" id="cartCity" placeholder="City" />
                                                 </div>
                                             </div>
-                                            <div className="row margin-top-20px margin-bottom-20px">
-                                                <div className="col-lg-6 col-md-6 col-sm-12">
+                                            <div className="row my-3">
+                                                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                                     <div className="form-group">
                                                         <select ref={ (ref) => { this.state.cartState = ref; }} className="form-element custom">
                                                             {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div className="col-lg-6 col-md-6 col-sm-12">
+                                                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                                     <div className="form-group">
                                                         <input ref={(ref) => { this.state.cartZip = ref; }} type="text" className="form-element" id="cartZip" placeholder="Zip" />
                                                     </div>
                                                 </div>
                                             </div>  
-                                            <button type="submit" className="btn btn-army margin-bottom-20px">Checkout</button>
+                                            <button type="submit" className="btn btn-army mb-3">Checkout</button>
                                         </form>
                                     </div>
-                                    <div className="col-lg-6 col-md-6 col-sm-12">
+                                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                         <div className="row">
-                                            <div className="col-lg-12 col-md-12 col-sm-12">
+                                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <img src={ `/img/memorial-day.jpg` } className="img-fluid" alt="God bless our troops" />
                                             </div>
                                         </div>

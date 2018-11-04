@@ -74,7 +74,7 @@ class StoreVisibility extends React.Component {
         return (
             <div>
                 <div className="row">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         <h3>Store Visibility</h3>
                         {
                             (this.state.visibilityError) ? (
@@ -82,7 +82,7 @@ class StoreVisibility extends React.Component {
                             ) : (null)
                         }
                         <form className="storeVisibility" onSubmit={this.onSubmit}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <div className="form-group">
                                     <select
                                         value={this.state.visibility}

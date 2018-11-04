@@ -17,8 +17,8 @@ class SearchBar extends React.Component {
 
     render() {
         return (
-            <div className="row margin-top-20px">
-                <div className="col-lg-12 col-md-12 col-sm-12 col xs-24">
+            <div className="row mt-3">
+                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     {
                         (this.state.searchError) ? (
                             <label>{this.state.searchError}</label>

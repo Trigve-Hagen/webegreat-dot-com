@@ -6,22 +6,22 @@ function uniqueId(id) {
 
 export default function UserItem(props) {
     let folder = uniqueId(props.user.id);
-    return <div className="row margin-top-20px">
-        <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24 text-center">
+    return <div className="row mt-3">
+        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 text-center">
             <img
                 alt={ props.user.name }
                 src={ `/img/avatar/${folder}/${props.user.image}` }
                 className="img-fluid"
             />
         </div>
-        <div className="col-lg-6 col-md-6 col-sm-12 col-xs-24">
-            <h4 className="margin-bottom-5px">Name: { props.user.name }</h4>
-            <p className="margin-bottom-5px">Role: { props.user.role }</p>
-            <p className="margin-bottom-5px">If Active: { props.user.ifactive }</p>
-            <p className="margin-bottom-5px">Email: { props.user.email }</p>
-            <p className="margin-bottom-5px">Address: { props.user.address }</p>
-            <p className="margin-bottom-5px">City: { props.user.city }</p>
-            <p className="margin-bottom-5px">State: { props.user.state }</p>
+        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+            <h4 className="mb-1">Name: { props.user.name }</h4>
+            <p className="mb-1">Role: { props.user.role }</p>
+            <p className="mb-1">If Active: { props.user.ifactive }</p>
+            <p className="mb-1">Email: { props.user.email }</p>
+            <p className="mb-1">Address: { props.user.address }</p>
+            <p className="mb-1">City: { props.user.city }</p>
+            <p className="mb-1">State: { props.user.state }</p>
             <p>Zip: { props.user.zip }</p>   
         </div>
     </div>

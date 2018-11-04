@@ -81,12 +81,12 @@ class Login extends React.Component {
                     }}
                 >
                     <div className="row">
-						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-							<h1 className="margin-top-20px">Login</h1>
-							<div className="row margin-bottom-50px">
-                                <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
+						<div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+							<h1 className="mt-3">Login</h1>
+							<div className="row mb-3">
+                                <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                                 </div>
-                                <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+                                <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                     <form name="login" onSubmit={this.onSubmit}>
                                         {
                                             (this.state.loginError) ? (
@@ -102,7 +102,7 @@ class Login extends React.Component {
                                         <button type="submit" className="btn btn-army" >Login</button>
                                     </form>
                                 </div>
-                                <div className="col-lg-2 col-md-2 col-sm-12 col-xs-24">
+                                <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                                 </div>
                             </div>
                         </div>

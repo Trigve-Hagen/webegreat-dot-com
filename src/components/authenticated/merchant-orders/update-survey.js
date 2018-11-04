@@ -66,11 +66,11 @@ class UpdateSurvey extends React.Component {
                 starString += '<i class="fa fa-star fa-2x font-awesome-star"></i>'
             }
             return (
-                <div className="margin-top-50px">
+                <div className="mt-3">
                     <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <div dangerouslySetInnerHTML={{__html: starString}} />
-                            <p className="margin-bottom-5px">{this.props.orders[0].surveyitems[0].comment}</p>
+                            <p className="mb-1">{this.props.orders[0].surveyitems[0].comment}</p>
                             <p>
                                 {
                                     this.props.orders[0].surveyitems[0].iffront
@@ -82,14 +82,14 @@ class UpdateSurvey extends React.Component {
                     </div>
                     <h4>Set if showing in referals.</h4>
                     <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             {
                                 (this.state.mordersSurveyUpdateError) ? (
                                     <label>{this.state.mordersSurveyUpdateError}</label>
                                 ) : (null)
                             }
                             <form name="cSurveyUpload" onSubmit={this.onSubmit}>
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
+                                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <div className="form-group">
                                         <select value={this.state.mordersSurveyUpdateIfFront} onChange={this.onChange} name="mordersSurveyUpdateIfFront" className="form-element custom">
                                             <option value="">Please select a value.</option>

@@ -3,18 +3,18 @@ import AddButton from '../product-components/add-button';
 import RemoveButton from '../product-components/remove-button';
 
 export default function ProductItem(props) {
-    return <div className="row margin-bottom-20px">
-                <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+    return <div className="row mb-3">
+                <div className="col-xl-3 col-lg-3 col-md-3 col-sm-12">
                     <img
                         alt={ props.product.name }
                         src={ `/img/products/${ props.product.image }` }
                         className="img-fluid"
                     />
                 </div>
-                <div className="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-xs-12">
-                    <h3 className="margin-bottom-5px">{ props.product.name }</h3>
-                    <p className="margin-bottom-5px">{ props.product.description }</p>
-                    <p className="margin-bottom-5px">${ props.product.price }</p>
+                <div className="col-xl-9 col-lg-9 col-md-9 col-sm-12">
+                    <h4 className="mb-1">{ props.product.name }</h4>
+                    <p className="mb-1">{ props.product.description }</p>
+                    <p className="mb-1">${ props.product.price }</p>
                     <div className="product-button">
                         <AddButton 
                             cartItem={props.cartItem}

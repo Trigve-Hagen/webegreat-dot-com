@@ -209,8 +209,8 @@ class UserRoles extends React.Component {
                         role={this.props.authentication[0].role}
                     />
                     <div className="container">
-                        <div className="row margin-top-50px margin-bottom-50px">
-                            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-24">
+                        <div className="row my-3">
+                            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
                                 <h2>Create User</h2>
                                 {
                                     (this.state.loadUserError) ? (
@@ -236,7 +236,7 @@ class UserRoles extends React.Component {
                                 />
                                 <UploadUser />
                             </div>
-                            <div className="col-lg-8 col-md-8 col-sm-12 col-xs-24">
+                            <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <UserItem user={this.state.user}/>
                                 <UpdateUser user={this.state.user}/>
                             </div>
