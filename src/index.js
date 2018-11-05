@@ -25,6 +25,74 @@ import Contact from './components/contact';
 import Register from './components/register';
 import Login from './components/login';
 
+import Roles from './components/authenticated/roles';
+import Profile from './components/authenticated/profile';
+import Products from './components/authenticated/products';
+import Menu from './components/authenticated/menu';
+import CustomerOrders from './components/authenticated/customer-orders';
+import MerchantOrders from './components/authenticated/merchant-orders'; 
+
+
+/*const Roles = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/roles')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Profile = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/profile')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Products = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/products')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Menu = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/menu')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const CustomerOrders = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/customer-orders')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const MerchantOrders = (props) => (
+    <DynamicImport load={() => import('./components/authenticated/merchant-orders')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)*/
+
 class DynamicImport extends Component {
     state = {
         component: null
@@ -82,66 +150,6 @@ const Cancel = (props) => (
 
 const Logout = (props) => (
     <DynamicImport load={() => import('./components/authenticated/logout')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Roles = (props) => (
-    <DynamicImport load={() => import('./components/authenticated/roles')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Profile = (props) => (
-    <DynamicImport load={() => import('./components/authenticated/profile')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Products = (props) => (
-    <DynamicImport load={() => import('./components/authenticated/products')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Menu = (props) => (
-    <DynamicImport load={() => import('./components/authenticated/menu')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const CustomerOrders = (props) => (
-    <DynamicImport load={() => import('./components/authenticated/customer-orders')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const MerchantOrders = (props) => (
-    <DynamicImport load={() => import('./components/authenticated/merchant-orders')}>
         {
             (Component) => Component == null
                 ? <div></div>

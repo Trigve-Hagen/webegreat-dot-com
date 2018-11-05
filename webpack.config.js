@@ -19,7 +19,7 @@ module.exports = {
     publicPath: '/'
   },
 
-  optimization: {
+  /*optimization: {
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
@@ -39,7 +39,7 @@ module.exports = {
         },
       },
     },
-  },
+  },*/
 
   module: {
     rules: [
