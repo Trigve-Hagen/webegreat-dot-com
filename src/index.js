@@ -18,64 +18,14 @@ import './index.css';
 
 import store from './config/store';
 import Home from './components/home';
+import Store from './components/store';
+import About from './components/about';
+import Cart from './components/cart';
+import Contact from './components/contact';
+import Register from './components/register';
+import Login from './components/login';
 
-
-class DynamicImport extends Component {
-    state = {
-        component: null
-    }
-    componentWillMount() {
-        this.props.load()
-            .then((mod) => this.setState(() => ({
-                component: mod.default
-            })))
-    }
-    render() {
-        return this.props.children(this.state.component)
-    }
-}
-
-const NotFound = (props) => (
-    <DynamicImport load={() => import('./NotFound')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Signup = (props) => (
-    <DynamicImport load={() => import('./components/register/signup-complete')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Success = (props) => (
-    <DynamicImport load={() => import('./components/paypal/success')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Cancel = (props) => (
-    <DynamicImport load={() => import('./components/paypal/cancel')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Store = (props) => (
+/*const Store = (props) => (
     <DynamicImport load={() => import('./components/store')}>
         {
             (Component) => Component == null
@@ -127,6 +77,63 @@ const Register = (props) => (
 
 const Login = (props) => (
     <DynamicImport load={() => import('./components/login')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)*/
+
+
+
+class DynamicImport extends Component {
+    state = {
+        component: null
+    }
+    componentWillMount() {
+        this.props.load()
+            .then((mod) => this.setState(() => ({
+                component: mod.default
+            })))
+    }
+    render() {
+        return this.props.children(this.state.component)
+    }
+}
+
+const NotFound = (props) => (
+    <DynamicImport load={() => import('./NotFound')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Signup = (props) => (
+    <DynamicImport load={() => import('./components/register/signup-complete')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Success = (props) => (
+    <DynamicImport load={() => import('./components/paypal/success')}>
+        {
+            (Component) => Component == null
+                ? <div></div>
+                : <Component {...props} />
+       }
+    </DynamicImport>
+)
+
+const Cancel = (props) => (
+    <DynamicImport load={() => import('./components/paypal/cancel')}>
         {
             (Component) => Component == null
                 ? <div></div>

@@ -13,23 +13,15 @@ module.exports = {
     ]
   },
 
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendor",
-          chunks: "all"
-        }
-      }
-    }
-  },
-
   output: {
     path: helpers.root('dist'),
-    publicPath: '/',
-    filename: '[name].js',
-    chunkFilename: '[name].bundle.js',
+    publicPath: '/'
+  },
+
+  optimization: {
+      splitChunks: {
+        chunks: 'all'
+      }
   },
 
   module: {
