@@ -25,68 +25,6 @@ import Contact from './components/contact';
 import Register from './components/register';
 import Login from './components/login';
 
-/*const Store = (props) => (
-    <DynamicImport load={() => import('./components/store')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const About = (props) => (
-    <DynamicImport load={() => import('./components/about')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Cart = (props) => (
-    <DynamicImport load={() => import('./components/cart')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Contact = (props) => (
-    <DynamicImport load={() => import('./components/contact')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Register = (props) => (
-    <DynamicImport load={() => import('./components/register')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)
-
-const Login = (props) => (
-    <DynamicImport load={() => import('./components/login')}>
-        {
-            (Component) => Component == null
-                ? <div></div>
-                : <Component {...props} />
-       }
-    </DynamicImport>
-)*/
-
-
-
 class DynamicImport extends Component {
     state = {
         component: null
@@ -211,7 +149,6 @@ const MerchantOrders = (props) => (
        }
     </DynamicImport>
 )
-
 
 import( /* webpackChunkName: 'application' */ './App')
     .then(({ default: App }) =>
