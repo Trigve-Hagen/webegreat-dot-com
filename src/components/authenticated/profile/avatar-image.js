@@ -99,7 +99,7 @@ class AvatarImage extends React.Component {
                 </div>
                 <div className="row">
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                        <h3>Avatar Upload</h3>
+                        <h3 className="mt-3">Avatar Upload</h3>
                         {
                             (this.state.avatarError) ? (
                                 <label>{this.state.avatarError}</label>

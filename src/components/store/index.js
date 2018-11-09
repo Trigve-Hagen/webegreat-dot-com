@@ -7,6 +7,7 @@ import config from '../../config/config';
 import MenuDisplay from '../authenticated/menu/menu-display';
 import SearchBar from '../search-bar';
 import Referrals from './referrals';
+import Chat from '../chat';
 
 class Home extends React.Component {
     constructor(props) {
@@ -110,6 +111,11 @@ class Home extends React.Component {
                             <SearchBar onSubmit={this.onSubmit}/>
                         </div>
                         <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                            {
+                                this.props.visibility[0].visibility == 1
+                                    ? <Chat />
+                                    : (<div></div>)
+                            }
                             {
                                 this.props.visibility[0].visibility == 1
                                     ? <MenuDisplay onClick={this.onClick}/>

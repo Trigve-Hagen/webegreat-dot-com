@@ -55,14 +55,14 @@ class ToggleOnStore extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-24">
-                        <h3>Check Paypal</h3>
+                        <h3 className="mt-3">Check Paypal</h3>
                         {
                             (onError) ? (
                                 <label>{onError}</label>
                             ) : (null)
                         }
                         <form className="checkPaypal" onSubmit={this.onSubmit}>
-                            <button type="submit" className="btn btn-army">Run $1.00 Charge</button>
+                            <button type="submit" className="btn btn-army mb-3">Run $1.00 Charge</button>
                         </form>
                     </div>
                 </div>

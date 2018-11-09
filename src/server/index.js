@@ -13,6 +13,95 @@ const config = require('./config/mysqldbconfig');
 const urlConfig = require('../config/config');
 
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+const {
+    VERIFY_USER,
+    USER_CONNECTED,
+    COMMUNITY_CHAT,
+    USER_DISCONNECTED,
+    MESSAGE_RECIEVED,
+    MESSAGE_SENT,
+    LOGOUT
+} = require('../components/chat/chat-events');
+const {
+    createChat,
+    createMessage,
+    createUser
+} = require('../components/chat/chat-helpers')
+
+let communityChat = createChat();
+let connectedUsers = {};
+let chats = [communityChat];
+
+
+io.on('connection', function(socket) {
+    let sendMessageToChatFromUser;
+
+    socket.on(VERIFY_USER, (name, callback) => {
+        if(isUser(connectedUsers, name)) {
+            callback({ isUser: true, user: null });
+        } else {
+            callback({ isUser: false, user: createUser({ name: name }) });
+        }
+    });
+
+    socket.on(USER_CONNECTED, (user) => {
+        connectedUsers = addUser(connectedUsers, user);
+        socket.user = user;
+
+        sendMessageToChatFromUser = sendMessageToChat(user.name)
+        io.emit(USER_CONNECTED, connectedUsers);
+    });
+
+    socket.on('disconnect', () => {
+        if("user" in socket) {
+            connectedUsers = removeUser(connectedUsers, socket.user.name);
+
+            io.emit(USER_DISCONNECTED, connectedUsers);
+        }
+    })
+
+    socket.on(COMMUNITY_CHAT, (callback) => {
+        callback(communityChat);
+    })
+
+    socket.on(LOGOUT, () => {
+        connectedUsers = removeUser(connectedUsers, socket.user.name);
+        io.emit(USER_DISCONNECTED, connectedUsers);
+    });
+
+    socket.on(MESSAGE_SENT, ({chatId, message}) => {
+        sendMessageToChatFromUser(chatId, message);
+    })
+});
+
+const sendMessageToChat = (sender) => {
+    return (ChatId, message) => {
+        io.emit(`${MESSAGE_RECIEVED}-${ChatId}`, createMessage({message, sender}))
+    }
+}
+
+const addUser = (userList, user) => {
+    let newList = Object.assign({}, userList);
+    newList[user.name] = user;
+    return newList;
+}
+
+const removeUser = (userList, username) => {
+    let newList = Object.assign({}, userList);
+    delete newList[username];
+    return newList;
+}
+
+const isUser = (userList, username) => {
+    return username in userList;
+}
+
+http.listen(5000, function() {
+    console.log('Starting server on port 5000');
+});
 
 //console.log(util.inspect(token, {showHidden: false, depth: null}))
 
@@ -127,6 +216,16 @@ function validateImageUpload(file) {
         else return false;
     } else return false;
 }
+
+/*
+ ***************************** Socket.io *******************************
+ ***********************************************************************
+ */
+
+app.get('/api/chat/app', function (req, res) {
+    res.send('hello world')
+})
+
 
 /*
  ************************ Registration && Signup ***********************

@@ -186,6 +186,11 @@ https://www.youtube.com/watch?v=HZOXPta21PI&t=33s<br>
 https://www.youtube.com/watch?v=EPnBO8HgyRU<br>
 https://www.w3schools.com/nodejs/nodejs_email.asp
 
+`TechWarriorz & Leon Watson`<br>
+Socket.io
+https://www.youtube.com/watch?v=rGawLIqi21c&t=2738s<br>
+https://www.youtube.com/watch?v=6VFeJSwNj5w
+
 `Code refrences`<br>
 https://reactjs.org<br>
 https://www.youtube.com/watch?v=xa-_FIy2NgE<br>
@@ -195,6 +200,7 @@ https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/lifecycle_me
 `Other interesting stuff`<br>
 I have yet to dive into.<br>
 https://nodeschool.io/<br>
+https://projecteuler.net/archives<br>
 https://www.youtube.com/watch?v=SuzutbwjUp8<br>
 https://www.youtube.com/watch?v=ubXtOROjILU<br>
 https://egghead.io/lessons/react-redux-the-single-immutable-state-tree<br>

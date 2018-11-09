@@ -75,7 +75,7 @@ class StoreVisibility extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                        <h3>Store Visibility</h3>
+                        <h3 className="mt-3">Store Visibility</h3>
                         {
                             (this.state.visibilityError) ? (
                                 <label>{this.state.visibilityError}</label>
