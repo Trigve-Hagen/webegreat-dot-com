@@ -42,7 +42,10 @@ class Chat extends React.Component {
     }
 
     sendOpenPrivateMessage = (reciever) => {
-        this.state.socket.emit(PRIVATE_MESSAGE, {reciever, sender: this.state.user.name})
+        this.state.socket.emit(
+            PRIVATE_MESSAGE,
+            {reciever, sender: this.state.user.name, activeChat: this.state.activeChat}
+        );
     }
 
     setUser = (user) => {

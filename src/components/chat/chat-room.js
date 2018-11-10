@@ -62,7 +62,7 @@ class ChatRoom extends React.Component {
     }
 
     render() {
-        //console.log(this.props.chat);
+        console.log(this.props.chat);
         /**/
         return (
             <div>

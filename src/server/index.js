@@ -56,6 +56,7 @@ io.on('connection', function(socket) {
         socket.user = user;
 
         sendMessageToChatFromUser = sendMessageToChat(user.name);
+        //console.log(sendMessageToChatFromUser);
         sendTypingFromUser = sendTypingToChat(user.name);
 
         io.emit(USER_CONNECTED, connectedUsers);
@@ -88,12 +89,17 @@ io.on('connection', function(socket) {
         sendTypingFromUser(chatId, isTyping);
     });
 
-    socket.on(PRIVATE_MESSAGE, ({reciever, sender}) => {
+    socket.on(PRIVATE_MESSAGE, ({reciever, sender, activeChat}) => {
         if(reciever in connectedUsers) {
-            const newChat = createChat({ name: `${reciever}&${sender}`, users: [reciever, sender] });
             const recieverSocket = connectedUsers[reciever].socketId;
-            socket.to(recieverSocket).emit(PRIVATE_MESSAGE, newChat);
-            socket.emit(PRIVATE_MESSAGE, newChat);
+            if(activeChat === null || activeChat.id === communityChat.id) {
+                const newChat = createChat({ name: `${reciever}&${sender}`, users: [reciever, sender] });
+                console.log(newChat);
+                socket.to(recieverSocket).emit(PRIVATE_MESSAGE, newChat);
+                socket.emit(PRIVATE_MESSAGE, newChat);
+            } else {
+                socket.to(recieverSocket).emit(PRIVATE_MESSAGE, activeChat);
+            }
         }
     })
 
@@ -126,10 +132,6 @@ const removeUser = (userList, username) => {
 const isUser = (userList, username) => {
     return username in userList;
 }
-
-http.listen(5000, function() {
-    console.log('Starting server on port 5000');
-});
 
 //console.log(util.inspect(token, {showHidden: false, depth: null}))
 
@@ -4334,6 +4336,6 @@ app.post('/api/corders/survey', function(req, res) {
     });
 });
 
-app.listen(4000, () => {
+http.listen(4000, () => {
     console.log('  :)=>  Products server listening on port 4000');
 });

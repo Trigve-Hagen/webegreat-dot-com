@@ -18,9 +18,11 @@ class ChatSidebar extends React.Component {
     onSubmit(e) {
         e.preventDefault();
         this.props.onSendPrivateMessage(this.state.searchChats);
+        this.setState({ searchChats: '' });
     }
 
     render() {
+        console.log(this.props.chats);
         return (
             <div>
                 <form name="search-chats" onSubmit={this.onSubmit}>
