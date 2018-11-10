@@ -15,6 +15,7 @@ class ChatRoom extends React.Component {
         this.state = {
             messages: [],
             chatMessage: '',
+            isTyping: false,
             chatError: ''
         }
         this.onChange= this.onChange.bind(this);
@@ -31,21 +32,60 @@ class ChatRoom extends React.Component {
         this.setState({ chatMessage: "" })
     }
 
-    sendTyping = () => {
+    componentWillUnmount() {
+        this.stopCheckingTyping();
+    }
 
+    sendTyping = () => {
+        this.lastUpdateTime = Date.now();
+        if(!this.state.isTyping) {
+            this.setState({ isTyping: true });
+            this.props.sendTyping(true);
+            this.startCheckingTyping();
+        }
+    }
+
+    startCheckingTyping = () => {
+        this.typingInterval = setInterval(() => {
+            if((Date.now() - this.lastUpdateTime) > 300) {
+                this.setState({ isTyping: false });
+                this.stopCheckingTyping();
+            }
+        }, 300)
+    }
+
+    stopCheckingTyping = () => {
+        if(this.typingInterval) {
+            clearInterval(this.typingInterval);
+            this.props.sendTyping(false);
+        }
     }
 
     render() {
-        console.log(this.props.chat);
+        //console.log(this.props.chat);
+        /**/
         return (
             <div>
-                <ul>
+                <div style={{ height: '300px', overflowY: 'scroll', paddingBottom: '10px' }}>
+                    <ul>
+                        {
+                            this.props.chat.messages.map((message) =>
+                                <li key={message.id}><b>{message.sender}</b>: {message.message}</li>
+                            )
+                        }
+                    </ul>
+                </div>
+                <div>
                     {
-                        this.props.chat.messages.map((message) =>
-                            <li key={message.id}>{message.sender}: {message.message}</li>
-                        )
+                        this.props.typingUsers.map((name) => {
+                            return (
+                                <div key={name}>
+                                    {`${name} is typing . . .`}
+                                </div>
+                            )
+                        })
                     }
-                </ul>
+                </div>
                 <form name="chat" onSubmit={this.onSubmit}>
                     <div className="input-group">
                         <input

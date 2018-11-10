@@ -17,12 +17,13 @@ class ChatSidebar extends React.Component {
 
     onSubmit(e) {
         e.preventDefault();
+        this.props.onSendPrivateMessage(this.state.searchChats);
     }
 
     render() {
         return (
             <div>
-                <form name="saerch-chats" onSubmit={this.onSubmit}>
+                <form name="search-chats" onSubmit={this.onSubmit}>
                     <div className="input-group">
                         <input
                             value={this.state.searchChats}
@@ -51,11 +52,10 @@ class ChatSidebar extends React.Component {
                     <h5 className="mt-1">Chats</h5>
                     {
                         this.props.chats.map((chat) => {
-                            
                             if(chat.name) {
-                                const user = chat.users.find(({name}) => {
-                                    return name !== this.props.name;
-                                }) || { name: "Community" }
+                                const chatName = chat.users.find((name) => {
+                                    return name !== this.props.user.name;
+                                }) || "Community"
                                 const classNames = (this.props.activeChat && this.props.activeChat.id === chat.id) ? 'active' : ''
 
                                 return (
@@ -67,7 +67,7 @@ class ChatSidebar extends React.Component {
                                                     this.props.setActiveChat(chat)
                                                 } }
                                             >
-                                                { user.name }
+                                                { chatName }
                                             </a>
                                         </div>
                                     </div>

@@ -6,6 +6,7 @@ import ChatSidebar from './chat-sidebar'
 import config from '../../config/config';
 import {
     MESSAGE_RECIEVED,
+    PRIVATE_MESSAGE,
     USER_CONNECTED,
     COMMUNITY_CHAT,
     MESSAGE_SENT,
@@ -27,7 +28,21 @@ class Chat extends React.Component {
     }
 
     componentDidMount() {
-        this.state.socket.emit(COMMUNITY_CHAT, this.resetChat);
+        const { socket } = this.state;
+        this.initSocket(socket);
+    }
+
+    initSocket(socket) {
+        socket.emit(COMMUNITY_CHAT, this.resetChat);
+        socket.on(PRIVATE_MESSAGE, this.addChat);
+        socket.on('connect', () => {
+            socket.emit(COMMUNITY_CHAT, this.resetChat);
+        });
+        //socket.emit(PRIVATE_MESSAGE, {reciever: "Mike", sender: this.props.user.name})
+    }
+
+    sendOpenPrivateMessage = (reciever) => {
+        this.state.socket.emit(PRIVATE_MESSAGE, {reciever, sender: this.state.user.name})
     }
 
     setUser = (user) => {
@@ -44,14 +59,14 @@ class Chat extends React.Component {
         return this.addChat(chat, true);
     }
 
-    addChat = (chat, reset) => {
+    addChat = (chat, reset = false) => {
         const newChats = reset ? [chat] : [...this.state.chats, chat];
-        this.setState({ chats: newChats });
+        this.setState({ chats: newChats, activeChat: reset ? chat : this.state.activeChat });
 
         const messageEvent = `${MESSAGE_RECIEVED}-${chat.id}`;
         const typingEvent = `${TYPING}-${chat.id}`;
 
-        this.state.socket.on(typingEvent);
+        this.state.socket.on(typingEvent, this.updateTypingInChat(chat.id));
         this.state.socket.on(messageEvent, this.addMessageToChat(chat.id));
     }
 
@@ -65,7 +80,23 @@ class Chat extends React.Component {
         }
     }
 
-    updateTypingInChat = (chatId) => {}
+    updateTypingInChat = (chatId) => {
+        return ({isTyping, user}) => {
+            if(user !== user.name) {
+                let newChats = this.state.chats.map((chat) => {
+                    if(chat.id === chatId) {
+                        if(isTyping && !chat.typingUsers.includes(user)) {
+                            chat.typingUsers.push(user);
+                        } else if(!isTyping && chat.typingUsers.includes(user)) {
+                            chat.typingUsers = chat.typingUsers.filter(u => u !== user)
+                        }
+                    }
+                    return chat;
+                })
+                this.setState({ chats: newChats });
+            }
+        }
+    }
 
     sendMessage = (chatId, message) => {
         this.state.socket.emit(MESSAGE_SENT, {chatId, message})
@@ -93,6 +124,7 @@ class Chat extends React.Component {
                                 user={this.state.user}
                                 activeChat={this.state.activeChat}
                                 setActiveChat={this.setActiveChat}
+                                onSendPrivateMessage={this.sendOpenPrivateMessage}
                             />
                         </div>
                 }
@@ -113,7 +145,7 @@ class Chat extends React.Component {
                                 ? <ChatRoom
                                         user={this.state.user}
                                         chat={this.state.activeChat}
-                                        typingUser={this.state.activeChat.typingUser}
+                                        typingUsers={this.state.activeChat.typingUsers}
                                         sendMessage={
                                             (message) => {
                                                 this.sendMessage(this.state.activeChat.id, message)
