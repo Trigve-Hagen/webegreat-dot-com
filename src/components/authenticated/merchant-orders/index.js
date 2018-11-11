@@ -19,6 +19,7 @@ class MerchantOrders extends React.Component {
             currentPage: 1,
             loadOrdersError: '',
             orders: [],
+            order: [],
             pages: []
         }
         this.onView = this.onView.bind(this);
@@ -168,6 +169,7 @@ class MerchantOrders extends React.Component {
     }
 
     onView(e) {
+        //this.setState({ order: this.getOrderObject(e.target.dataset.orderid) });
         this.props.updateMOrders(this.getOrderObject(e.target.dataset.orderid));
     }
 

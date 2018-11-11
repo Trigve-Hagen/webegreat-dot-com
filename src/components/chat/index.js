@@ -75,10 +75,7 @@ class Chat extends React.Component {
     checkForDuplicates = (messages, messageId) => {
         let ifDuplicate = false;
         messages.map((message) => {
-            if(messageId.localeCompare(message.id) == 0) {
-                console.log("diplicate");
-                ifDuplicate = true;
-            }
+            if(messageId.localeCompare(message.id) == 0) ifDuplicate = true;
         });
         return ifDuplicate;
     }
@@ -130,6 +127,7 @@ class Chat extends React.Component {
                     this.state.user == null
                         ? null
                         : <div className="menu-item border-box">
+                            <p>To reach support type Support into the search and a private message will be started if support is available. Otherwise a community chat is started by default please try to find help here till we return. To start a private chat type the name into the search and if they are connected it will create a link under CHATS to start the chat.</p>
                             <ChatSidebar
                                 logout={this.logout}
                                 chats={this.state.chats}

@@ -9,6 +9,7 @@ class ChatRoom extends React.Component {
         }
         this.onChange= this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.scrollDown = this.scrollDown.bind(this);
     }
     
     onChange(e) {
@@ -50,12 +51,25 @@ class ChatRoom extends React.Component {
         }
     }
 
+    scrollDown() {
+        const { messageContainer } = this.refs;
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+
+    componentDidMount() {
+        this.scrollDown();
+    }
+
+    componentDidUpdate(prevProps, preState) {
+        this.scrollDown();
+    }
+
     render() {
         //console.log(this.props.chat);
         /**/
         return (
             <div>
-                <div style={{ height: '300px', overflowY: 'scroll', paddingBottom: '10px' }}>
+                <div ref='messageContainer' style={{ height: '300px', overflowY: 'scroll', paddingBottom: '10px' }}>
                     <ul>
                         {
                             this.props.chat.messages.map((message) =>

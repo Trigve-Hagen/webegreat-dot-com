@@ -24,6 +24,7 @@ const {
     MESSAGE_RECIEVED,
     PRIVATE_MESSAGE,
     MESSAGE_SENT,
+    SUPPORT,
     LOGOUT,
     TYPING
 } = require('../components/chat/chat-events');
@@ -35,6 +36,8 @@ const {
 
 let communityChat = createChat();
 let connectedUsers = {};
+//  allowed chats = 'community', 'support', 'private'
+let allowedChats = ['community', 'support', 'private'];
 
 io.on('connection', function(socket) {
     let sendMessageToChatFromUser;
