@@ -1,22 +1,11 @@
 import React from 'react';
-import io from 'socket.io-client';
-import config from '../../config/config';
-import {
-    USER_CONNECTED,
-    VERIFY_USER,
-    LOGOUT
-} from './chat-events';
-
-const socket = io.connect(config.chat_url);
 
 class ChatRoom extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            messages: [],
             chatMessage: '',
-            isTyping: false,
-            chatError: ''
+            isTyping: false
         }
         this.onChange= this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -29,7 +18,7 @@ class ChatRoom extends React.Component {
     onSubmit(e) {
         e.preventDefault();
         this.props.sendMessage(this.state.chatMessage);
-        this.setState({ chatMessage: "" })
+        this.setState({ chatMessage: "" });
     }
 
     componentWillUnmount() {
@@ -62,7 +51,7 @@ class ChatRoom extends React.Component {
     }
 
     render() {
-        console.log(this.props.chat);
+        //console.log(this.props.chat);
         /**/
         return (
             <div>

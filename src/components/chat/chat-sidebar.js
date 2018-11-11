@@ -4,8 +4,7 @@ class ChatSidebar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchChats: '',
-            searchChatsError: ''
+            searchChats: ''
         }
         this.onChange= this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -22,7 +21,6 @@ class ChatSidebar extends React.Component {
     }
 
     render() {
-        console.log(this.props.chats);
         return (
             <div>
                 <form name="search-chats" onSubmit={this.onSubmit}>

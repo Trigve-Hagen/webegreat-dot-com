@@ -35,8 +35,6 @@ const {
 
 let communityChat = createChat();
 let connectedUsers = {};
-let chats = [communityChat];
-
 
 io.on('connection', function(socket) {
     let sendMessageToChatFromUser;
@@ -56,10 +54,10 @@ io.on('connection', function(socket) {
         socket.user = user;
 
         sendMessageToChatFromUser = sendMessageToChat(user.name);
-        //console.log(sendMessageToChatFromUser);
         sendTypingFromUser = sendTypingToChat(user.name);
 
         io.emit(USER_CONNECTED, connectedUsers);
+        console.log(connectedUsers);
     });
 
     socket.on('disconnect', () => {
@@ -71,14 +69,14 @@ io.on('connection', function(socket) {
         }
     });
 
-    socket.on(COMMUNITY_CHAT, (callback) => {
-        callback(communityChat);
-    });
-
     socket.on(LOGOUT, () => {
         connectedUsers = removeUser(connectedUsers, socket.user.name);
         io.emit(USER_DISCONNECTED, connectedUsers);
         console.log("Logout: " + connectedUsers);
+    });
+
+    socket.on(COMMUNITY_CHAT, (callback) => {
+        callback(communityChat);
     });
 
     socket.on(MESSAGE_SENT, ({chatId, message}) => {
@@ -94,7 +92,6 @@ io.on('connection', function(socket) {
             const recieverSocket = connectedUsers[reciever].socketId;
             if(activeChat === null || activeChat.id === communityChat.id) {
                 const newChat = createChat({ name: `${reciever}&${sender}`, users: [reciever, sender] });
-                console.log(newChat);
                 socket.to(recieverSocket).emit(PRIVATE_MESSAGE, newChat);
                 socket.emit(PRIVATE_MESSAGE, newChat);
             } else {
@@ -105,31 +102,31 @@ io.on('connection', function(socket) {
 
 });
 
-const sendTypingToChat = (user) => {
+function sendTypingToChat(user) {
     return (chatId, isTyping) => {
         io.emit(`${TYPING}-${chatId}`, {user, isTyping})
     }
 }
 
-const sendMessageToChat = (sender) => {
+function sendMessageToChat(sender) {
     return (ChatId, message) => {
         io.emit(`${MESSAGE_RECIEVED}-${ChatId}`, createMessage({message, sender}))
     }
 }
 
-const addUser = (userList, user) => {
+function addUser(userList, user) {
     let newList = Object.assign({}, userList);
     newList[user.name] = user;
     return newList;
 }
 
-const removeUser = (userList, username) => {
+function removeUser(userList, username) {
     let newList = Object.assign({}, userList);
     delete newList[username];
     return newList;
 }
 
-const isUser = (userList, username) => {
+function isUser(userList, username) {
     return username in userList;
 }
 

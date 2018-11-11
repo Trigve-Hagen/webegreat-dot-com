@@ -21,7 +21,7 @@ class Chat extends React.Component {
             user: null,
             chats: [],
             activeChat: null,
-            socket: io.connect(config.chat_url)
+            socket: io.connect(config.site_url)
         }
         this.setUser = this.setUser.bind(this);
         this.setActiveChat = this.setActiveChat.bind(this);
@@ -38,7 +38,6 @@ class Chat extends React.Component {
         socket.on('connect', () => {
             socket.emit(COMMUNITY_CHAT, this.resetChat);
         });
-        //socket.emit(PRIVATE_MESSAGE, {reciever: "Mike", sender: this.props.user.name})
     }
 
     sendOpenPrivateMessage = (reciever) => {
@@ -73,10 +72,21 @@ class Chat extends React.Component {
         this.state.socket.on(messageEvent, this.addMessageToChat(chat.id));
     }
 
+    checkForDuplicates = (messages, messageId) => {
+        let ifDuplicate = false;
+        messages.map((message) => {
+            if(messageId.localeCompare(message.id) == 0) {
+                console.log("diplicate");
+                ifDuplicate = true;
+            }
+        });
+        return ifDuplicate;
+    }
+
     addMessageToChat = (chatId) => {
         return message => {
             let newChats = this.state.chats.map((chat) => {
-                if(chat.id === chatId) chat.messages.push(message);
+                if(chat.id === chatId && !this.checkForDuplicates(chat.messages, message.id)) chat.messages.push(message);
                 return chat;
             });
             this.setState({ chats: newChats })
@@ -85,7 +95,7 @@ class Chat extends React.Component {
 
     updateTypingInChat = (chatId) => {
         return ({isTyping, user}) => {
-            if(user !== user.name) {
+            if(user !== this.state.user.name) {
                 let newChats = this.state.chats.map((chat) => {
                     if(chat.id === chatId) {
                         if(isTyping && !chat.typingUsers.includes(user)) {
@@ -114,7 +124,6 @@ class Chat extends React.Component {
     }
 
     render() {
-
         return (
             <div>
                 {

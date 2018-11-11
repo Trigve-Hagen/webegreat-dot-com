@@ -1,7 +1,6 @@
 module.exports = {
   //site_url: 'https://webegreat.com',
   site_url: 'http://localhost:4000',
-  chat_url: 'http://localhost:5000',
 
   per_page: 10,
   
