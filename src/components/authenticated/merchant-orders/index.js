@@ -9,7 +9,6 @@ import OrderList from './order-list';
 import OrderItem from './order-item';
 import config from '../../../config/config';
 import { convertTime } from '../../../components/utils/helpers';
-import UpdateSurvey from './update-survey';
 
 class MerchantOrders extends React.Component {
     constructor(props) {
@@ -64,13 +63,14 @@ class MerchantOrders extends React.Component {
                         let surveyItems = [];
                         if(value.customer_survey != undefined) {
                             let surveyArray = value.customer_survey.split("_");
+                            let range = [];
+                            for(let i = 1; i <= surveyArray[1]; i++) range.push(i);
                             surveyItems.push({
                                 iffront: surveyArray[0],
-                                stars: surveyArray[1],
+                                stars: range,
                                 comment: surveyArray[2]
                             });
                         }
-
                         arrayArgs.push({
                             id: value['orderid'],
                             date: convertTime(value['created_at']),
@@ -86,10 +86,12 @@ class MerchantOrders extends React.Component {
                             orderitems: orderItems,
                             surveyitems: surveyItems
                         });
+                        //count++;
                     }
 					this.setState({
                         loadOrdersError: json.message,
-                        orders: arrayArgs
+                        orders: arrayArgs,
+                        order: [arrayArgs[0]]
 					});
 				} else {
                     this.setState({
@@ -127,8 +129,8 @@ class MerchantOrders extends React.Component {
     }
     
     componentDidMount() {
-        this.fetchPages();
         this.fetchMerchantOrders();
+        this.fetchPages();
     }
 
     getOrderObject(orderId) {
@@ -169,8 +171,7 @@ class MerchantOrders extends React.Component {
     }
 
     onView(e) {
-        //this.setState({ order: this.getOrderObject(e.target.dataset.orderid) });
-        this.props.updateMOrders(this.getOrderObject(e.target.dataset.orderid));
+        this.setState({ order: [this.getOrderObject(e.target.dataset.orderid)] });
     }
 
     onDelete(e) {
@@ -211,19 +212,6 @@ class MerchantOrders extends React.Component {
                         loadOrdersError: json.message,
                         orders: arrayArgs
                     });
-                    this.props.updateMOrders({
-                        id: arrayArgs[0].id,
-                        date: arrayArgs[0].date,
-                        name: arrayArgs[0].name,
-                        email: arrayArgs[0].email,
-                        address: arrayArgs[0].address,
-                        city: arrayArgs[0].city,
-                        state: arrayArgs[0].state,
-                        zip: arrayArgs[0].zip,
-                        proids: arrayArgs[0].proids,
-                        numofs: arrayArgs[0].numofs,
-                        prices: arrayArgs[0].prices,
-                    });
                     //location.reload();
 				} else {
                     this.setState({
@@ -235,7 +223,6 @@ class MerchantOrders extends React.Component {
     }
 
     render() {
-        //this.props.resetMOrders();
         if(this.props.authentication[0].authenticated) {
             return (
                 <div>
@@ -270,11 +257,10 @@ class MerchantOrders extends React.Component {
                                         <label>{this.state.loadOrdersError}</label>
                                     ) : (null)
                                 }
-                                <UploadOrders cart={this.props.cart} orders={this.props.morders}/>
+                                <UploadOrders cart={this.props.cart} orders={this.state.orders}/>
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <OrderItem order={this.props.morders} />
-                                <UpdateSurvey orders={this.props.morders} /> 
+                                <OrderItem order={this.state.order}/>
                             </div>
                         </div>
                     </div>
@@ -288,20 +274,8 @@ class MerchantOrders extends React.Component {
 function mapStateToProps(state) {
     return {
         cart: state.cart,
-        morders: state.morders,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateMOrders: (value) => {
-            dispatch({ type: 'UPDATE_MORDERS', payload: value})
-        },
-        resetMOrders: (value) => {
-            dispatch({ type: 'RESET_MORDERS', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MerchantOrders)
+export default connect(mapStateToProps)(MerchantOrders)

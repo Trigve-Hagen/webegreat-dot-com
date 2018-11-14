@@ -3871,6 +3871,57 @@ app.post('/api/orders/referrals', function(req, res) {
     });
 });
 
+app.post('/api/morders/getusers', function(req, res) {
+    const { body } = req;
+    const {
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid morders list users.'
+            });
+        } else {
+            let userList = "SELECT * FROM ??";
+            let userListInserts = [
+                config.tables[2].table_name
+            ];
+            userList = mysql.format(userList, userListInserts);
+            connection.query(userList, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in update profile'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        users: result
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.post('/api/morders/all', function(req, res) {
     const { body } = req;
     const {
@@ -4329,6 +4380,98 @@ app.post('/api/corders/survey', function(req, res) {
                         iffront: iffront,
                         stars: stars,
                         comment: comment
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/morders/updateSurvey', function(req, res) {
+    const { body } = req;
+    const {
+        id,
+        iffront,
+        token
+    } = body;
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Id invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!iffront || !config.patterns.numbers.test(iffront)) {
+        return res.send({
+            success: false,
+            message: 'If front invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid update survey.'
+            });
+        } else {
+            let getSurveyFromOrder = "SELECT * FROM ?? WHERE ?? = ?";
+            let getSurveyFromOrderInserts = [
+                config.tables[5].table_name,
+                config.tables[5].table_fields[0].Field,
+                id
+            ];
+            getSurveyFromOrder = mysql.format(getSurveyFromOrder, getSurveyFromOrderInserts);
+            connection.query(getSurveyFromOrder, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get get survey from order update survey.'
+                    });
+                } else {
+                    let surveyParts = result[0]['customer_survey'].split("_");
+                    let survey = iffront + "_" + surveyParts[1] + "_" + surveyParts[2];
+                    console.log(result[0]['customer_survey']);
+
+                    let updateSurvey = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+                    let updateSurveyInserts = [
+                        config.tables[5].table_name,
+                        config.tables[5].table_fields[15].Field,
+                        survey,
+                        config.tables[5].table_fields[0].Field,
+                        id
+                    ];
+
+                    updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);
+                    connection.query(updateSurvey, function (error, result, fields) {
+                        if(error) {
+                            return res.send({
+                                success: false,
+                                message: 'Server error in update survey'
+                            });
+                        } else {
+                            return res.send({
+                                success: true,
+                                message: 'Your survey has been successfully updated.',
+                                iffront: iffront
+                            });
+                        }
                     });
                 }
             });

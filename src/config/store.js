@@ -1,11 +1,9 @@
 import { createStore, combineReducers } from 'redux';
 import cartReducer from '../components/cart/reducer';
-import roleReducer from '../components/authenticated/roles/reducer';
 import authenticationReducer from '../components/authentication/reducer';
 import paginationReducer from '../components/pagination/reducer';
 import avatarReducer from '../components/authenticated/profile/reducer';
 import searchReducer from '../components/search-bar/reducer';
-import mordersReducer from '../components/authenticated/merchant-orders/reducer';
 import cordersReducer from '../components/authenticated/customer-orders/reducer';
 import visibilityReducer from '../components/authenticated/profile/store-controls/store-visibility/reducer';
 
@@ -31,10 +29,8 @@ function loadFromLocalStorage() {
 
 const rootReducer = combineReducers({
     cart: cartReducer,
-    role: roleReducer,
     avatar: avatarReducer,
     search: searchReducer,
-    morders: mordersReducer,
     corders: cordersReducer,
     pagination: paginationReducer,
     visibility: visibilityReducer,

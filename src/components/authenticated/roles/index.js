@@ -137,7 +137,6 @@ class UserRoles extends React.Component {
 
     onView(e) {
         this.setState({ user: this.getUserObject(e.target.dataset.userid) });
-        this.props.updateRole(this.getUserObject(e.target.dataset.userid));
     }
 
     onDelete(e) {
@@ -176,18 +175,6 @@ class UserRoles extends React.Component {
                     this.setState({
                         loadProductError: json.message,
                         users: arrayArgs
-                    });
-                    this.props.updateRole({
-                        id: arrayArgs[0].id,
-                        image: arrayArgs[0].image,
-                        name: arrayArgs[0].name,
-                        role: arrayArgs[0].role,
-                        email: arrayArgs[0].email,
-                        adderss: arrayArgs[0].adderss,
-                        city: arrayArgs[0].city,
-                        state: arrayArgs[0].state,
-                        zip: arrayArgs[0].zip,
-                        ifactive: arrayArgs[0].ifactive
                     });
                     //location.reload();
                 } else {
@@ -255,15 +242,4 @@ function mapStateToProps(state) {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateRole: (value) => {
-            dispatch({ type: 'UPDATE_ROLE', payload: value})
-        },
-        resetRole: (value) => {
-            dispatch({ type: 'RESET_ROLE', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserRoles)
+export default connect(mapStateToProps)(UserRoles)

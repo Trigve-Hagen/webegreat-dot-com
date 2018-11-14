@@ -3,21 +3,110 @@ import { connect } from 'react-redux';
 import config from '../../../config/config';
 import states from '../../../data/states';
 
+function uniqueId(id) {
+    return parseInt(id) - (50 * 2);
+}
+
+function reverseId(id) {
+    return parseInt(id) + (50 * 2);
+}
+
 class UploadOrders extends React.Component {
     constructor(props) {
 		super(props);
 		this.state = {
             mordersUploadError: '',
-            mordersUploadId: this.props.role[0].id,
-            mordersUploadName: this.props.role[0].name,
-            mordersUploadEmail: this.props.role[0].email,
-            mordersUploadAddress: this.props.role[0].address,
-            mordersUploadCity: this.props.role[0].city,
-            mordersUploadState: this.props.role[0].state,
-            mordersUploadZip: this.props.role[0].zip
+            mordersUploadUser: '',
+            mordersUploadUsers: [],
+            mordersUploadId: '',
+            mordersUploadName: '',
+            mordersUploadEmail: '',
+            mordersUploadAddress: '',
+            mordersUploadCity: '',
+            mordersUploadState: '',
+            mordersUploadZip: ''
 		}
-        this.onChange= this.onChange.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onSwitchUserChange = this.onSwitchUserChange.bind(this);
+    }
+
+    componentDidMount() {
+        fetch(config.site_url + '/api/morders/getusers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: this.props.authentication[0].token
+            })
+        }).then(res => res.json())
+            .then(json => {
+                if(json.success) {
+                    let arrayArgs = [];
+                    //console.log(json.users);
+                    for (let value of Object.values(json.users)) {
+                        arrayArgs.push({
+                            id: value['userid'],
+                            image: value['avatar'],
+                            role: value['role'],
+                            name: value['name'],
+                            email: value['email'],
+                            address: value['shipping_address'],
+                            city: value['shipping_city'],
+                            state: value['shipping_state'],
+                            zip: value['shipping_zip'],
+                            ifactive: value['store_visible']
+                        });
+                    }
+                    console.log(arrayArgs);
+                    this.setState({
+                        mordersUploadError: json.message,
+                        mordersUploadId: arrayArgs[0].id,
+                        mordersUploadName: arrayArgs[0].name,
+                        mordersUploadEmail: arrayArgs[0].email,
+                        mordersUploadAddress: arrayArgs[0].address,
+                        mordersUploadCity: arrayArgs[0].city,
+                        mordersUploadState: arrayArgs[0].state,
+                        mordersUploadZip: arrayArgs[0].zip,
+                        mordersUploadUsers: arrayArgs
+                    });
+                } else {
+                    this.setState({
+                        mordersUploadError: json.message
+                    });
+                }
+            });
+    }
+
+    getUserObject(userid) {
+        let obj={};
+        this.state.mordersUploadUsers.map(user => {
+            if(user.id == userid) {
+                obj.id = user.id;
+                obj.name = user.name;
+                obj.email = user.email;
+                obj.address = user.address;
+                obj.city = user.city;
+                obj.state = user.state;
+                obj.zip = user.zip;
+            }
+        });
+        return obj;
+    }
+
+    onSwitchUserChange(e) {
+        let user = this.getUserObject(reverseId(e.target.value));
+        this.setState({
+            mordersUploadId: user.id,
+            mordersUploadName: user.name,
+            mordersUploadEmail: user.email,
+            mordersUploadAddress: user.address,
+            mordersUploadCity: user.city,
+            mordersUploadState: user.state,
+            mordersUploadZip: user.zip,
+            mordersUploadUser: uniqueId(e.target.value)
+        });
     }
     
     onChange(e) {
@@ -43,7 +132,7 @@ class UploadOrders extends React.Component {
             else cartString += item.id + "_" + item.name + "_" + item.sku + "_" + item.price + "_" + item.quantity + "_" + item.image + "_" + item.stock + "_" + (parseInt(item.quantity) * parseFloat(item.price)).toFixed(2) + "&";
             cartCount++;
         });
-        console.log(cartString);
+        //console.log(cartString);
         const data = new FormData();
             data.append('id', this.state.mordersUploadId);
             data.append('name', this.state.mordersUploadName);
@@ -100,10 +189,28 @@ class UploadOrders extends React.Component {
 	}
 
     render() {
-        //this.props.resetRole();
         return (
 			<div>
                 <h3>Order Upload</h3>
+                <div className="row">
+                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-3">
+                        <div className="form-group">
+                            <select value={this.state.mordersUploadUser} onChange={this.onSwitchUserChange} name="onSwitchUserChange" className="form-element custom">
+                                <option value="">Please select a value.</option>
+                                {
+                                    this.state.mordersUploadUsers.map(user =>
+                                        <option
+                                            key={uniqueId(user.id)}
+                                            value={uniqueId(user.id)}
+                                        >
+                                            {uniqueId(user.id)} - {user.name}
+                                        </option>
+                                    )
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div className="row">
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-3">
                         {
@@ -143,11 +250,11 @@ class UploadOrders extends React.Component {
                                 <fieldset className="form-group">
                                     <input value={this.state.mordersUploadCity} onChange={this.onChange} name="mordersUploadCity" type="text" className="form-element" placeholder="City"/>
                                 </fieldset>
-                                    <div className="form-group">
-                                        <select value={this.state.mordersUploadState} onChange={this.onChange} name="mordersUploadState" className="form-element custom">
-                                            {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
-                                        </select>
-                                    </div>
+                                <div className="form-group">
+                                    <select value={this.state.mordersUploadState} onChange={this.onChange} name="mordersUploadState" className="form-element custom">
+                                        {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
+                                    </select>
+                                </div>
                                 <fieldset className="form-group">
                                     <input value={this.state.mordersUploadZip} onChange={this.onChange} name="mordersUploadZip" type="text" className="form-element" placeholder="Zip"/>
                                 </fieldset>
@@ -163,7 +270,7 @@ class UploadOrders extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        role: state.role,
+        //role: state.role,
         morders: state.morders,
         authentication: state.authentication
     }
