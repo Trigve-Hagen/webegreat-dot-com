@@ -17,6 +17,8 @@ class MerchantOrders extends React.Component {
             perPage: config.per_page,
             currentPage: 1,
             loadOrdersError: '',
+            orderItem: '',
+            orderIfFront: '',
             orders: [],
             order: [],
             pages: []
@@ -24,6 +26,35 @@ class MerchantOrders extends React.Component {
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onChangePagination = this.onChangePagination.bind(this);
+        this.onSurveySubmit = this.onSurveySubmit.bind(this);
+    }
+
+    onSurveySubmit(e) {
+        //console.log(e.target.dataset.orderifsurvey);
+        e.preventDefault();
+        const data = new FormData();
+            data.append('id', this.state.orderItem);
+            data.append('iffront', e.target.dataset.orderifsurvey);
+            data.append('token', this.props.authentication[0].token);
+
+		fetch(config.site_url + '/api/morders/updateSurvey', {
+            method: 'POST',
+            body: data,
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    console.log("User survey successfull." + json.iffront);
+					this.setState({
+                        loadOrdersError: json.message,
+                        orderIfFront: json.iffront
+                    });
+                    //location.reload();
+				} else {
+                    this.setState({
+						loadOrdersError: json.message
+					});
+                }
+			});
     }
 
     fetchMerchantOrders() {
@@ -91,6 +122,8 @@ class MerchantOrders extends React.Component {
 					this.setState({
                         loadOrdersError: json.message,
                         orders: arrayArgs,
+                        orderIfFront: arrayArgs[0].surveyitems[0].iffront,
+                        orderItem: arrayArgs[0].id,
                         order: [arrayArgs[0]]
 					});
 				} else {
@@ -163,15 +196,20 @@ class MerchantOrders extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(prevState.currentPage !== this.state.currentPage) {
-            this.setState({ currentPage: this.state.currentPage });
+        if(prevState.currentPage !== this.state.currentPage || prevState.orderIfFront !== this.state.orderIfFront) {
+            this.setState({ currentPage: this.state.currentPage, orderIfFront: this.state.orderIfFront });
             this.fetchPages();
             this.fetchMerchantOrders();
         }
     }
 
     onView(e) {
-        this.setState({ order: [this.getOrderObject(e.target.dataset.orderid)] });
+        let orderObj = this.getOrderObject(e.target.dataset.orderid);
+        this.setState({
+            order: [orderObj],
+            orderItem: orderObj.id,
+            orderIfFront: orderObj.surveyitems[0].iffront
+        });
     }
 
     onDelete(e) {
@@ -223,6 +261,7 @@ class MerchantOrders extends React.Component {
     }
 
     render() {
+        console.log(this.state.orderIfFront);
         if(this.props.authentication[0].authenticated) {
             return (
                 <div>
@@ -260,7 +299,12 @@ class MerchantOrders extends React.Component {
                                 <UploadOrders cart={this.props.cart} orders={this.state.orders}/>
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <OrderItem order={this.state.order}/>
+                                <OrderItem
+                                    order={this.state.order}
+                                    ifFront={this.state.orderIfFront}
+                                    orderItem={this.state.orderItem}
+                                    onSubmit={this.onSurveySubmit}
+                                />
                             </div>
                         </div>
                     </div>

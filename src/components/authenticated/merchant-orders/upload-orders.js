@@ -62,6 +62,7 @@ class UploadOrders extends React.Component {
                     console.log(arrayArgs);
                     this.setState({
                         mordersUploadError: json.message,
+                        mordersUploadUser: uniqueId(arrayArgs[0].id),
                         mordersUploadId: arrayArgs[0].id,
                         mordersUploadName: arrayArgs[0].name,
                         mordersUploadEmail: arrayArgs[0].email,
@@ -105,7 +106,7 @@ class UploadOrders extends React.Component {
             mordersUploadCity: user.city,
             mordersUploadState: user.state,
             mordersUploadZip: user.zip,
-            mordersUploadUser: uniqueId(e.target.value)
+            mordersUploadUser: e.target.value
         });
     }
     

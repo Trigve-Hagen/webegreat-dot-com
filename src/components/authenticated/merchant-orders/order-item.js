@@ -1,69 +1,21 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import config from '../../../config/config';
 
 class OrderItem extends React.Component {
     constructor(props) {
 		super(props);
 		this.state = {
-            mordersSurveyUpdateError: '',
-            mordersSurveyUpdateIfFront: '',
+            surveyIfFront: this.props.ifFront
 		}
         this.onChange= this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
     }
-
-    /*componentDidUpdate(nextProps, nextState) {
-        let newProps = false, iffront = 0;
-        nextProps.orders.map(order => {
-            if(order.id == nextProps.orderItem) {
-                if(order.surveyitems[0].iffront !== this.state.mordersSurveyUpdateIfFront) {
-                    iffront = order.surveyitems[0].iffront;
-                    newProps = true;
-                }
-            }
-        })
-        //console.log(nextState);
-        if(newProps) {
-            this.setState({
-                mordersSurveyUpdateIfFront: iffront
-            });
-        }
-    }*/
 
     onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-	onSubmit(e) {
-        e.preventDefault();
-        const data = new FormData();
-            data.append('id', this.props.orderItem);
-            data.append('iffront', this.state.mordersSurveyUpdateIfFront);
-            data.append('token', this.props.authentication[0].token);
-
-		fetch(config.site_url + '/api/morders/updateSurvey', {
-            method: 'POST',
-            body: data,
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
-                    console.log("User survey successfull." + json.iffront);
-					this.setState({
-                        mordersSurveyUpdateError: json.message,
-                        mordersSurveyUpdateIfFront: json.iffront
-                    });
-                    location.reload();
-				} else {
-                    this.setState({
-						mordersSurveyUpdateError: json.message
-					});
-                }
-			});
-    }
-
     render() {
-        console.log(this.props.order)
+        console.log(this.props.ifFront);
+        console.log(this.state.surveyIfFront);
         return (
             <div className="row mt-3">
                 <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -126,18 +78,13 @@ class OrderItem extends React.Component {
                                                         <h4>Set if showing in referals.</h4>
                                                         <div className="row">
                                                             <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                                {
-                                                                    (this.state.mordersSurveyUpdateError) ? (
-                                                                        <label>{this.state.mordersSurveyUpdateError}</label>
-                                                                    ) : (null)
-                                                                }
-                                                                <form name="cSurveyUpload" onSubmit={this.onSubmit}>
+                                                                <form name="cSurveyUpload" data-orderifsurvey={this.state.surveyIfFront} onSubmit={this.props.onSubmit}>
                                                                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                                         <div className="form-group">
                                                                             <select
-                                                                                value={this.state.mordersSurveyUpdateIfFront}
+                                                                                value={this.state.surveyIfFront}
                                                                                 onChange={this.onChange}
-                                                                                name="mordersSurveyUpdateIfFront"
+                                                                                name="surveyIfFront"
                                                                                 className="form-element custom"
                                                                             >
                                                                                 <option value="">Please select a value.</option>
@@ -164,10 +111,4 @@ class OrderItem extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        authentication: state.authentication
-    }
-}
-
-export default connect(mapStateToProps)(OrderItem);
+export default OrderItem;
