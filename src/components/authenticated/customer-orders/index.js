@@ -18,6 +18,7 @@ class CustomerOrders extends React.Component {
             currentPage: 1,
             loadOrdersError: '',
             orders: [],
+            order: [],
             pages: []
         }
         this.onView = this.onView.bind(this);
@@ -85,7 +86,8 @@ class CustomerOrders extends React.Component {
                     }
 					this.setState({
                         loadOrdersError: json.message,
-                        orders: arrayArgs
+                        orders: arrayArgs,
+                        order: arrayArgs[0]
 					});
 				} else {
                     this.setState({
@@ -168,10 +170,13 @@ class CustomerOrders extends React.Component {
     }
 
     onView(e) {
-        this.props.updateCOrders(this.getOrderObject(e.target.dataset.orderid));
+        //this.props.updateCOrders(this.getOrderObject(e.target.dataset.orderid));
+        // <UploadSurvey cart={this.props.cart} order={this.state.order}/>
+        this.setState({ order: this.getOrderObject(e.target.dataset.orderid) })
     }
 
     render() {
+        console.log(this.state.order)
         if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 1) {
             return (
                 <div>
@@ -204,8 +209,7 @@ class CustomerOrders extends React.Component {
                                 />
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <OrderItem order={this.props.corders} />
-                                <UploadSurvey cart={this.props.cart} orders={this.props.corders}/>
+                                <OrderItem order={this.state.orders} />
                             </div>
                         </div>
                     </div>
@@ -218,20 +222,8 @@ class CustomerOrders extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        corders: state.corders,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateCOrders: (value) => {
-            dispatch({ type: 'UPDATE_CORDERS', payload: value})
-        },
-        resetCOrders: (value) => {
-            dispatch({ type: 'RESET_CORDERS', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CustomerOrders)
+export default connect(mapStateToProps)(CustomerOrders)

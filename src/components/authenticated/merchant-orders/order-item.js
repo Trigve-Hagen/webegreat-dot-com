@@ -14,8 +14,8 @@ class OrderItem extends React.Component {
     }
 
     render() {
-        console.log(this.props.ifFront);
-        console.log(this.state.surveyIfFront);
+        //console.log(this.props.ifFront);
+        //console.log(this.state.surveyIfFront);
         return (
             <div className="row mt-3">
                 <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">

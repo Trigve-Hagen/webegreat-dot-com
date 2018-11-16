@@ -194,12 +194,18 @@ class MerchantOrders extends React.Component {
             this.setState({ currentPage: e.target.dataset.currentpage });
         }
     }
-
+    // view puts it all together for the next order then componentDidUpdate resets it to the first
     componentDidUpdate(prevProps, prevState) {
+        //console.log(prevState);
         if(prevState.currentPage !== this.state.currentPage || prevState.orderIfFront !== this.state.orderIfFront) {
-            this.setState({ currentPage: this.state.currentPage, orderIfFront: this.state.orderIfFront });
             this.fetchPages();
             this.fetchMerchantOrders();
+            this.setState({
+                currentPage: this.state.currentPage,
+                orderIfFront: this.state.orderIfFront,
+                order: this.state.order,
+                orderItem: this.state.orderItem
+            });
         }
     }
 
@@ -208,7 +214,7 @@ class MerchantOrders extends React.Component {
         this.setState({
             order: [orderObj],
             orderItem: orderObj.id,
-            orderIfFront: orderObj.surveyitems[0].iffront
+            //orderIfFront: orderObj.surveyitems[0].iffront
         });
     }
 
@@ -261,7 +267,7 @@ class MerchantOrders extends React.Component {
     }
 
     render() {
-        console.log(this.state.orderIfFront);
+        //console.log(this.state.orderIfFront);
         if(this.props.authentication[0].authenticated) {
             return (
                 <div>

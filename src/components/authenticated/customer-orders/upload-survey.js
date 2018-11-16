@@ -7,19 +7,19 @@ class UploadSurvey extends React.Component {
 		super(props);
 		this.state = {
             cordersSurveyUploadError: '',
-            cordersSurveyUploadStars: this.props.orders[0].surveyitems[0].stars,
-            cordersSurveyUploadComment: this.props.orders[0].surveyitems[0].comment
+            cordersSurveyUploadStars: this.props.order[0].surveyitems[0].stars,
+            cordersSurveyUploadComment: this.props.order[0].surveyitems[0].comment
 		}
         this.onChange= this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-        console.log(this.props.orders[0].surveyitems[0].stars);
+        console.log(this.props.order[0].surveyitems[0].stars);
     }
 
     componentDidUpdate(nextProps) {
-        if(nextProps.orders[0].surveyitems !== this.props.orders[0].surveyitems) {
+        if(nextProps.order[0].surveyitems !== this.props.order[0].surveyitems) {
             this.setState({
-                cordersSurveyUploadStars: this.props.orders[0].surveyitems[0].stars,
-                cordersSurveyUploadComment: this.props.orders[0].surveyitems[0].comment
+                cordersSurveyUploadStars: this.props.order[0].surveyitems[0].stars,
+                cordersSurveyUploadComment: this.props.order[0].surveyitems[0].comment
             });
         }
     }
@@ -32,7 +32,7 @@ class UploadSurvey extends React.Component {
         e.preventDefault();
         
         const data = new FormData();
-            data.append('id', this.props.orders[0].id);
+            data.append('id', this.props.order[0].id);
             data.append('iffront', 0);
             data.append('stars', this.state.cordersSurveyUploadStars);
             data.append('comment', this.state.cordersSurveyUploadComment);

@@ -31,7 +31,12 @@ class Cart extends React.Component {
             footerHeight: 0,
             menuHeight: 0
         }
+        this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onChange(e) {
+		this.setState({ [e.target.name]: e.target.value });
     }
 
     componentDidMount() {
@@ -43,6 +48,34 @@ class Cart extends React.Component {
             footerHeight: footerHeight,
             menuHeight: menuHeight
         });
+        if(this.props.authentication[0].authenticated == true) {
+            fetch(config.site_url + '/api/account/get-account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: this.props.authentication[0].token
+                })
+            }).then(res => res.json())
+                .then(json => {
+                    if(json.success) {
+                        this.setState({
+                            cartError: json.message,
+                            cartName: json.name,
+                            cartEmail: json.email,
+                            cartAddress: json.address,
+                            cartCity: json.city,
+                            cartState: json.state,
+                            cartZip: json.zip
+                        });
+                    } else {
+                        this.setState({
+                            cartError: json.message
+                        });
+                    }
+                });
+        }
     }
 
 	onSubmit(e) {
@@ -68,12 +101,12 @@ class Cart extends React.Component {
         //console.log(items);
 
         const data = new FormData();
-            data.append('name', this.state.cartName.value);
-            data.append('email', this.state.cartEmail.value);
-            data.append('address', this.state.cartAddress.value);
-            data.append('city', this.state.cartCity.value);
-            data.append('state', this.state.cartState.value);
-            data.append('zip', this.state.cartZip.value);
+            data.append('name', this.state.cartName);
+            data.append('email', this.state.cartEmail);
+            data.append('address', this.state.cartAddress);
+            data.append('city', this.state.cartCity);
+            data.append('state', this.state.cartState);
+            data.append('zip', this.state.cartZip);
             data.append('items', items);
             data.append('proids', proids);
             data.append('numofs', numofs);
@@ -188,29 +221,29 @@ class Cart extends React.Component {
                                         <form name="cartForm" onSubmit={this.onSubmit}>
                                             <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <div className="form-group">
-                                                    <input ref={(ref) => { this.state.cartName = ref; }} type="text" className="form-element" id="cartName" placeholder="Full Name" />
+                                                    <input value={this.state.cartName} onChange={this.onChange} type="text" className="form-element" name="cartName" placeholder="Full Name" />
                                                 </div>
                                                 <div className="form-group">
-                                                    <input ref={(ref) => { this.state.cartEmail = ref; }} type="email" className="form-element" id="cartEmail" placeholder="Email Address" />
+                                                    <input value={this.state.cartEmail} onChange={this.onChange} type="email" className="form-element" name="cartEmail" placeholder="Email Address" />
                                                 </div>
                                                 <div className="form-group">
-                                                    <input ref={(ref) => { this.state.cartAddress = ref; }} type="text" className="form-element" id="cartAddress" placeholder="Address" />
+                                                    <input value={this.state.cartAddress} onChange={this.onChange} type="text" className="form-element" name="cartAddress" placeholder="Address" />
                                                 </div>
                                                 <div className="form-group">
-                                                    <input ref={(ref) => { this.state.cartCity = ref; }} type="text" className="form-element" id="cartCity" placeholder="City" />
+                                                    <input value={this.state.cartCity} onChange={this.onChange} type="text" className="form-element" name="cartCity" placeholder="City" />
                                                 </div>
                                             </div>
                                             <div className="row my-3">
                                                 <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                                     <div className="form-group">
-                                                        <select ref={ (ref) => { this.state.cartState = ref; }} className="form-element custom">
+                                                        <select value={this.state.cartState} onChange={this.onChange} name="cartState" className="form-element custom">
                                                             {states.map(state => <option key={state.abrev} value={state.abrev}>{state.name}</option>)}
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                                     <div className="form-group">
-                                                        <input ref={(ref) => { this.state.cartZip = ref; }} type="text" className="form-element" id="cartZip" placeholder="Zip" />
+                                                        <input value={this.state.cartZip} onChange={this.onChange} type="text" className="form-element" name="cartZip" placeholder="Zip" />
                                                     </div>
                                                 </div>
                                             </div>  
