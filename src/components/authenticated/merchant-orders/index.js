@@ -6,6 +6,7 @@ import Footer from '../../footer';
 import UploadOrders from './upload-orders';
 import Pagination from '../../pagination';
 import OrderList from './order-list';
+import UpdateSurvey from './update-survey';
 import OrderItem from './order-item';
 import config from '../../../config/config';
 import { convertTime } from '../../../components/utils/helpers';
@@ -17,8 +18,7 @@ class MerchantOrders extends React.Component {
             perPage: config.per_page,
             currentPage: 1,
             loadOrdersError: '',
-            orderItem: '',
-            orderIfFront: '',
+            orderId: '',
             orders: [],
             order: [],
             pages: []
@@ -26,35 +26,6 @@ class MerchantOrders extends React.Component {
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onChangePagination = this.onChangePagination.bind(this);
-        this.onSurveySubmit = this.onSurveySubmit.bind(this);
-    }
-
-    onSurveySubmit(e) {
-        //console.log(e.target.dataset.orderifsurvey);
-        e.preventDefault();
-        const data = new FormData();
-            data.append('id', this.state.orderItem);
-            data.append('iffront', e.target.dataset.orderifsurvey);
-            data.append('token', this.props.authentication[0].token);
-
-		fetch(config.site_url + '/api/morders/updateSurvey', {
-            method: 'POST',
-            body: data,
-		}).then(res => res.json())
-			.then(json => {
-				if(json.success) {
-                    console.log("User survey successfull." + json.iffront);
-					this.setState({
-                        loadOrdersError: json.message,
-                        orderIfFront: json.iffront
-                    });
-                    //location.reload();
-				} else {
-                    this.setState({
-						loadOrdersError: json.message
-					});
-                }
-			});
     }
 
     fetchMerchantOrders() {
@@ -78,7 +49,6 @@ class MerchantOrders extends React.Component {
                         //console.log(argsArray);
                         for(let h=0; h<argsArray.length; h++) {
                             let orderArgs = argsArray[h].split("_");
-                            //console.log(orderArgs.length);
                             orderItems.push({
                                 id: orderArgs[0],
                                 name: orderArgs[1],
@@ -88,18 +58,6 @@ class MerchantOrders extends React.Component {
                                 image: orderArgs[5],
                                 stock: orderArgs[6],
                                 total: orderArgs[7]
-                            });
-                        }
-
-                        let surveyItems = [];
-                        if(value.customer_survey != undefined) {
-                            let surveyArray = value.customer_survey.split("_");
-                            let range = [];
-                            for(let i = 1; i <= surveyArray[1]; i++) range.push(i);
-                            surveyItems.push({
-                                iffront: surveyArray[0],
-                                stars: range,
-                                comment: surveyArray[2]
                             });
                         }
                         arrayArgs.push({
@@ -114,17 +72,15 @@ class MerchantOrders extends React.Component {
                             proids: value['product_ids'],
                             numofs: value['number_ofs'],
                             prices: value['prices'],
-                            orderitems: orderItems,
-                            surveyitems: surveyItems
+                            orderitems: orderItems
                         });
                         //count++;
                     }
 					this.setState({
                         loadOrdersError: json.message,
                         orders: arrayArgs,
-                        orderIfFront: arrayArgs[0].surveyitems[0].iffront,
-                        orderItem: arrayArgs[0].id,
-                        order: [arrayArgs[0]]
+                        order: [arrayArgs[0]],
+                        orderId: arrayArgs[0].id
 					});
 				} else {
                     this.setState({
@@ -151,11 +107,11 @@ class MerchantOrders extends React.Component {
                     for(let i = 1; i <= json.pages; i++) range.push(i);
                     this.setState({
                         pages: range,
-                        loadProductError: json.message
+                        loadOrdersError: json.message
 					});
 				} else {
                     this.setState({
-                        loadProductError: json.message
+                        loadOrdersError: json.message
 					});
                 }
 			});
@@ -183,7 +139,6 @@ class MerchantOrders extends React.Component {
                 obj.numofs = order.numofs;
                 obj.prices = order.prices;
                 obj.orderitems = order.orderitems;
-                obj.surveyitems = order.surveyitems;
             }
         });
         return obj;
@@ -194,17 +149,16 @@ class MerchantOrders extends React.Component {
             this.setState({ currentPage: e.target.dataset.currentpage });
         }
     }
-    // view puts it all together for the next order then componentDidUpdate resets it to the first
+
     componentDidUpdate(prevProps, prevState) {
         //console.log(prevState);
-        if(prevState.currentPage !== this.state.currentPage || prevState.orderIfFront !== this.state.orderIfFront) {
+        if(prevState.currentPage !== this.state.currentPage) {
             this.fetchPages();
             this.fetchMerchantOrders();
             this.setState({
                 currentPage: this.state.currentPage,
-                orderIfFront: this.state.orderIfFront,
                 order: this.state.order,
-                orderItem: this.state.orderItem
+                orderId: this.state.orderId
             });
         }
     }
@@ -213,8 +167,7 @@ class MerchantOrders extends React.Component {
         let orderObj = this.getOrderObject(e.target.dataset.orderid);
         this.setState({
             order: [orderObj],
-            orderItem: orderObj.id,
-            //orderIfFront: orderObj.surveyitems[0].iffront
+            orderId: orderObj.id
         });
     }
 
@@ -222,7 +175,7 @@ class MerchantOrders extends React.Component {
         let orderId = e.target.dataset.orderid;
         let productObject = this.getOrderObject(orderId);
         if (confirm(`Are you sure you want to delete ${productObject.id}, ${productObject.name}?`)) {
-            fetch(config.site_url + '/api/morders/delete-order', {
+            fetch(config.site_url + '/api/morders/delete', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -256,7 +209,7 @@ class MerchantOrders extends React.Component {
                         loadOrdersError: json.message,
                         orders: arrayArgs
                     });
-                    //location.reload();
+                    location.reload();
 				} else {
                     this.setState({
 						loadOrdersError: json.message
@@ -267,7 +220,6 @@ class MerchantOrders extends React.Component {
     }
 
     render() {
-        //console.log(this.state.orderIfFront);
         if(this.props.authentication[0].authenticated) {
             return (
                 <div>
@@ -305,12 +257,8 @@ class MerchantOrders extends React.Component {
                                 <UploadOrders cart={this.props.cart} orders={this.state.orders}/>
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <OrderItem
-                                    order={this.state.order}
-                                    ifFront={this.state.orderIfFront}
-                                    orderItem={this.state.orderItem}
-                                    onSubmit={this.onSurveySubmit}
-                                />
+                                <OrderItem order={this.state.order}/>
+                                <UpdateSurvey orderId={this.state.orderId}/>
                             </div>
                         </div>
                     </div>

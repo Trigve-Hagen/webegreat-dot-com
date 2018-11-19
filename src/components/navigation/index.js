@@ -60,7 +60,6 @@ class Navigation extends React.Component {
     }
 
     render() {
-        console.log(this.state.loadMenuItems);
         const count = this.props.cart.length;
         const { path, authenticated, role } = this.state;
         let fragment = '';

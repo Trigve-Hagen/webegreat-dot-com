@@ -4,7 +4,6 @@ import authenticationReducer from '../components/authentication/reducer';
 import paginationReducer from '../components/pagination/reducer';
 import avatarReducer from '../components/authenticated/profile/reducer';
 import searchReducer from '../components/search-bar/reducer';
-import cordersReducer from '../components/authenticated/customer-orders/reducer';
 import visibilityReducer from '../components/authenticated/profile/store-controls/store-visibility/reducer';
 
 function saveToLocalStorage(state) {
@@ -31,7 +30,6 @@ const rootReducer = combineReducers({
     cart: cartReducer,
     avatar: avatarReducer,
     search: searchReducer,
-    corders: cordersReducer,
     pagination: paginationReducer,
     visibility: visibilityReducer,
     authentication: authenticationReducer

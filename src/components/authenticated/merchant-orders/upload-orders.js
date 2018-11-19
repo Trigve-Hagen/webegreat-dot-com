@@ -59,7 +59,6 @@ class UploadOrders extends React.Component {
                             ifactive: value['store_visible']
                         });
                     }
-                    console.log(arrayArgs);
                     this.setState({
                         mordersUploadError: json.message,
                         mordersUploadUser: uniqueId(arrayArgs[0].id),
@@ -155,19 +154,6 @@ class UploadOrders extends React.Component {
 			.then(json => {
 				if(json.success) {
 					console.log("User upload successfull.");
-					this.props.updateMOrders({
-                        id: json.transid,
-                        name: json.name,
-                        email: json.email,
-                        address: json.address,
-                        city: json.city,
-                        state: json.state,
-                        zip: json.zip,
-                        proids: json.proids,
-                        numofs: json.numofs,
-                        prices: json.prices,
-                        orderitems: json.orderitems
-                    });
 					this.setState({
                         mordersUploadError: json.message,
                         mordersUploadName: '',
@@ -271,21 +257,8 @@ class UploadOrders extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        //role: state.role,
-        morders: state.morders,
         authentication: state.authentication
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateMOrders: (value) => {
-            dispatch({ type: 'UPDATE_MORDER', payload: value})
-        },
-        resetMOrders: (value) => {
-            dispatch({ type: 'RESET_MORDER', payload: value})
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UploadOrders);
+export default connect(mapStateToProps)(UploadOrders);

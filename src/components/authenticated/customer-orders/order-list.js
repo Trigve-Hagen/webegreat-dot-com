@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function OrderList(props) {
-    if(props.orders == []) {
+    if(props.orders) {
         return <ul className="ul-styles">
             {
                 props.orders.map(order => 
@@ -12,6 +12,6 @@ export default function OrderList(props) {
             }
         </ul>
     } else {
-        return <div><h3>No orders yet.</h3></div>
+        return <div><p>No orders yet.</p></div>
     }
 }

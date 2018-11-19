@@ -503,8 +503,8 @@ module.exports = {
                     Extra: ''
                 },
                 {
-                    Field: 'customer_survey',
-                    Type: 'TEXT',
+                    Field: 'survey_id',
+                    Type: 'int(255)',
                     Null: 'NULL',
                     Key: '',
                     Default: null,
@@ -639,8 +639,7 @@ module.exports = {
                     Key: '',
                     Default: null,
                     Extra: ''
-                }
-                ,
+                },
                 {
                     Field: 'if_active',
                     Type: 'int(1)',
@@ -655,6 +654,59 @@ module.exports = {
                     Null: 'NOT NULL',
                     Key: '',
                     Default: 'DEFAULT 1',
+                    Extra: ''
+                }
+            ]
+        },
+        {
+            table_name: 'i_survey', // 8
+            table_fields: [
+                 {
+                    Field: 'surveyid',
+                    Type: 'int(11)',
+                    Null: 'NOT NULL',
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: 'AUTO_INCREMENT'
+                },
+                {
+                    Field: 'created_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: ''
+                },
+                {
+                    Field: 'updated_at',
+                    Type: 'TIMESTAMP',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT CURRENT_TIMESTAMP',
+                    Extra: ''
+                },
+                {
+                    Field: 'iffront',
+                    Type: 'int(1)',
+                    Null: 'NOT NULL',
+                    Key: '',
+                    Default: 'DEFAULT 0',
+                    Extra: ''
+                },
+                {
+                    Field: 'stars',
+                    Type: 'int(1)',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                {
+                    Field: 'comment',
+                    Type: 'text',
+                    Null: 'NULL',
+                    Key: '',
+                    Default: null,
                     Extra: ''
                 }
             ]

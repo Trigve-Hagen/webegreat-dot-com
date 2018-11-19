@@ -17,6 +17,10 @@ class CustomerOrders extends React.Component {
             perPage: config.per_page,
             currentPage: 1,
             loadOrdersError: '',
+            windowHeight: 0,
+            footerHeight: 0,
+            menuHeight: 0,
+            orderItem: '',
             orders: [],
             order: [],
             pages: []
@@ -67,7 +71,6 @@ class CustomerOrders extends React.Component {
                                 comment: surveyArray[2]
                             });
                         }
-
                         arrayArgs.push({
                             id: value['orderid'],
                             date: convertTime(value['created_at']),
@@ -80,14 +83,14 @@ class CustomerOrders extends React.Component {
                             proids: value['product_ids'],
                             numofs: value['number_ofs'],
                             prices: value['prices'],
-                            orderitems: orderItems,
-                            surveyitems: surveyItems
+                            orderitems: orderItems
                         });
                     }
 					this.setState({
                         loadOrdersError: json.message,
                         orders: arrayArgs,
-                        order: arrayArgs[0]
+                        order: arrayArgs[0],
+                        orderItem: arrayArgs[0].id
 					});
 				} else {
                     this.setState({
@@ -128,6 +131,14 @@ class CustomerOrders extends React.Component {
     }
     
     componentDidMount() {
+        let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+        let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
+        let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
+        this.setState({
+            windowHeight: windowHeight,
+            footerHeight: footerHeight,
+            menuHeight: menuHeight
+        });
         this.fetchPages();
 		this.fetchOrders();
     }
@@ -135,7 +146,7 @@ class CustomerOrders extends React.Component {
     getOrderObject(orderId) {
         let obj={};
         this.state.orders.map(order => {
-            console.log(order.id + ", " + orderId);
+            //console.log(order.id + ", " + orderId);
             if(order.id == orderId) {
                 obj.id = order.id;
                 obj.date = order.date;
@@ -149,7 +160,6 @@ class CustomerOrders extends React.Component {
                 obj.numofs = order.numofs;
                 obj.prices = order.prices;
                 obj.orderitems = order.orderitems;
-                obj.surveyitems = order.surveyitems;
             }
         });
         return obj;
@@ -170,18 +180,26 @@ class CustomerOrders extends React.Component {
     }
 
     onView(e) {
-        //this.props.updateCOrders(this.getOrderObject(e.target.dataset.orderid));
-        // <UploadSurvey cart={this.props.cart} order={this.state.order}/>
         this.setState({ order: this.getOrderObject(e.target.dataset.orderid) })
     }
 
     render() {
-        console.log(this.state.order)
+        let containerHeight = this.state.windowHeight - (this.state.menuHeight + this.state.footerHeight);
+        console.log(containerHeight)
         if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 1) {
             return (
                 <div>
-                    <Navigation path="/customer-orders" authenticated={this.props.authentication[0].authenticated} role={this.props.authentication[0].role}/>
-                    <div className="container">
+                    <Navigation
+                        path="/customer-orders"
+                        authenticated={this.props.authentication[0].authenticated}
+                        role={this.props.authentication[0].role}
+                    />
+                    <div
+                        className="container"
+                        style={{
+                            minHeight: containerHeight + 'px'
+                        }}
+                    >
                         <div className="row my-3">
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <h3>Customer Orders</h3>
@@ -210,6 +228,7 @@ class CustomerOrders extends React.Component {
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <OrderItem order={this.state.orders} />
+                                <UploadSurvey orderId={this.state.orderItem}/>
                             </div>
                         </div>
                     </div>

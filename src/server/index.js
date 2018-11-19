@@ -2696,6 +2696,7 @@ app.post('/api/cart/call-paypal', function(req, res) {
 
     let itemIds = [];
     let productItems = items.split("&");
+
     productItems.forEach(item => {
         let itemParts = item.split("_");
         if(!itemParts[0] || !config.patterns.numbers.test(itemParts[0])) {
@@ -2825,8 +2826,9 @@ app.post('/api/cart/call-paypal', function(req, res) {
                                     "currency": "USD",
                                     "quantity": parseInt(itemObj.quantity),
                                 });
+
                                 if(objCount == itemIds.length - 1) itemsString += product[config.tables[0].table_fields[0].Field] + "_" + product[config.tables[0].table_fields[4].Field] + "_" + product[config.tables[0].table_fields[11].Field] + "_" + product[config.tables[0].table_fields[7].Field] + "_" + itemObj.quantity + "_" + product[config.tables[0].table_fields[6].Field] + "_" + product[config.tables[0].table_fields[9].Field] + "_" + (parseInt(itemObj.quantity) * parseFloat(product[config.tables[0].table_fields[7].Field])).toFixed(2) + "_" + product[config.tables[0].table_fields[10].Field];
-                                else itemsString += "&" + product[config.tables[0].table_fields[0].Field] + "_" + product[config.tables[0].table_fields[4].Field] + "_" + product[config.tables[0].table_fields[11].Field] + "_" + product[config.tables[0].table_fields[7].Field] + "_" + itemObj.quantity + "_" + product[config.tables[0].table_fields[6].Field] + "_" + product[config.tables[0].table_fields[9].Field] + "_" + (parseInt(itemObj.quantity) * parseFloat(product[config.tables[0].table_fields[7].Field])).toFixed(2) + "_" + product[config.tables[0].table_fields[10].Field];
+                                else itemsString += product[config.tables[0].table_fields[0].Field] + "_" + product[config.tables[0].table_fields[4].Field] + "_" + product[config.tables[0].table_fields[11].Field] + "_" + product[config.tables[0].table_fields[7].Field] + "_" + itemObj.quantity + "_" + product[config.tables[0].table_fields[6].Field] + "_" + product[config.tables[0].table_fields[9].Field] + "_" + (parseInt(itemObj.quantity) * parseFloat(product[config.tables[0].table_fields[7].Field])).toFixed(2) + "_" + product[config.tables[0].table_fields[10].Field] + "&";
                                 objCount++;
                             }
                         });
@@ -2846,8 +2848,8 @@ app.post('/api/cart/call-paypal', function(req, res) {
                         } else {
                             let newTransid = maxIdResults[0]['MAX(`' + config.tables[5].table_fields[0].Field + '`)'] + 1;
                             // "http://localhost:3000" urlConfig.site_url
-                            let cancelUrl = urlConfig.site_url + config.paypal_urls.cancel + '/' + newTransid;
-                            let successUrl = urlConfig.site_url + config.paypal_urls.success;
+                            let cancelUrl = "http://localhost:3000" + config.paypal_urls.cancel + '/' + newTransid;
+                            let successUrl = "http://localhost:3000" + config.paypal_urls.success;
                             let create_payment_json = {
                                 "intent": "sale",
                                 "payer": {
@@ -2877,29 +2879,63 @@ app.post('/api/cart/call-paypal', function(req, res) {
                                         message: 'Error: You most likely forgot to upload your Paypal client id and secret or: ' + error
                                     });
                                 } else {
-                                    
-                                    let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?)";
-                                    let insertOrderInserts = [
-                                        config.tables[5].table_name, results[0][config.tables[0].table_fields[3].Field],
-                                        myDate, myDate, name, email, address, city, state, zip,
-                                        proids, numofs, prices, payment.id, itemsString
+                                    let loadUseridByEmail = "SELECT * FROM ?? WHERE ?? = ?";
+                                    let loadUseridByEmailInserts = [
+                                        config.tables[2].table_name,
+                                        config.tables[2].table_fields[4].Field,
+                                        email
                                     ];
-                                    insertOrder = mysql.format(insertOrder, insertOrderInserts);
-                                    connection.query(insertOrder, function (error, result, fields) {
+                                    loadUseridByEmail = mysql.format(loadUseridByEmail, loadUseridByEmailInserts);
+                                    connection.query(loadUseridByEmail, function (error, idResult, fields) {
                                         if(error) {
                                             return res.send({
                                                 success: false,
-                                                message: 'Server Error in insert order call paypal.'
+                                                message: 'Server Error in load credentials call paypal.'
                                             });
                                         } else {
-                                            for(let i=0; i<payment.links.length; i++) {
-                                                if(payment.links[i].rel === 'approval_url') {
+                                            var insertSurvey = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, 0, 0, '')";
+                                            var insertSurveyInserts = [
+                                                config.tables[8].table_name,
+                                                myDate, myDate
+                                            ];
+                                            insertSurvey = mysql.format(insertSurvey, insertSurveyInserts);
+                                            //console.log(insertSurvey)
+                                            connection.query(insertSurvey, function (error, insertSurveyResult, fields) {
+                                                if(error) {
                                                     return res.send({
-                                                        success: true,
-                                                        url: payment.links[i].href
+                                                        success: false,
+                                                        message: 'Server error in create order call paypal',
+                                                        token: null,
+                                                        id: null
+                                                    });
+                                                } else {
+                                                    let insertOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)";
+                                                    let insertOrderInserts = [
+                                                        config.tables[5].table_name,
+                                                        idResult[0][config.tables[2].table_fields[0].Field],
+                                                        myDate, myDate, name, email, address, city, state, zip,
+                                                        proids, numofs, prices, payment.id, insertSurveyResult.insertId, itemsString
+                                                    ];
+                                                    insertOrder = mysql.format(insertOrder, insertOrderInserts);
+                                                    connection.query(insertOrder, function (error, result, fields) {
+                                                        if(error) {
+                                                            return res.send({
+                                                                success: false,
+                                                                message: 'Server Error in insert order call paypal.'
+                                                            });
+                                                        } else {
+                                                            for(let i=0; i<payment.links.length; i++) {
+                                                                if(payment.links[i].rel === 'approval_url') {
+                                                                    return res.send({
+                                                                        success: true,
+                                                                        url: payment.links[i].href
+                                                                    });
+                                                                }
+                                                            }
+                                                        }
                                                     });
                                                 }
-                                            }
+                                            });
                                         }
                                     });
                                 }
@@ -3992,6 +4028,98 @@ app.post('/api/morders/all', function(req, res) {
     });
 });
 
+app.post('/api/morders/delete', function(req, res) {
+    const { body } = req;
+    const {
+        id,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Id invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid delete order.'
+            });
+        } else {
+            let getUserIdOrder = "SELECT * FROM ?? WHERE ?? = ?";
+            let getUserIdOrderInserts = [
+                config.tables[5].table_name,
+                config.tables[5].table_fields[0].Field,
+                id
+            ];
+            getUserIdOrder = mysql.format(getUserIdOrder, getUserIdOrderInserts);
+            connection.query(getUserIdOrder, function (error, getUserIdOrderResults, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get userid delete order.'
+                    });
+                } else {
+                    let deleteSurvey = "DELETE FROM ?? WHERE ?? = ?;";
+                    let deleteSurveyInserts = [
+                        config.tables[8].table_name,
+                        config.tables[8].table_fields[0].Field,
+                        getUserIdOrderResults[0]['survey_id']
+                    ];
+                    deleteSurvey = mysql.format(deleteSurvey, deleteSurveyInserts);
+                    connection.query(deleteSurvey, function (error, result, fields) {
+                        if(error) {
+                            return res.send({
+                                success: false,
+                                message: 'Server error in delete order.'
+                            });
+                        } else {
+                            let deleteOrder = "DELETE FROM ?? WHERE ?? = ?;";
+                            let deleteOrderInserts = [
+                                config.tables[5].table_name,
+                                config.tables[5].table_fields[0].Field,
+                                id
+                            ];
+                            deleteOrder = mysql.format(deleteOrder, deleteOrderInserts);
+                            connection.query(deleteOrder, function (error, result, fields) {
+                                if(error) {
+                                    return res.send({
+                                        success: false,
+                                        message: 'Server error in delete order.'
+                                    });
+                                } else {
+                                    return res.send({
+                                        success: true,
+                                        message: 'Success'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.post('/api/morders/items', function(req, res) {
     const { body } = req;
     const {
@@ -4172,15 +4300,14 @@ app.post('/api/morders/upload', (req, res, next) => {
                 message: 'Server error in get userid create order.'
             });
         } else {
-            var insertMerchantOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 0, '', ?)";
-            var inserts = [
-                config.tables[5].table_name,
-                id, myDate, myDate, name, email,
-                address, city, state, zip,
-                proids, numofs, prices, orderitems
+            var insertSurvey = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, 0, 0, '')";
+            var insertSurveyInserts = [
+                config.tables[8].table_name,
+                myDate, myDate
             ];
-            insertMerchantOrder = mysql.format(insertMerchantOrder, inserts);
-            connection.query(insertMerchantOrder, function (error, result, fields) {
+            insertSurvey = mysql.format(insertSurvey, insertSurveyInserts);
+            //console.log(insertSurvey)
+            connection.query(insertSurvey, function (error, insertSurveyResult, fields) {
                 if(error) {
                     return res.send({
                         success: false,
@@ -4189,21 +4316,101 @@ app.post('/api/morders/upload', (req, res, next) => {
                         id: null
                     });
                 } else {
+                    var insertMerchantOrder = "INSERT INTO ?? VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 0, ?, ?)";
+                    var inserts = [
+                        config.tables[5].table_name,
+                        id, myDate, myDate, name, email,
+                        address, city, state, zip,
+                        proids, numofs, prices, insertSurveyResult.insertId, orderitems
+                    ];
+                    insertMerchantOrder = mysql.format(insertMerchantOrder, inserts);
+                    connection.query(insertMerchantOrder, function (error, result, fields) {
+                        if(error) {
+                            return res.send({
+                                success: false,
+                                message: 'Server error in create order',
+                                token: null,
+                                id: null
+                            });
+                        } else {
+                            return res.send({
+                                success: true,
+                                message: 'Successfull order',
+                                transid: result.insertId,
+                                id: id,
+                                name: name,
+                                email: email,
+                                address: address,
+                                city: city,
+                                state: state,
+                                zip: zip,
+                                proids: proids,
+                                numofs: numofs,
+                                prices: prices,
+                                orderitems: orderitems
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/survey/item', function(req, res) {
+    const { body } = req;
+    const {
+        itemId,
+        token
+    } = body;
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    if(!itemId || !config.patterns.numbers.test(itemId)) {
+        return res.send({
+            success: false,
+            message: 'Item id invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid survey order.'
+            });
+        } else {
+            let surveyItem = "SELECT * FROM ?? WHERE ?? = ?;";
+            let surveyItemInserts = [
+                config.tables[8].table_name,
+                config.tables[8].table_fields[0].Field,
+                itemId
+            ];
+            surveyItem = mysql.format(surveyItem, surveyItemInserts);
+            connection.query(surveyItem, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get surver order.'
+                    });
+                } else {
                     return res.send({
                         success: true,
-                        message: 'Successfull order',
-                        transid: result.insertId,
-                        id: id,
-                        name: name,
-                        email: email,
-                        address: address,
-                        city: city,
-                        state: state,
-                        zip: zip,
-                        proids: proids,
-                        numofs: numofs,
-                        prices: prices,
-                        orderitems: orderitems
+                        message: 'Success',
+                        survey: result
                     });
                 }
             });
@@ -4270,6 +4477,7 @@ app.post('/api/corders/all', function(req, res) {
                 start, perPage
             ];
             orderList = mysql.format(orderList, orderListInserts);
+            console.log(orderList)
             connection.query(orderList, function (error, result, fields) {
                 if(error) {
                     return res.send({
