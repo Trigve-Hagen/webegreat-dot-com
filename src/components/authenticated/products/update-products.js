@@ -109,9 +109,9 @@ class UpdateProducts extends React.Component {
                         proUpdateStock: json.stock,
                         proUpdateIfManaged: json.ifmanaged,
                         proUpdateDescription: json.description,
-                        updateInput: '',
                         fileName: imagename[0]
                     });
+                    location.reload();
                 } else {
                     this.setState({
                         proUpdateError: json.message

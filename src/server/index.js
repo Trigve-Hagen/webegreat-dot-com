@@ -3865,7 +3865,7 @@ app.post('/api/roles/user-update', function(req, res) {
  ***********************************************************************
  */
 
-app.post('/api/orders/referrals', function(req, res) {
+app.post('/api/store/referrals', function(req, res) {
     const { body } = req;
     const {
         currentPage,
@@ -3886,12 +3886,20 @@ app.post('/api/orders/referrals', function(req, res) {
         });
     }
 
-    let orderList = "SELECT * FROM ??";
-    let orderListInserts = [
-        config.tables[5].table_name
+    let referralList = "SELECT ??, ??, ?? FROM ??, ?? WHERE ?? = ?? AND ?? = 1";
+    let referralListInserts = [
+        config.tables[5].table_fields[4].Field,
+        config.tables[8].table_fields[4].Field,
+        config.tables[8].table_fields[5].Field,
+        config.tables[5].table_name,
+        config.tables[8].table_name,
+        config.tables[5].table_fields[15].Field,
+        config.tables[8].table_fields[0].Field,
+        config.tables[8].table_fields[3].Field
     ];
-    orderList = mysql.format(orderList, orderListInserts);
-    connection.query(orderList, function (error, result, fields) {
+    referralList = mysql.format(referralList, referralListInserts);
+    //console.log(referralList)
+    connection.query(referralList, function (error, result, fields) {
         if(error) {
             return res.send({
                 success: false,

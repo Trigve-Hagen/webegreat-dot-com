@@ -124,8 +124,7 @@ class Products extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(prevState.currentPage !== this.state.currentPage) {
-            this.setState({ currentPage: this.state.currentPage });
+        if(prevState.currentPage !== this.state.currentPage || prevState.products.length !== this.state.products.length) {
             this.fetchPages();
             this.fetchProducts();
         }
@@ -182,7 +181,6 @@ class Products extends React.Component {
                         ifmanaged: arrayArgs[0].ifmanaged,
                         description: arrayArgs[0].description
                     });
-                    //location.reload();
 				} else {
                     this.setState({
 						loadProductError: json.message

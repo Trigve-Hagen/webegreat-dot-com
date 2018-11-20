@@ -164,6 +164,7 @@ class UploadOrders extends React.Component {
 					this.setState({
                         mordersUploadError: json.message
                     });
+                    location.reload();
 				} else {
                     this.setState({
 						mordersUploadError: json.message

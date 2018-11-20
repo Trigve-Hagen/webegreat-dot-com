@@ -156,9 +156,7 @@ class MerchantOrders extends React.Component {
 
     updateStateUploadOrder() {
         e.preventDefault()
-        this.setState({
-            orders: this.state.orders
-        })
+        this.setState({ orders: this.state.orders });
     }
 
     componentDidUpdate(prevProps, prevState) {

@@ -122,8 +122,7 @@ class MenuMaker extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(prevState.currentPage !== this.state.currentPage) {
-            this.setState({ currentPage: this.state.currentPage });
+        if(prevState.currentPage !== this.state.currentPage || prevState.loadMenuItems.length !== this.state.loadMenuItems.length) {
             this.fetchPages();
             this.fetchMenu();
         }
@@ -178,7 +177,7 @@ class MenuMaker extends React.Component {
                         ifactive: arrayArgs[0].ifactive,
                         ifdropdown: arrayArgs[0].ifdropdown
                     });
-                    location.reload();
+                    //location.reload();
 				} else {
                     this.setState({
 						loadProductError: json.message
