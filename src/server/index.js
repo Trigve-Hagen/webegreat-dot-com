@@ -1863,7 +1863,7 @@ app.post('/api/product/update', function(req, res) {
                 updateProductInserts.push(config.tables[0].table_fields[3].Field);
                 
                 updateProduct = mysql.format(updateProduct, updateProductInserts);
-                console.log(updateProduct);
+                //console.log(updateProduct);
                 connection.query(updateProduct, function (error, result, fields) {
                     if(error) {
                         return res.send({
@@ -4400,6 +4400,7 @@ app.post('/api/survey/item', function(req, res) {
                 itemId
             ];
             surveyItem = mysql.format(surveyItem, surveyItemInserts);
+            //console.log(surveyItem)
             connection.query(surveyItem, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -4410,7 +4411,10 @@ app.post('/api/survey/item', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Success',
-                        survey: result
+                        id: result[0]['surveyid'],
+                        iffront: result[0]['iffront'],
+                        stars: result[0]['stars'],
+                        comment: result[0]['comment']
                     });
                 }
             });
@@ -4631,7 +4635,6 @@ app.post('/api/corders/getSurvey', function(req, res) {
             ];
 
             getSurvey = mysql.format(getSurvey, getSurveyInserts);
-            console.log(getSurvey)
             connection.query(getSurvey, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -4695,45 +4698,48 @@ app.post('/api/morders/updateSurvey', function(req, res) {
                 message: 'Server error in get userid update survey.'
             });
         } else {
-            let getSurveyFromOrder = "SELECT * FROM ?? WHERE ?? = ?";
-            let getSurveyFromOrderInserts = [
-                config.tables[5].table_name,
-                config.tables[5].table_fields[0].Field,
+            let updateSurvey = "UPDATE ?? SET ?? = ?, ?? = ? WHERE ?? = ?";
+            let updateSurveyInserts = [
+                config.tables[8].table_name,
+                config.tables[8].table_fields[2].Field,
+                myDate,
+                config.tables[8].table_fields[3].Field,
+                iffront,
+                config.tables[8].table_fields[0].Field,
                 id
             ];
-            getSurveyFromOrder = mysql.format(getSurveyFromOrder, getSurveyFromOrderInserts);
-            connection.query(getSurveyFromOrder, function (error, result, fields) {
+
+            updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);
+            //console.log(updateSurvey)
+            connection.query(updateSurvey, function (error, result, fields) {
                 if(error) {
                     return res.send({
                         success: false,
-                        message: 'Server error in get get survey from order update survey.'
+                        message: 'Server error in update survey'
                     });
                 } else {
-                    let surveyParts = result[0]['customer_survey'].split("_");
-                    let survey = iffront + "_" + surveyParts[1] + "_" + surveyParts[2];
-                    console.log(result[0]['customer_survey']);
-
-                    let updateSurvey = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
-                    let updateSurveyInserts = [
-                        config.tables[5].table_name,
-                        config.tables[5].table_fields[15].Field,
-                        survey,
-                        config.tables[5].table_fields[0].Field,
+                    let getSurvey = "SELECT * FROM ?? WHERE ?? = ?";
+                    let getSurveyInserts = [
+                        config.tables[8].table_name,
+                        config.tables[8].table_fields[0].Field,
                         id
                     ];
 
-                    updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);
-                    connection.query(updateSurvey, function (error, result, fields) {
+                    getSurvey = mysql.format(getSurvey, getSurveyInserts);
+                    connection.query(getSurvey, function (error, result, fields) {
                         if(error) {
                             return res.send({
                                 success: false,
-                                message: 'Server error in update survey'
+                                message: 'Server error in get survey'
                             });
                         } else {
                             return res.send({
                                 success: true,
                                 message: 'Your survey has been successfully updated.',
-                                iffront: iffront
+                                id: result[0]['surveyid'],
+                                iffront: result[0]['iffront'],
+                                stars: result[0]['stars'],
+                                comment: result[0]['comment']
                             });
                         }
                     });

@@ -13,12 +13,12 @@ I've uploaded server configuration now but its in testing stage. Made a producti
 For the fallback system. All custom work will happen in the fallback_folder_name folder that you can set in the src/config/config.js. Put the same folder structure there as in src and the program will check for these folders and files first before using the ones in src. The idea will be to have another folder stucture exactly the same as the core code like magento. Then a module checks for code in the fallback_folder_name first before falling back to the core in src. Simply copy the file into the fallback_folder_name but in the same folder structure as src and make changes to it there so those in src stay the same. Also for now everything server wise is one file server.js and everything routing wise is in index.js for ease of developing but when the work is done and I start on the fallback system I will be putting server.js files and routing.js files in with each component and separating out index.js and server.js into these files based on the component needs. The module will then look for these files in each component and create a single file from these. Its the plan anyways I will see how it goes when I get there.<br>
 
 search for this line in the src/servier/index.js - // "http://localhost:3000" urlConfig.site_url  
-Update the urlConfig.site_url to "http://localhost:3000" to test paypal in development.
+Update the urlConfig.site_url to "http://localhost:3000" to test paypal in development.  
 Leave as urlConfig.site_url and change the url in config to your url for production.<br>
 
-// "http://localhost:3000" urlConfig.site_url
-let cancelUrl = urlConfig.site_url + config.paypal_urls.cancel + '/' + newTransid;
-let successUrl = urlConfig.site_url + config.paypal_urls.success;
+// "http://localhost:3000" urlConfig.site_url  
+let cancelUrl = urlConfig.site_url + config.paypal_urls.cancel + '/' + newTransid;  
+let successUrl = urlConfig.site_url + config.paypal_urls.success;<br>
 
 There is a method for checking your errors on the server. testErrorsOnServer(content). You can use it to anonomously check for errors in production. It writes a file to /tmp/webegreat. You can change the name to whatever you like. The check for production server checks the path on the server for a certain folder this one it html.<br>if(!reqPath.split(path.sep).indexOf("html")) development<br>
 else production

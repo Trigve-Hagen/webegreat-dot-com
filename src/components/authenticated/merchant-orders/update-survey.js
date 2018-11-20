@@ -7,48 +7,39 @@ class UpdateSurvey extends React.Component {
     constructor(props) {
 		super(props);
 		this.state = {
-            mordersUpdateSurvey: [],
             mordersUpdateSurveyError: '',
-            mordersUpdateSurveyIfFront: ''
+            mordersUpdateSurveyIfFront: '',
+            morderUpdateSurveyStars: [],
+            morderUpdateSurveyComment: ''
 		}
         this.onChange= this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
-       this.getSurvey(newProps.orderId);
+       this.getSurvey(newProps.surveyId);
     }
 
-    getSurvey = (orderId) => {
+    getSurvey = (surveyId) => {
         fetch(config.site_url + '/api/survey/item', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				itemId: orderId,
+				itemId: surveyId,
                 token: this.props.authentication[0].token
 			})
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-                    let arrayArgs = [];
-                    for (let value of Object.values(json.survey)) {
-                        let range = [];
-                        for(let i = 1; i <= value['stars']; i++) range.push(i);
-                        arrayArgs.push({
-                            id: value['surveyid'],
-                            date: convertTime(value['created_at']),
-                            iffront: value['iffront'],
-                            stars: range,
-                            comment: value['comment']
-                        });
-                        //count++;
-                    }
-                    console.log(arrayArgs)
+                    let range = [];
+                    for(let i = 1; i <= json.stars; i++) range.push(i);
 					this.setState({
                         mordersUpdateSurveyError: json.message,
-                        mordersUpdateSurvey: arrayArgs
+                        mordersUpdateSurveyIfFront: json.iffront,
+                        morderUpdateSurveyStars: range,
+                        morderUpdateSurveyComment: json.comment,
 					});
 				} else {
                     this.setState({
@@ -58,13 +49,13 @@ class UpdateSurvey extends React.Component {
 			});
     }
 
-    /*componentDidUpdate(prevProps, prevState) {
-        if(prevProps.mordersUpdateSurveyIfFront !== this.state.mordersUpdateSurveyIfFront) {
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.mordersUpdateSurveyIfFront !== this.state.mordersUpdateSurveyIfFront) {
             this.setState({
                 mordersUpdateSurveyIfFront: this.state.mordersUpdateSurveyIfFront,
             });
         }
-    }*/
+    }
     
     onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
@@ -73,7 +64,7 @@ class UpdateSurvey extends React.Component {
 	onSubmit(e) {
         e.preventDefault();
         const data = new FormData();
-            data.append('id', this.props.item);
+            data.append('id', this.props.surveyId);
             data.append('iffront', this.state.mordersUpdateSurveyIfFront);
             data.append('token', this.props.authentication[0].token);
 
@@ -83,12 +74,14 @@ class UpdateSurvey extends React.Component {
 		}).then(res => res.json())
 			.then(json => {
 				if(json.success) {
-                    console.log("User survey successfull." + json.iffront);
+                    let range = [];
+                    for(let i = 1; i <= json.stars; i++) range.push(i);
 					this.setState({
                         mordersUpdateSurveyError: json.message,
-                        mordersUpdateSurveyIfFront: json.iffront
-                    });
-                    //location.reload();
+                        mordersUpdateSurveyIfFront: json.iffront,
+                        morderUpdateSurveyStars: range,
+                        morderUpdateSurveyComment: json.comment,
+					});
 				} else {
                     this.setState({
 						mordersUpdateSurveyError: json.message
@@ -98,58 +91,54 @@ class UpdateSurvey extends React.Component {
     }
 
     render() {
-        if(this.state.mordersUpdateSurvey.comment) {
-            return (
-                <div>
+        if(this.state.morderUpdateSurveyComment != '') {
+            return <div className="mt-3">
+                    <div className="row">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            {
+                                this.state.morderUpdateSurveyStars.map((element, index) => 
+                                    <img
+                                        src="/img/greenstar-md.png"
+                                        key={index}
+                                        style={{ maxWidth: '50px' }}
+                                        className="img-fluid"
+                                    />
+                                )
+                            }
+                            <p className="mb-1">{this.state.morderUpdateSurveyComment}</p>
+                            <p>
+                                {
+                                    this.state.mordersUpdateSurveyIfFront == 1
+                                        ? 'Showing in referrals'
+                                        : 'Not Showing in referrals'
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <h4>Set if showing in referals.</h4>
                     {
-                        this.state.mordersUpdateSurvey.map(item => {
-                            <div className="mt-3" key={item.id}>
-                                    <div className="row">
-                                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            {
-                                                item.stars.map((element, index) => 
-                                                    <img
-                                                        src="/img/greenstar-md.png"
-                                                        key={index}
-                                                        style={{ maxWidth: '50px' }}
-                                                        className="img-fluid"
-                                                    />
-                                                )
-                                            }
-                                            <p className="mb-1">{item.comment}</p>
-                                            <p>
-                                                {
-                                                    item.iffront == 1
-                                                        ? 'Showing in referrals'
-                                                        : 'Not Showing in referrals'
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <h4>Set if showing in referals.</h4>
-                                    <div className="row">
-                                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            
-                                            <form name="cSurveyUpload" onSubmit={this.onSubmit}>
-                                                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                    <div className="form-group">
-                                                        <select value={this.state.mordersUpdateSurveyIfFront} onChange={this.onChange} name="mordersUpdateSurveyIfFront" className="form-element custom">
-                                                            <option value="">Please select a value.</option>
-                                                            <option value="0">Don't show in front.</option>
-                                                            <option value="1">Show in front.</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <button type="submit" className="btn btn-army">Update Survey</button>
-                                            </form>
-                                        </div>
+                        (this.state.mordersUpdateSurveyError) ? (
+                            <label>{this.state.mordersUpdateSurveyError}</label>
+                        ) : (null)
+                    }
+                    <div className="row">
+                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            
+                            <form name="cSurveyUpload" onSubmit={this.onSubmit}>
+                                <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <div className="form-group">
+                                        <select value={this.state.mordersUpdateSurveyIfFront} onChange={this.onChange} name="mordersUpdateSurveyIfFront" className="form-element custom">
+                                            <option value="">Please select a value.</option>
+                                            <option value="0">Don't show in front.</option>
+                                            <option value="1">Show in front.</option>
+                                        </select>
                                     </div>
                                 </div>
-                            }
-                        )
-                    }
+                                <button type="submit" className="btn btn-army">Update Survey</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            )
         } else {
             return <div className="row mt-3">
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">

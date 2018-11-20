@@ -31,6 +31,13 @@ class UploadOrders extends React.Component {
         this.onSwitchUserChange = this.onSwitchUserChange.bind(this);
     }
 
+    /*componentDidUpdate(prevProps, prevState) {
+        if(prevProps.orders.length !== this.props.orders.length) {
+            this.props.fetchPages();
+            this.props.fetchOrders();
+        }
+    }*/
+
     componentDidMount() {
         fetch(config.site_url + '/api/morders/getusers', {
             method: 'POST',
@@ -155,18 +162,8 @@ class UploadOrders extends React.Component {
 				if(json.success) {
 					console.log("User upload successfull.");
 					this.setState({
-                        mordersUploadError: json.message,
-                        mordersUploadName: '',
-                        mordersUploadEmail: '',
-                        mordersUploadAddress: '',
-                        mordersUploadCity: '',
-                        mordersUploadState: '',
-                        mordersUploadZip: '',
-                        mordersUploadItems: '',
-                        mordersUploadNumofs: '',
-                        mordersUploadPrices: ''
+                        mordersUploadError: json.message
                     });
-                    location.reload();
 				} else {
                     this.setState({
 						mordersUploadError: json.message
@@ -207,7 +204,7 @@ class UploadOrders extends React.Component {
                                         <img src={ `/img/products/${item.image}` } alt="Army Strong" className="img-fluid"/>
                                     </div>
                                     <div className="col-xl-9 col-lg-9 col-md-9 col-sm-12">
-                                        <h4 className="mb-1">{item.name}</h4>
+                                        <h5 className="mb-1">{item.name}</h5>
                                         <p className="mb-1">Quantity: {item.quantity}</p>
                                         <p>Price: {item.price}</p>
                                     </div>
@@ -246,7 +243,7 @@ class UploadOrders extends React.Component {
                                     <input value={this.state.mordersUploadZip} onChange={this.onChange} name="mordersUploadZip" type="text" className="form-element" placeholder="Zip"/>
                                 </fieldset>
                             </div>
-                            <button type="submit" className="btn btn-army">Merchant Orders Upload</button>
+                            <button type="submit" onClick={this.props.updateStateUploadOrder} className="btn btn-army">Merchant Orders Upload</button>
                         </form>
                     </div>
                 </div>

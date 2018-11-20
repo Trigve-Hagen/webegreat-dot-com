@@ -18,7 +18,7 @@ class MerchantOrders extends React.Component {
             perPage: config.per_page,
             currentPage: 1,
             loadOrdersError: '',
-            orderId: '',
+            surveyId: '',
             orders: [],
             order: [],
             pages: []
@@ -26,6 +26,7 @@ class MerchantOrders extends React.Component {
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onChangePagination = this.onChangePagination.bind(this);
+        this.updateStateUploadOrder = this.updateStateUploadOrder.bind(this);
     }
 
     fetchMerchantOrders() {
@@ -72,6 +73,7 @@ class MerchantOrders extends React.Component {
                             proids: value['product_ids'],
                             numofs: value['number_ofs'],
                             prices: value['prices'],
+                            surveyid: value['survey_id'],
                             orderitems: orderItems
                         });
                         //count++;
@@ -80,7 +82,8 @@ class MerchantOrders extends React.Component {
                         loadOrdersError: json.message,
                         orders: arrayArgs,
                         order: [arrayArgs[0]],
-                        orderId: arrayArgs[0].id
+                        orderId: arrayArgs[0].id,
+                        surveyId: arrayArgs[0].surveyid
 					});
 				} else {
                     this.setState({
@@ -138,6 +141,7 @@ class MerchantOrders extends React.Component {
                 obj.proids = order.proids;
                 obj.numofs = order.numofs;
                 obj.prices = order.prices;
+                obj.surveyid = order.surveyid;
                 obj.orderitems = order.orderitems;
             }
         });
@@ -150,16 +154,17 @@ class MerchantOrders extends React.Component {
         }
     }
 
+    updateStateUploadOrder() {
+        e.preventDefault()
+        this.setState({
+            orders: this.state.orders
+        })
+    }
+
     componentDidUpdate(prevProps, prevState) {
-        //console.log(prevState);
-        if(prevState.currentPage !== this.state.currentPage) {
+        if(prevState.currentPage !== this.state.currentPage || prevState.orders.length !== this.state.orders.length) {
             this.fetchPages();
             this.fetchMerchantOrders();
-            this.setState({
-                currentPage: this.state.currentPage,
-                order: this.state.order,
-                orderId: this.state.orderId
-            });
         }
     }
 
@@ -167,7 +172,7 @@ class MerchantOrders extends React.Component {
         let orderObj = this.getOrderObject(e.target.dataset.orderid);
         this.setState({
             order: [orderObj],
-            orderId: orderObj.id
+            surveyId: orderObj.surveyid
         });
     }
 
@@ -209,7 +214,7 @@ class MerchantOrders extends React.Component {
                         loadOrdersError: json.message,
                         orders: arrayArgs
                     });
-                    location.reload();
+                    //location.reload();
 				} else {
                     this.setState({
 						loadOrdersError: json.message
@@ -231,7 +236,7 @@ class MerchantOrders extends React.Component {
                     <div className="container">
                         <div className="row my-3">
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <h2>Merchant Orders</h2>
+                                <h3>Merchant Orders</h3>
                                 <Pagination
                                     pages={this.state.pages}
                                     perPage={this.state.perPage}
@@ -254,11 +259,15 @@ class MerchantOrders extends React.Component {
                                         <label>{this.state.loadOrdersError}</label>
                                     ) : (null)
                                 }
-                                <UploadOrders cart={this.props.cart} orders={this.state.orders}/>
+                                <UploadOrders
+                                    cart={this.props.cart}
+                                    orders={this.state.orders}
+                                    updateState={this.updateStateUploadOrder}
+                                />
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <OrderItem order={this.state.order}/>
-                                <UpdateSurvey orderId={this.state.orderId}/>
+                                <UpdateSurvey surveyId={this.state.surveyId}/>
                             </div>
                         </div>
                     </div>
