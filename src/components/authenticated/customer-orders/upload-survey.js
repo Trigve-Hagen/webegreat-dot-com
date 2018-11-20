@@ -8,20 +8,45 @@ class UploadSurvey extends React.Component {
 		this.state = {
             cordersSurveyUploadError: '',
             cordersSurveyUploadStars: '',
+            cordersSurveyUploadStarsArray: [],
             cordersSurveyUploadComment: ''
 		}
         this.onChange= this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    /*componentDidUpdate(nextProps) {
-        if(nextProps.order[0].surveyitems !== this.props.order[0].surveyitems) {
-            this.setState({
-                cordersSurveyUploadStars: this.props.order[0].surveyitems[0].stars,
-                cordersSurveyUploadComment: this.props.order[0].surveyitems[0].comment
-            });
-        }
-    }*/
+    componentWillReceiveProps(newProps) {
+       this.getSurvey(newProps.orderId);
+    }
+
+    getSurvey = (orderId) => {
+        fetch(config.site_url + '/api/corders/getSurvey', {
+            method: 'POST',
+            headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                id: orderId,
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.stars; i++) range.push(i);
+                    this.setState({
+                        cordersSurveyUploadStarsArray: range,
+                        cordersSurveyUploadStars: json.stars,
+                        cordersSurveyUploadComment: json.comment,
+                        cordersSurveyUploadError: json.message
+                    });
+				} else {
+                    this.setState({
+                        cordersSurveyUploadError: json.message
+					});
+                }
+			});
+    }
     
     onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
@@ -32,7 +57,6 @@ class UploadSurvey extends React.Component {
         
         const data = new FormData();
             data.append('id', this.props.orderId);
-            data.append('iffront', 0);
             data.append('stars', this.state.cordersSurveyUploadStars);
             data.append('comment', this.state.cordersSurveyUploadComment);
             data.append('token', this.props.authentication[0].token);
@@ -71,7 +95,12 @@ class UploadSurvey extends React.Component {
                     <form name="cSurveyUpload" onSubmit={this.onSubmit}>
                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <div className="form-group">
-                                <select value={this.state.cordersSurveyUploadStars} onChange={this.onChange} name="cordersSurveyUploadStars" className="form-element custom">
+                                <select
+                                    value={this.state.cordersSurveyUploadStars}
+                                    onChange={this.onChange}
+                                    name="cordersSurveyUploadStars"
+                                    className="form-element custom"
+                                >
                                     <option value="">Please rate our service.</option>
                                     <option value="1">One Star</option>
                                     <option value="2">Two Star</option>
@@ -81,7 +110,14 @@ class UploadSurvey extends React.Component {
                                 </select>
                             </div>
                             <fieldset className="form-group">
-                                <textarea value={this.state.cordersSurveyUploadComment} onChange={this.onChange} name="cordersSurveyUploadComment" className="form-element" rows="3" placeholder="Please leave a comment."/>
+                                <textarea
+                                    value={this.state.cordersSurveyUploadComment}
+                                    onChange={this.onChange}
+                                    name="cordersSurveyUploadComment"
+                                    className="form-element"
+                                    rows="3"
+                                    placeholder="Please leave a comment."
+                                />
                             </fieldset>
                         </div>
                         <button type="submit" className="btn btn-army">Submit Survey</button>

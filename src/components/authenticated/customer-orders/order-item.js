@@ -10,9 +10,9 @@ export default function OrderItem(props) {
                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <div className="row">
                                 <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <h4>Ship to: {item.name}</h4>
-                                    <p>{item.email}</p>
-                                    <p>{item.address}</p>
+                                    <h4 className="mb-1">Ship to: {item.name}</h4>
+                                    <p className="mb-1">{item.email}</p>
+                                    <p className="mb-1">{item.address}</p>
                                     <p>{item.city}, {item.state} {item.zip}</p>
                                 </div>
                             </div>
@@ -26,9 +26,9 @@ export default function OrderItem(props) {
                                             />
                                         </div>
                                         <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 text-left">
-                                            <h4>{product.name}</h4>
-                                            <p>Price: {product.price}</p>
-                                            <p>Quantity: {product.quantity}</p>
+                                            <h4 className="mb-1">{product.name}</h4>
+                                            <p className="mb-1">Price: {product.price}</p>
+                                            <p className="mb-1">Quantity: {product.quantity}</p>
                                             <p>Total: {product.total}</p>
                                         </div>
                                     </div>

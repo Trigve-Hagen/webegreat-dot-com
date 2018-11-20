@@ -20,7 +20,7 @@ class CustomerOrders extends React.Component {
             windowHeight: 0,
             footerHeight: 0,
             menuHeight: 0,
-            orderItem: '',
+            surveyId: '',
             orders: [],
             order: [],
             pages: []
@@ -47,10 +47,8 @@ class CustomerOrders extends React.Component {
                     for (let value of Object.values(json.orders)) {
                         let orderItems = [];
                         let argsArray = value.items.split("&");
-                        //console.log(argsArray);
                         for(let h=0; h<argsArray.length; h++) {
                             let orderArgs = argsArray[h].split("_");
-                            //console.log(orderArgs.length);
                             orderItems.push({
                                 id: orderArgs[0],
                                 name: orderArgs[1],
@@ -60,15 +58,6 @@ class CustomerOrders extends React.Component {
                                 image: orderArgs[5],
                                 stock: orderArgs[6],
                                 total: orderArgs[7]
-                            });
-                        }
-                        let surveyItems = [];
-                        if(value.customer_survey != undefined) {
-                            let surveyArray = value.customer_survey.split("_");
-                            surveyItems.push({
-                                iffront: surveyArray[0],
-                                stars: surveyArray[1],
-                                comment: surveyArray[2]
                             });
                         }
                         arrayArgs.push({
@@ -83,14 +72,15 @@ class CustomerOrders extends React.Component {
                             proids: value['product_ids'],
                             numofs: value['number_ofs'],
                             prices: value['prices'],
+                            surveyid: value['survey_id'],
                             orderitems: orderItems
                         });
                     }
 					this.setState({
                         loadOrdersError: json.message,
                         orders: arrayArgs,
-                        order: arrayArgs[0],
-                        orderItem: arrayArgs[0].id
+                        order: [arrayArgs[0]],
+                        surveyId: arrayArgs[0].surveyid
 					});
 				} else {
                     this.setState({
@@ -131,6 +121,8 @@ class CustomerOrders extends React.Component {
     }
     
     componentDidMount() {
+        this.fetchPages();
+		this.fetchOrders();
         let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
         let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
         let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
@@ -139,8 +131,6 @@ class CustomerOrders extends React.Component {
             footerHeight: footerHeight,
             menuHeight: menuHeight
         });
-        this.fetchPages();
-		this.fetchOrders();
     }
 
     getOrderObject(orderId) {
@@ -159,6 +149,7 @@ class CustomerOrders extends React.Component {
                 obj.proids = order.proids;
                 obj.numofs = order.numofs;
                 obj.prices = order.prices;
+                obj.surveyid = order.surveyid;
                 obj.orderitems = order.orderitems;
             }
         });
@@ -180,12 +171,14 @@ class CustomerOrders extends React.Component {
     }
 
     onView(e) {
-        this.setState({ order: this.getOrderObject(e.target.dataset.orderid) })
+        this.setState({
+            order: [this.getOrderObject(e.target.dataset.orderid)],
+            surveyId: this.getOrderObject(e.target.dataset.orderid).surveyid
+        })
     }
 
     render() {
         let containerHeight = this.state.windowHeight - (this.state.menuHeight + this.state.footerHeight);
-        console.log(containerHeight)
         if(this.props.authentication[0].authenticated && this.props.authentication[0].role == 1) {
             return (
                 <div>
@@ -227,8 +220,8 @@ class CustomerOrders extends React.Component {
                                 />
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <OrderItem order={this.state.orders} />
-                                <UploadSurvey orderId={this.state.orderItem}/>
+                                <OrderItem order={this.state.order} />
+                                <UploadSurvey orderId={this.state.surveyId}/>
                             </div>
                         </div>
                     </div>

@@ -4477,7 +4477,7 @@ app.post('/api/corders/all', function(req, res) {
                 start, perPage
             ];
             orderList = mysql.format(orderList, orderListInserts);
-            console.log(orderList)
+            //console.log(orderList)
             connection.query(orderList, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -4507,7 +4507,6 @@ app.post('/api/corders/survey', function(req, res) {
     const { body } = req;
     const {
         id,
-        iffront,
         stars,
         comment,
         token
@@ -4527,13 +4526,6 @@ app.post('/api/corders/survey', function(req, res) {
         });
     }
 
-    if(!iffront || !config.patterns.numbers.test(iffront)) {
-        return res.send({
-            success: false,
-            message: 'If front invalid or cannot be left empty.'
-        });
-    }
-
     if(!stars || !config.patterns.numbers.test(stars)) {
         return res.send({
             success: false,
@@ -4547,8 +4539,6 @@ app.post('/api/corders/survey', function(req, res) {
             message: 'Comment invalid or cannot be left empty.'
         });
     }
-
-    let survey = iffront + "_" + stars + "_" + comment;
 
     let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
     let userIdInserts = [
@@ -4565,16 +4555,19 @@ app.post('/api/corders/survey', function(req, res) {
                 message: 'Server error in get userid update survey.'
             });
         } else {
-            let updateSurvey = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+            let updateSurvey = "UPDATE ?? SET ?? = ?, ?? = ? WHERE ?? = ?";
             let updateSurveyInserts = [
-                config.tables[5].table_name,
-                config.tables[5].table_fields[15].Field,
-                survey,
-                config.tables[5].table_fields[0].Field,
+                config.tables[8].table_name,
+                config.tables[8].table_fields[4].Field,
+                stars,
+                config.tables[8].table_fields[5].Field,
+                comment,
+                config.tables[8].table_fields[0].Field,
                 id
             ];
 
             updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);
+            //console.log(updateSurvey)
             connection.query(updateSurvey, function (error, result, fields) {
                 if(error) {
                     return res.send({
@@ -4585,9 +4578,72 @@ app.post('/api/corders/survey', function(req, res) {
                     return res.send({
                         success: true,
                         message: 'Your survey has been successfully updated.',
-                        iffront: iffront,
                         stars: stars,
                         comment: comment
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/api/corders/getSurvey', function(req, res) {
+    const { body } = req;
+    const {
+        id,
+        token
+    } = body;
+
+    if(!id || !config.patterns.numbers.test(id)) {
+        return res.send({
+            success: false,
+            message: 'Id invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server error in get userid get survey.'
+            });
+        } else {
+            let getSurvey = "SELECT * FROM ?? WHERE ?? = ?";
+            let getSurveyInserts = [
+                config.tables[8].table_name,
+                config.tables[8].table_fields[0].Field,
+                id
+            ];
+
+            getSurvey = mysql.format(getSurvey, getSurveyInserts);
+            console.log(getSurvey)
+            connection.query(getSurvey, function (error, result, fields) {
+                if(error) {
+                    return res.send({
+                        success: false,
+                        message: 'Server error in get survey'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: 'Success',
+                        stars: result[0]['stars'],
+                        comment: result[0]['comment']
                     });
                 }
             });
