@@ -833,6 +833,7 @@ app.post('/api/menu/delete-item', function(req, res) {
 });
 
 app.post('/api/menu/front', function(req, res) {
+
     let getFrontMenu = "SELECT * FROM ??";
     let getFrontMenuInserts = [
         config.tables[7].table_name
@@ -850,6 +851,79 @@ app.post('/api/menu/front', function(req, res) {
                 success: true,
                 message: "Success",
                 menuItems: result
+            });
+        }
+    });
+});
+
+app.post('/api/menu/backend', function(req, res) {
+    const { body } = req;
+    const {
+        perPage,
+        currentPage,
+        token
+    } = body;
+
+    if(!perPage || !config.patterns.numbers.test(perPage)) {
+        return res.send({
+            success: false,
+            message: 'Per Page invalid or cannot be left empty.'
+        });
+    }
+
+    if(!currentPage || !config.patterns.numbers.test(currentPage)) {
+        return res.send({
+            success: false,
+            message: 'Current Page invalid or cannot be left empty.'
+        });
+    }
+
+    if(!token || !config.patterns.numbers.test(token)) {
+        return res.send({
+            success: false,
+            message: 'Token invalid or cannot be left empty.'
+        });
+    }
+
+    let getUserIdSession = "SELECT ?? FROM ?? WHERE ?? = ?";
+    let userIdInserts = [
+        config.tables[3].table_fields[1].Field,
+        config.tables[3].table_name,
+        config.tables[3].table_fields[0].Field,
+        token
+    ];
+    getUserIdSession = mysql.format(getUserIdSession, userIdInserts);
+    //console.log(getUserIdSession);
+    connection.query(getUserIdSession, function (error, results, fields) {
+        if(error) {
+            return res.send({
+                success: false,
+                message: 'Server Error in get userid upload menu.'
+            });
+        } else {
+            let start = (currentPage-1)*perPage;
+
+            let getFrontMenu = "SELECT * FROM ?? ORDER BY ?? DESC LIMIT ?, ?";
+            let getFrontMenuInserts = [
+                config.tables[7].table_name,
+                config.tables[7].table_fields[0].Field,
+                start, perPage
+            ];
+            getFrontMenu = mysql.format(getFrontMenu, getFrontMenuInserts);
+            connection.query(getFrontMenu, function (err, result, fields) {
+                if(err) {
+                    console.log("Error: in load all menu: " + err);
+                    return res.send({
+                        success: false,
+                        message: 'Server Error in load all menu.'
+                    });
+                } else {
+                    return res.send({
+                        success: true,
+                        message: "Success",
+                        menuItems: result
+                    });
+                }
             });
         }
     });

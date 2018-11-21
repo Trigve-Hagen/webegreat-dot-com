@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
 
 class Menu extends React.Component {
     render() {
@@ -14,7 +13,7 @@ class Menu extends React.Component {
                         {
                             this.props.menu.map(item =>
                                 item.ifproduct == 1
-                                    ? <a className="dropdown-item" key={item.id} href={item.link} onClick={this.props.onClick} data-linkname={item.name}>{item.name}</a>
+                                    ? <a className="dropdown-item" key={item.id} href="#" onClick={this.props.onClick} data-linkname={item.name}>{item.name}</a>
                                     : null
                             )
                         }

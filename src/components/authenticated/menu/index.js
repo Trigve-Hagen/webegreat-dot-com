@@ -19,6 +19,7 @@ class MenuMaker extends React.Component {
             perPage: config.per_page,
             currentPage: 1,
             loadMenuItem: [],
+            loadMenuItemsAll: [],
             loadMenuItems: [],
             pages: []
         }
@@ -27,13 +28,52 @@ class MenuMaker extends React.Component {
         this.onChangePagination = this.onChangePagination.bind(this);
     }
 
-    fetchMenu() {
+    fetchMenuAll() {
         fetch(config.site_url + '/api/menu/front', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let arrayArgs = [];
+                    for (let value of Object.values(json.menuItems)) {
+                        arrayArgs.push({
+                            id: value['menuid'],
+                            name: value['name'],
+                            level: value['level'],
+                            parent: value['parent'],
+                            description: value['description'],
+                            ifproduct: value['if_product'],
+                            ifactive: value['if_active'],
+                            ifdropdown: value['if_dropdown']
+                        });
+                    }
+                    //console.log(arrayArgs);
+                    this.setState({
+                        loadMenuItemsAll: arrayArgs
+                    });
+				} else {
+                    this.setState({
+						loadMenuError: json.message
+					});
+                }
+			});
+    }
+
+    fetchMenu() {
+        fetch(config.site_url + '/api/menu/backend', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                perPage: this.state.perPage,
+                currentPage: this.state.currentPage,
                 token: this.props.authentication[0].token
 			})
 		}).then(res => res.json())
@@ -95,7 +135,8 @@ class MenuMaker extends React.Component {
 
     componentDidMount() {
         this.fetchPages();
-		this.fetchMenu();
+        this.fetchMenu();
+        this.fetchMenuAll();
     }
 
     getMenuObject(menuId) {
@@ -122,9 +163,11 @@ class MenuMaker extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(prevState.currentPage !== this.state.currentPage || prevState.loadMenuItems.length !== this.state.loadMenuItems.length) {
+        console.log(prevState.loadMenuItems.length + ", " + this.state.loadMenuItems.length)
+        if(prevState.currentPage !== this.state.currentPage || prevState.loadMenuItemsAll.length !== this.state.loadMenuItemsAll.length) {
             this.fetchPages();
             this.fetchMenu();
+            this.fetchMenuAll();
         }
     }
 
@@ -165,17 +208,8 @@ class MenuMaker extends React.Component {
                     });
                     this.setState({
                         loadProductError: json.message,
+                        loadMenuItem: arrayArgs[0],
                         loadMenuItems: arrayArgs
-                    });
-                    this.props.updateMenu({
-                        id: arrayArgs[0].id,
-                        name: arrayArgs[0].name,
-                        level: arrayArgs[0].level,
-                        parent: arrayArgs[0].parent,
-                        description: arrayArgs[0].description,
-                        ifproduct: arrayArgs[0].ifproduct,
-                        ifactive: arrayArgs[0].ifactive,
-                        ifdropdown: arrayArgs[0].ifdropdown
                     });
                     //location.reload();
 				} else {
@@ -221,7 +255,7 @@ class MenuMaker extends React.Component {
                                 <UploadMenu menuItems={this.state.loadMenuItems}/>
                             </div>
                             <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <MenuDisplay menuItems={this.state.loadMenuItems} />
+                                <MenuDisplay menuItems={this.state.loadMenuItemsAll} />
                                 <MenuItem menu={this.state.loadMenuItem} />
                                 <UpdateMenu
                                     menuItems={this.state.loadMenuItems}

@@ -16,6 +16,7 @@ class Home extends React.Component {
             perPage: 15,
             currentPage: 1,
             loadProductError: '',
+            loadMenuItems: [],
             searchString: 'all',
             windowHeight: 0,
             footerHeight: 0,
@@ -39,6 +40,7 @@ class Home extends React.Component {
 
     componentDidMount() {
         this.searchProducts(this.state.searchString);
+        this.getMenu();
         let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
         let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
         let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
@@ -47,6 +49,46 @@ class Home extends React.Component {
             footerHeight: footerHeight,
             menuHeight: menuHeight
         });
+    }
+
+    getMenu() {
+		fetch(config.site_url + '/api/menu/front', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let arrayArgs = [];
+                    for (let value of Object.values(json.menuItems)) {
+                        if(value['if_active'] == 1 && value['if_dropdown'] == 0) {
+                            arrayArgs.push({
+                                id: value['menuid'],
+                                name: value['name'],
+                                level: value['level'],
+                                parent: value['parent'],
+                                description: value['description'],
+                                ifproduct: value['if_product'],
+                                ifactive: value['if_active'],
+                                ifdropdown: value['if_dropdown']
+                            });
+                        }
+                    }
+                    //console.log(arrayArgs);
+                    this.setState({
+                        loadProductError: json.message,
+                        loadMenuItems: arrayArgs
+                    });
+				} else {
+                    this.setState({
+						loadProductError: json.message
+					});
+                }
+			});
     }
 
     searchProducts(searchString) {
@@ -114,17 +156,17 @@ class Home extends React.Component {
                             {
                                 this.props.visibility[0].visibility == 1
                                     ? <Chat />
-                                    : (<div></div>)
+                                    : <div></div>
                             }
                             {
                                 this.props.visibility[0].visibility == 1
-                                    ? <MenuDisplay onClick={this.onClick}/>
-                                    : (<div></div>)
+                                    ? <MenuDisplay onClick={this.onClick} menuItems={this.state.loadMenuItems}/>
+                                    : <div></div>
                             }
                             {
                                 this.props.visibility[0].visibility == 1
                                     ? <Referrals authenticated={this.props.authentication[0].authenticated} />
-                                    : (<div></div>)
+                                    : <div></div>
                             }
                         </div>
                         <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">

@@ -185,15 +185,19 @@ module.exports = function(database, config, connection, moment, fs, reqPath) {
             }
             if(element.table_name == 'h_frontmenu') {
                 const products = [
-                    `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Army Clothing', 0, 'base', 'Army airborne clothing and clothing accessories department.', 0, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Army Hygiene', 0, 'base', 'Army airborne hygiene and hygiene accessories department.', 0, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(3, 321, '${myDate}', '${myDate}', 'Army Gear', 0, 'base', 'Army airborne gear department.', 0, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(4, 321, '${myDate}', '${myDate}', 'Cologne', 1, 'Army Hygiene', 'Army cologne department.', 1, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(5, 321, '${myDate}', '${myDate}', 'Shirts', 1, 'Army Clothing', 'Army airborne shirts department.', 0, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(6, 321, '${myDate}', '${myDate}', 'T-shirts', 2, 'Shirts', 'Army airborne t-shirts department.', 1, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(7, 321, '${myDate}', '${myDate}', 'Watches', 1, 'Army Gear', 'Army airborne watches and watch accessories department.', 1, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(8, 321, '${myDate}', '${myDate}', 'Head Gear', 2, 'Army Clothing', 'Army head coverings department.', 0, 1, 1);`,
-                    `INSERT INTO ${element.table_name} VALUES(9, 321, '${myDate}', '${myDate}', 'Baseball Caps', 2, 'Head Gear', 'Army baseball caps.', 1, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(1, 321, '${myDate}', '${myDate}', 'Army Clothing', 0, 'base', 'Army airborne clothing and clothing accessories department.', 0, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(2, 321, '${myDate}', '${myDate}', 'Army Hygiene', 0, 'base', 'Army airborne hygiene and hygiene accessories department.', 0, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(3, 321, '${myDate}', '${myDate}', 'Army Gear', 0, 'base', 'Army airborne gear department.', 0, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(4, 321, '${myDate}', '${myDate}', 'Cologne', 1, 'Army Hygiene', 'Army cologne department.', 1, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(5, 321, '${myDate}', '${myDate}', 'Shirts', 1, 'Army Clothing', 'Army airborne shirts department.', 0, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(6, 321, '${myDate}', '${myDate}', 'T-shirts', 2, 'Shirts', 'Army airborne t-shirts department.', 1, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(7, 321, '${myDate}', '${myDate}', 'Watches', 1, 'Army Gear', 'Army airborne watches and watch accessories department.', 1, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(8, 321, '${myDate}', '${myDate}', 'Head Gear', 1, 'Army Clothing', 'Army head coverings department.', 0, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(9, 321, '${myDate}', '${myDate}', 'Baseball Caps', 2, 'Head Gear', 'Army baseball caps.', 1, 1, 0);`,
+                    `INSERT INTO ${element.table_name} VALUES(10, 321, '${myDate}', '${myDate}', 'Cologne', 1, 'Army Hygiene', 'Army cologne department.', 1, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(11, 321, '${myDate}', '${myDate}', 'T-shirts', 2, 'Shirts', 'Army airborne t-shirts department.', 1, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(12, 321, '${myDate}', '${myDate}', 'Watches', 1, 'Army Gear', 'Army airborne watches and watch accessories department.', 1, 1, 1);`,
+                    `INSERT INTO ${element.table_name} VALUES(13, 321, '${myDate}', '${myDate}', 'Baseball Caps', 2, 'Head Gear', 'Army baseball caps.', 1, 1, 1);`,
                 ];
                 products.forEach(insert => {
                     connection.query(insert, (error, results) => {
