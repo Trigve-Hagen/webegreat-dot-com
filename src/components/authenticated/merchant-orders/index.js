@@ -44,47 +44,56 @@ class MerchantOrders extends React.Component {
 			.then(json => {
 				if(json.success) {
                     let arrayArgs = [];
-                    for (let value of Object.values(json.orders)) {
-                        let orderItems = [];
-                        let argsArray = value.items.split("&");
-                        //console.log(argsArray);
-                        for(let h=0; h<argsArray.length; h++) {
-                            let orderArgs = argsArray[h].split("_");
-                            orderItems.push({
-                                id: orderArgs[0],
-                                name: orderArgs[1],
-                                sku: orderArgs[2],
-                                price: orderArgs[3],
-                                quantity: orderArgs[4],
-                                image: orderArgs[5],
-                                stock: orderArgs[6],
-                                total: orderArgs[7]
+                    if(json.orders.length > 0) {
+                        for (let value of Object.values(json.orders)) {
+                            let orderItems = [];
+                            let argsArray = value.items.split("&");
+                            for(let h=0; h<argsArray.length; h++) {
+                                let orderArgs = argsArray[h].split("_");
+                                orderItems.push({
+                                    id: orderArgs[0],
+                                    name: orderArgs[1],
+                                    sku: orderArgs[2],
+                                    price: orderArgs[3],
+                                    quantity: orderArgs[4],
+                                    image: orderArgs[5],
+                                    stock: orderArgs[6],
+                                    total: orderArgs[7]
+                                });
+                            }
+                            arrayArgs.push({
+                                id: value['orderid'],
+                                date: convertTime(value['created_at']),
+                                name: value['name'],
+                                email: value['email'],
+                                address: value['shipping_address'],
+                                city: value['shipping_city'],
+                                state: value['shipping_state'],
+                                zip: value['shipping_zip'],
+                                proids: value['product_ids'],
+                                numofs: value['number_ofs'],
+                                prices: value['prices'],
+                                surveyid: value['survey_id'],
+                                orderitems: orderItems
                             });
+                            //count++;
                         }
-                        arrayArgs.push({
-                            id: value['orderid'],
-                            date: convertTime(value['created_at']),
-                            name: value['name'],
-                            email: value['email'],
-                            address: value['shipping_address'],
-                            city: value['shipping_city'],
-                            state: value['shipping_state'],
-                            zip: value['shipping_zip'],
-                            proids: value['product_ids'],
-                            numofs: value['number_ofs'],
-                            prices: value['prices'],
-                            surveyid: value['survey_id'],
-                            orderitems: orderItems
+                        this.setState({
+                            loadOrdersError: json.message,
+                            orders: arrayArgs,
+                            order: [arrayArgs[0]],
+                            orderId: arrayArgs[0].id,
+                            surveyId: arrayArgs[0].surveyid
                         });
-                        //count++;
+                    } else {
+                        this.setState({
+                            loadOrdersError: json.message,
+                            orders: [],
+                            order: [],
+                            orderId: '',
+                            surveyId: ''
+                        });
                     }
-					this.setState({
-                        loadOrdersError: json.message,
-                        orders: arrayArgs,
-                        order: [arrayArgs[0]],
-                        orderId: arrayArgs[0].id,
-                        surveyId: arrayArgs[0].surveyid
-					});
 				} else {
                     this.setState({
 						loadOrdersError: json.message
@@ -172,6 +181,8 @@ class MerchantOrders extends React.Component {
             order: [orderObj],
             surveyId: orderObj.surveyid
         });
+        this.fetchPages();
+        this.fetchMerchantOrders();
     }
 
     onDelete(e) {
@@ -212,7 +223,8 @@ class MerchantOrders extends React.Component {
                         loadOrdersError: json.message,
                         orders: arrayArgs
                     });
-                    //location.reload();
+                    this.fetchPages();
+                    this.fetchMerchantOrders();
 				} else {
                     this.setState({
 						loadOrdersError: json.message
@@ -264,8 +276,15 @@ class MerchantOrders extends React.Component {
                                 />
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <OrderItem order={this.state.order}/>
-                                <UpdateSurvey surveyId={this.state.surveyId}/>
+                                {
+                                    this.state.order.length == 0
+                                        ?   <div><h4>There are no orders yet.</h4></div>
+                                        :   <div>
+                                                <OrderItem order={this.state.order}/>
+                                                <UpdateSurvey surveyId={this.state.surveyId}/>
+                                            </div>
+                                }
+                                
                             </div>
                         </div>
                     </div>

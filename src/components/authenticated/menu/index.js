@@ -41,22 +41,28 @@ class MenuMaker extends React.Component {
 			.then(json => {
 				if(json.success) {
                     let arrayArgs = [];
-                    for (let value of Object.values(json.menuItems)) {
-                        arrayArgs.push({
-                            id: value['menuid'],
-                            name: value['name'],
-                            level: value['level'],
-                            parent: value['parent'],
-                            description: value['description'],
-                            ifproduct: value['if_product'],
-                            ifactive: value['if_active'],
-                            ifdropdown: value['if_dropdown']
+                    if(json.menuItems.length > 0) {
+                        for (let value of Object.values(json.menuItems)) {
+                            arrayArgs.push({
+                                id: value['menuid'],
+                                name: value['name'],
+                                level: value['level'],
+                                parent: value['parent'],
+                                description: value['description'],
+                                ifproduct: value['if_product'],
+                                ifactive: value['if_active'],
+                                ifdropdown: value['if_dropdown']
+                            });
+                        }
+                        //console.log(arrayArgs);
+                        this.setState({
+                            loadMenuItemsAll: arrayArgs
+                        });
+                    } else {
+                        this.setState({
+                            loadMenuItemsAll: []
                         });
                     }
-                    //console.log(arrayArgs);
-                    this.setState({
-                        loadMenuItemsAll: arrayArgs
-                    });
 				} else {
                     this.setState({
 						loadMenuError: json.message
@@ -80,24 +86,32 @@ class MenuMaker extends React.Component {
 			.then(json => {
 				if(json.success) {
                     let arrayArgs = [];
-                    for (let value of Object.values(json.menuItems)) {
-                        arrayArgs.push({
-                            id: value['menuid'],
-                            name: value['name'],
-                            level: value['level'],
-                            parent: value['parent'],
-                            description: value['description'],
-                            ifproduct: value['if_product'],
-                            ifactive: value['if_active'],
-                            ifdropdown: value['if_dropdown']
+                    if(json.menuItems.length > 0) {
+                        for (let value of Object.values(json.menuItems)) {
+                            arrayArgs.push({
+                                id: value['menuid'],
+                                name: value['name'],
+                                level: value['level'],
+                                parent: value['parent'],
+                                description: value['description'],
+                                ifproduct: value['if_product'],
+                                ifactive: value['if_active'],
+                                ifdropdown: value['if_dropdown']
+                            });
+                        }
+                        //console.log(arrayArgs);
+                        this.setState({
+                            loadMenuError: json.message,
+                            loadMenuItem: arrayArgs[0],
+                            loadMenuItems: arrayArgs
+                        });
+                    } else {
+                        this.setState({
+                            loadMenuError: json.message,
+                            loadMenuItem: [],
+                            loadMenuItems: []
                         });
                     }
-                    //console.log(arrayArgs);
-                    this.setState({
-                        loadMenuError: json.message,
-                        loadMenuItem: arrayArgs[0],
-                        loadMenuItems: arrayArgs
-                    });
 				} else {
                     this.setState({
 						loadMenuError: json.message
@@ -173,6 +187,9 @@ class MenuMaker extends React.Component {
 
     onView(e) {
         this.setState({ loadMenuItem: this.getMenuObject(e.target.dataset.menuid) });
+        this.fetchPages();
+        this.fetchMenu();
+        this.fetchMenuAll();
     }
 
     onDelete(e) {
@@ -211,7 +228,9 @@ class MenuMaker extends React.Component {
                         loadMenuItem: arrayArgs[0],
                         loadMenuItems: arrayArgs
                     });
-                    //location.reload();
+                    this.fetchPages();
+                    this.fetchMenu();
+                    this.fetchMenuAll();
 				} else {
                     this.setState({
 						loadProductError: json.message
@@ -255,12 +274,23 @@ class MenuMaker extends React.Component {
                                 <UploadMenu menuItems={this.state.loadMenuItems}/>
                             </div>
                             <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <MenuDisplay menuItems={this.state.loadMenuItemsAll} />
-                                <MenuItem menu={this.state.loadMenuItem} />
-                                <UpdateMenu
-                                    menuItems={this.state.loadMenuItems}
-                                    menu={this.state.loadMenuItem}
-                                />
+                                {
+                                    this.state.loadMenuItemsAll.length == 0
+                                        ?   <div><h4>There are no menu items uploaded.</h4></div>
+                                        :   <MenuDisplay menuItems={this.state.loadMenuItemsAll} />
+                                }
+                                {
+                                    this.state.loadMenuItems.length == 0
+                                        ?   <div></div>
+                                        :   <div>
+                                                <MenuItem menu={this.state.loadMenuItem} />
+                                                <UpdateMenu
+                                                    menuItems={this.state.loadMenuItems}
+                                                    menu={this.state.loadMenuItem}
+                                                />
+                                            </div>
+                                }
+                                
                             </div>
                         </div>
                     </div>

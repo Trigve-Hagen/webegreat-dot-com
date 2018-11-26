@@ -4653,7 +4653,7 @@ app.post('/api/corders/survey', function(req, res) {
             ];
 
             updateSurvey = mysql.format(updateSurvey, updateSurveyInserts);
-            //console.log(updateSurvey)
+            console.log(updateSurvey)
             connection.query(updateSurvey, function (error, result, fields) {
                 if(error) {
                     return res.send({

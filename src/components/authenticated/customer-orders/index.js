@@ -9,12 +9,17 @@ import OrderList from './order-list';
 import OrderItem from './order-item';
 import config from '../../../config/config';
 import { convertTime } from '../../../components/utils/helpers';
+import { COPYFILE_FICLONE_FORCE } from 'constants';
 
 class CustomerOrders extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             perPage: config.per_page,
+            surveyIfFront: '',
+            surveyStarsArray: [],
+            surveyStars: 0,
+            surveyComment: '',
             currentPage: 1,
             loadOrdersError: '',
             windowHeight: 0,
@@ -26,6 +31,8 @@ class CustomerOrders extends React.Component {
             pages: []
         }
         this.onView = this.onView.bind(this);
+        this.onSurveyChange = this.onSurveyChange.bind(this);
+        this.onSurveySubmit = this.onSurveySubmit.bind(this);
         this.onChangePagination = this.onChangePagination.bind(this);
     }
 
@@ -44,44 +51,54 @@ class CustomerOrders extends React.Component {
 			.then(json => {
 				if(json.success) {
                     let arrayArgs = [];
-                    for (let value of Object.values(json.orders)) {
-                        let orderItems = [];
-                        let argsArray = value.items.split("&");
-                        for(let h=0; h<argsArray.length; h++) {
-                            let orderArgs = argsArray[h].split("_");
-                            orderItems.push({
-                                id: orderArgs[0],
-                                name: orderArgs[1],
-                                sku: orderArgs[2],
-                                price: orderArgs[3],
-                                quantity: orderArgs[4],
-                                image: orderArgs[5],
-                                stock: orderArgs[6],
-                                total: orderArgs[7]
+                    if(json.orders.length > 0) {
+                        for (let value of Object.values(json.orders)) {
+                            let orderItems = [];
+                            let argsArray = value.items.split("&");
+                            for(let h=0; h<argsArray.length; h++) {
+                                let orderArgs = argsArray[h].split("_");
+                                orderItems.push({
+                                    id: orderArgs[0],
+                                    name: orderArgs[1],
+                                    sku: orderArgs[2],
+                                    price: orderArgs[3],
+                                    quantity: orderArgs[4],
+                                    image: orderArgs[5],
+                                    stock: orderArgs[6],
+                                    total: orderArgs[7]
+                                });
+                            }
+                            arrayArgs.push({
+                                id: value['orderid'],
+                                date: convertTime(value['created_at']),
+                                name: value['name'],
+                                email: value['email'],
+                                address: value['shipping_address'],
+                                city: value['shipping_city'],
+                                state: value['shipping_state'],
+                                zip: value['shipping_zip'],
+                                proids: value['product_ids'],
+                                numofs: value['number_ofs'],
+                                prices: value['prices'],
+                                surveyid: value['survey_id'],
+                                orderitems: orderItems
                             });
                         }
-                        arrayArgs.push({
-                            id: value['orderid'],
-                            date: convertTime(value['created_at']),
-                            name: value['name'],
-                            email: value['email'],
-                            address: value['shipping_address'],
-                            city: value['shipping_city'],
-                            state: value['shipping_state'],
-                            zip: value['shipping_zip'],
-                            proids: value['product_ids'],
-                            numofs: value['number_ofs'],
-                            prices: value['prices'],
-                            surveyid: value['survey_id'],
-                            orderitems: orderItems
+                        this.setState({
+                            loadOrdersError: json.message,
+                            orders: arrayArgs,
+                            order: [arrayArgs[0]],
+                            surveyId: arrayArgs[0].surveyid
+                        });
+                        this.getSurvey(arrayArgs[0].surveyid);
+                    } else {
+                        this.setState({
+                            loadOrdersError: json.message,
+                            orders: [],
+                            order: [],
+                            surveyId: ''
                         });
                     }
-					this.setState({
-                        loadOrdersError: json.message,
-                        orders: arrayArgs,
-                        order: [arrayArgs[0]],
-                        surveyId: arrayArgs[0].surveyid
-					});
 				} else {
                     this.setState({
 						loadOrdersError: json.message
@@ -109,12 +126,12 @@ class CustomerOrders extends React.Component {
                         for(let i = 1; i <= json.pages; i++) range.push(i);
                         this.setState({
                             pages: range,
-                            loadProductError: json.message
+                            loadOrdersError: json.message
                         });
                     }
 				} else {
                     this.setState({
-                        loadProductError: json.message
+                        loadOrdersError: json.message
 					});
                 }
 			});
@@ -122,7 +139,7 @@ class CustomerOrders extends React.Component {
     
     componentDidMount() {
         this.fetchPages();
-		this.fetchOrders();
+        this.fetchOrders();
         let windowHeight = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
         let footerHeight = document.getElementsByClassName('webegreat-footer')[0].clientHeight;
         let menuHeight = document.getElementsByClassName('webegreat-menu')[0].clientHeight;
@@ -136,8 +153,8 @@ class CustomerOrders extends React.Component {
     getOrderObject(orderId) {
         let obj={};
         this.state.orders.map(order => {
-            //console.log(order.id + ", " + orderId);
             if(order.id == orderId) {
+                console.log(order.surveyid);
                 obj.id = order.id;
                 obj.date = order.date;
                 obj.name = order.name;
@@ -165,16 +182,84 @@ class CustomerOrders extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if(prevState.currentPage !== this.state.currentPage) {
             this.setState({ currentPage: this.state.currentPage });
-            this.fetchPages();
             this.fetchOrders();
+            this.fetchPages();
         }
     }
 
     onView(e) {
+        let orderObj = this.getOrderObject(e.target.dataset.orderid);
+        this.getSurvey(orderObj.surveyid);
         this.setState({
-            order: [this.getOrderObject(e.target.dataset.orderid)],
-            surveyId: this.getOrderObject(e.target.dataset.orderid).surveyid
-        })
+            order: [orderObj],
+            surveyId: orderObj.surveyid
+        });
+    }
+
+    getSurvey(surveyId) {
+        fetch(config.site_url + '/api/corders/getSurvey', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				id: surveyId,
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.stars; i++) range.push(i);
+					this.setState({
+                        loadOrdersError: json.message,
+                        surveyStarsArray: range,
+                        surveyStars: json.stars,
+                        surveyComment: json.comment
+					});
+				} else {
+                    this.setState({
+						loadOrdersError: json.message
+					});
+                }
+			});
+    }
+
+    onSurveyChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    onSurveySubmit(e) {
+        e.preventDefault();
+		fetch(config.site_url + '/api/corders/survey', {
+            method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                id: this.state.surveyId,
+                stars: this.state.surveyStars,
+                comment: this.state.surveyComment,
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.stars; i++) range.push(i);
+					this.setState({
+                        loadOrdersError: json.message,
+                        surveyIfFront: json.iffront,
+                        surveyStarsArray: range,
+                        surveyStars: json.stars,
+                        surveyComment: json.comment,
+					});
+				} else {
+                    this.setState({
+						loadOrdersError: json.message
+					});
+                }
+			});
     }
 
     render() {
@@ -220,8 +305,25 @@ class CustomerOrders extends React.Component {
                                 />
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <OrderItem order={this.state.order} />
-                                <UploadSurvey orderId={this.state.surveyId}/>
+                                {
+                                    this.state.order.length == 0
+                                        ?   <div><h4>There are no orders yet.</h4></div>
+                                        :   <div>
+                                                <OrderItem order={this.state.order} />
+                                                {
+                                                    this.state.surveyStars.length == 0
+                                                        ?   <div><h4>No survey yet.</h4></div>
+                                                        :   <UploadSurvey
+                                                                comment={this.state.surveyComment}
+                                                                stars={this.state.surveyStars}
+                                                                onChangeSurvey={this.onSurveyChange}
+                                                                onSubmitSurvey={this.onSurveySubmit}
+                                                            />
+                                                }
+                                                
+                                            </div>
+                                }
+                                
                             </div>
                         </div>
                     </div>
