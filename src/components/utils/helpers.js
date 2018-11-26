@@ -1,4 +1,12 @@
-export function convertTime(timeString) {
+function uniqueId(id) {
+    return parseInt(id) - (50 * 2);
+}
+
+function reverseId(id) {
+    return parseInt(id) + (50 * 2);
+}
+
+function convertTime(timeString) {
     let dateArgs = timeString.slice(0, 19).split("T");
 
     var time = dateArgs[1].split(':'); // your input
@@ -24,4 +32,10 @@ export function convertTime(timeString) {
     timeValue += (hours >= 12) ? " P.M." : " A.M.";  // get AM/PM
 
     return timeValue;
+}
+
+module.exports = {
+    uniqueId,
+    reverseId,
+    convertTime
 }

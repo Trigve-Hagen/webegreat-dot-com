@@ -9,7 +9,7 @@ import OrderList from './order-list';
 import UpdateSurvey from './update-survey';
 import OrderItem from './order-item';
 import config from '../../../config/config';
-import { convertTime } from '../../../components/utils/helpers';
+import { convertTime, uniqueId, reverseId } from '../../../components/utils/helpers';
 
 class MerchantOrders extends React.Component {
     constructor(props) {
@@ -18,6 +18,16 @@ class MerchantOrders extends React.Component {
             perPage: config.per_page,
             currentPage: 1,
             loadOrdersError: '',
+            uploadError: '',
+            uploadUser: '',
+            uploadUsers: [],
+            uploadId: '',
+            uploadName: '',
+            uploadEmail: '',
+            uploadAddress: '',
+            uploadCity: '',
+            uploadState: '',
+            uploadZip: '',
             surveyId: '',
             orders: [],
             order: [],
@@ -25,9 +35,150 @@ class MerchantOrders extends React.Component {
         }
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onChangeUpload = this.onChangeUpload.bind(this);
+        this.onSubmitUpload = this.onSubmitUpload.bind(this);
         this.onChangePagination = this.onChangePagination.bind(this);
-        this.updateStateUploadOrder = this.updateStateUploadOrder.bind(this);
+        this.onSwitchUserChange = this.onSwitchUserChange.bind(this);
     }
+
+    fetchUsers() {
+        fetch(config.site_url + '/api/morders/getusers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: this.props.authentication[0].token
+            })
+        }).then(res => res.json())
+            .then(json => {
+                if(json.success) {
+                    let arrayArgs = [];
+                    //console.log(json.users);
+                    for (let value of Object.values(json.users)) {
+                        arrayArgs.push({
+                            id: value['userid'],
+                            image: value['avatar'],
+                            role: value['role'],
+                            name: value['name'],
+                            email: value['email'],
+                            address: value['shipping_address'],
+                            city: value['shipping_city'],
+                            state: value['shipping_state'],
+                            zip: value['shipping_zip'],
+                            ifactive: value['store_visible']
+                        });
+                    }
+                    this.setState({
+                        uploadError: json.message,
+                        uploadUser: uniqueId(arrayArgs[0].id),
+                        uploadId: arrayArgs[0].id,
+                        uploadName: arrayArgs[0].name,
+                        uploadEmail: arrayArgs[0].email,
+                        uploadAddress: arrayArgs[0].address,
+                        uploadCity: arrayArgs[0].city,
+                        uploadState: arrayArgs[0].state,
+                        uploadZip: arrayArgs[0].zip,
+                        uploadUsers: arrayArgs
+                    });
+                } else {
+                    this.setState({
+                        uploadError: json.message
+                    });
+                }
+            });
+    }
+
+    getUserObject(userid) {
+        let obj={};
+        this.state.uploadUsers.map(user => {
+            if(user.id == userid) {
+                obj.id = user.id;
+                obj.name = user.name;
+                obj.email = user.email;
+                obj.address = user.address;
+                obj.city = user.city;
+                obj.state = user.state;
+                obj.zip = user.zip;
+            }
+        });
+        return obj;
+    }
+
+    onSwitchUserChange(e) {
+        let user = this.getUserObject(reverseId(e.target.value));
+        this.setState({
+            uploadId: user.id,
+            uploadName: user.name,
+            uploadEmail: user.email,
+            uploadAddress: user.address,
+            uploadCity: user.city,
+            uploadState: user.state,
+            uploadZip: user.zip,
+            uploadUser: e.target.value
+        });
+    }
+
+    onChangeUpload(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    onSubmitUpload(e) {
+        e.preventDefault();
+        let proids = [], numofs = [], prices = [];
+        function createArrays(item) {
+            proids.push(item.id);
+            numofs.push(item.quantity);
+            prices.push(item.price);
+        }
+        this.props.cart.forEach(createArrays);
+        let mordersProids = proids.join("_");
+        let mordersNumofs = numofs.join("_");
+        let mordersPrices = prices.join("_");
+        //console.log(mordersItems + ", " + mordersNumofs + ", " + mordersPrices)
+        let cartCount = 0; let cartString = '';
+        this.props.cart.map(item => {
+            if(cartCount == this.props.cart.length - 1) cartString += item.id + "_" + item.name + "_" + item.sku + "_" + item.price + "_" + item.quantity + "_" + item.image + "_" + item.stock + "_" + (parseInt(item.quantity) * parseFloat(item.price)).toFixed(2);
+            else cartString += item.id + "_" + item.name + "_" + item.sku + "_" + item.price + "_" + item.quantity + "_" + item.image + "_" + item.stock + "_" + (parseInt(item.quantity) * parseFloat(item.price)).toFixed(2) + "&";
+            cartCount++;
+        });
+        //console.log(cartString);
+
+		fetch(config.site_url + '/api/morders/upload', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: this.state.uploadId,
+                name: this.state.uploadName,
+                email: this.state.uploadEmail,
+                address: this.state.uploadAddress,
+                city: this.state.uploadCity,
+                state: this.state.uploadState,
+                zip: this.state.uploadZip,
+                orderitems: cartString,
+                proids: mordersProids,
+                numofs: mordersNumofs,
+                prices: mordersPrices,
+                token: this.props.authentication[0].token
+            })
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+					console.log("User upload successfull.");
+					this.setState({
+                        uploadError: json.message
+                    });
+                    this.fetchMerchantOrders();
+                    this.fetchPages();
+				} else {
+                    this.setState({
+						uploadError: json.message
+					});
+                }
+			});
+	}
 
     fetchMerchantOrders() {
         fetch(config.site_url + '/api/morders/all', {
@@ -130,6 +281,7 @@ class MerchantOrders extends React.Component {
     }
     
     componentDidMount() {
+        this.fetchUsers();
         this.fetchMerchantOrders();
         this.fetchPages();
     }
@@ -163,11 +315,6 @@ class MerchantOrders extends React.Component {
         }
     }
 
-    updateStateUploadOrder() {
-        e.preventDefault()
-        this.setState({ orders: this.state.orders });
-    }
-
     componentDidUpdate(prevProps, prevState) {
         if(prevState.currentPage !== this.state.currentPage || prevState.orders.length !== this.state.orders.length) {
             this.fetchPages();
@@ -181,8 +328,7 @@ class MerchantOrders extends React.Component {
             order: [orderObj],
             surveyId: orderObj.surveyid
         });
-        this.fetchPages();
-        this.fetchMerchantOrders();
+        
     }
 
     onDelete(e) {
@@ -271,8 +417,18 @@ class MerchantOrders extends React.Component {
                                 }
                                 <UploadOrders
                                     cart={this.props.cart}
-                                    orders={this.state.orders}
-                                    updateState={this.updateStateUploadOrder}
+                                    error={this.state.uploadError}
+                                    user={this.state.uploadUser}
+                                    users={this.state.uploadUsers}
+                                    name={this.state.uploadName}
+                                    email={this.state.uploadEmail}
+                                    address={this.state.uploadAddress}
+                                    city={this.state.uploadCity}
+                                    state={this.state.uploadState}
+                                    zip={this.state.uploadZip}
+                                    onSwitchUser={this.onSwitchUserChange}
+                                    onUploadChange={this.onChangeUpload}
+                                    onUploadSubmit={this.onSubmitUpload}
                                 />
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12">

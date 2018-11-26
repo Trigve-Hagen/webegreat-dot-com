@@ -187,9 +187,9 @@ class MenuMaker extends React.Component {
 
     onView(e) {
         this.setState({ loadMenuItem: this.getMenuObject(e.target.dataset.menuid) });
-        this.fetchPages();
+        /*this.fetchPages();
         this.fetchMenu();
-        this.fetchMenuAll();
+        this.fetchMenuAll();*/
     }
 
     onDelete(e) {

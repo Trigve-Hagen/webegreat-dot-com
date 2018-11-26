@@ -9,7 +9,6 @@ import OrderList from './order-list';
 import OrderItem from './order-item';
 import config from '../../../config/config';
 import { convertTime } from '../../../components/utils/helpers';
-import { COPYFILE_FICLONE_FORCE } from 'constants';
 
 class CustomerOrders extends React.Component {
     constructor(props) {
