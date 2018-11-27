@@ -2,9 +2,8 @@ import { createStore, combineReducers } from 'redux';
 import cartReducer from '../components/cart/reducer';
 import authenticationReducer from '../components/authentication/reducer';
 import paginationReducer from '../components/pagination/reducer';
-import avatarReducer from '../components/authenticated/profile/reducer';
+import { avatarReducer, visibilityReducer } from '../components/authenticated/profile/reducer';
 import searchReducer from '../components/search-bar/reducer';
-import visibilityReducer from '../components/authenticated/profile/store-controls/store-visibility/reducer';
 
 function saveToLocalStorage(state) {
     try {

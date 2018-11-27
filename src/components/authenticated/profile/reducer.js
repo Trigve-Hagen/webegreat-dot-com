@@ -1,8 +1,12 @@
-const initialState = {
+const avatarInitialState = {
     avatar: 'user-avatar.jpg' 
 }
 
-const avatarReducer = (state=[initialState], action) => {
+const visibilityInitialState = {
+    visibility: 0
+}
+
+const avatarReducer = (state=[avatarInitialState], action) => {
     switch(action.type) {
         case "RESET_AVATAR":
             return [initialState];
@@ -14,4 +18,19 @@ const avatarReducer = (state=[initialState], action) => {
     }
 }
 
-export default avatarReducer;
+const visibilityReducer = (state=[visibilityInitialState], action) => {
+    switch(action.type) {
+        case "RESET_VISIBILITY":
+            return [initialState];
+        case "UPDATE_VISIBILITY":
+            state=[];
+            return [...state, action.payload];
+        default:
+            return state;
+    }
+}
+
+module.exports = {
+    avatarReducer,
+    visibilityReducer
+}

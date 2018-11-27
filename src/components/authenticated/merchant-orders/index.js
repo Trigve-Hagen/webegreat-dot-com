@@ -18,6 +18,10 @@ class MerchantOrders extends React.Component {
             perPage: config.per_page,
             currentPage: 1,
             loadOrdersError: '',
+            updateSurveyError: '',
+            updateSurveyIfFront: '',
+            updateSurveyStars: [],
+            updateSurveyComment: '',
             uploadError: '',
             uploadUser: '',
             uploadUsers: [],
@@ -35,10 +39,76 @@ class MerchantOrders extends React.Component {
         }
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onChangeSurvey = this.onChangeSurvey.bind(this);
+        this.onSubmitSurvey = this.onSubmitSurvey.bind(this);
         this.onChangeUpload = this.onChangeUpload.bind(this);
         this.onSubmitUpload = this.onSubmitUpload.bind(this);
         this.onChangePagination = this.onChangePagination.bind(this);
         this.onSwitchUserChange = this.onSwitchUserChange.bind(this);
+    }
+
+    onChangeSurvey(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+	onSubmitSurvey(e) {
+        e.preventDefault();
+		fetch(config.site_url + '/api/morders/updateSurvey', {
+            method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+                id: this.state.surveyId,
+                iffront: this.state.updateSurveyIfFront,
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.stars; i++) range.push(i);
+					this.setState({
+                        updateSurveyError: json.message,
+                        updateSurveyIfFront: json.iffront,
+                        updateSurveyStars: range,
+                        updateSurveyComment: json.comment,
+					});
+				} else {
+                    this.setState({
+						updateSurveyError: json.message
+					});
+                }
+			});
+    }
+
+    getSurvey(surveyId) {
+        fetch(config.site_url + '/api/survey/item', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				itemId: surveyId,
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    let range = [];
+                    for(let i = 1; i <= json.stars; i++) range.push(i);
+					this.setState({
+                        updateSurveyError: json.message,
+                        updateSurveyIfFront: json.iffront,
+                        updateSurveyStars: range,
+                        updateSurveyComment: json.comment,
+					});
+				} else {
+                    this.setState({
+						updateSurveyError: json.message
+					});
+                }
+			});
     }
 
     fetchUsers() {
@@ -236,6 +306,7 @@ class MerchantOrders extends React.Component {
                             orderId: arrayArgs[0].id,
                             surveyId: arrayArgs[0].surveyid
                         });
+                        this.getSurvey(arrayArgs[0].surveyid);
                     } else {
                         this.setState({
                             loadOrdersError: json.message,
@@ -324,6 +395,7 @@ class MerchantOrders extends React.Component {
 
     onView(e) {
         let orderObj = this.getOrderObject(e.target.dataset.orderid);
+        this.getSurvey(orderObj.surveyid);
         this.setState({
             order: [orderObj],
             surveyId: orderObj.surveyid
@@ -369,8 +441,8 @@ class MerchantOrders extends React.Component {
                         loadOrdersError: json.message,
                         orders: arrayArgs
                     });
-                    this.fetchPages();
                     this.fetchMerchantOrders();
+                    this.fetchPages();
 				} else {
                     this.setState({
 						loadOrdersError: json.message
@@ -437,7 +509,19 @@ class MerchantOrders extends React.Component {
                                         ?   <div><h4>There are no orders yet.</h4></div>
                                         :   <div>
                                                 <OrderItem order={this.state.order}/>
-                                                <UpdateSurvey surveyId={this.state.surveyId}/>
+                                                {
+                                                    this.state.updateSurveyComment == ''
+                                                        ?   <div><h4 className="mt-3">No survey yet.</h4></div>
+                                                        :   <UpdateSurvey
+                                                                error={this.state.updateSurveyError}
+                                                                iffront={this.state.updateSurveyIfFront}
+                                                                stars={this.state.updateSurveyStars}
+                                                                comment={this.state.updateSurveyComment}
+                                                                onSurveyChange={this.onChangeSurvey}
+                                                                onSurveySubmit={this.onSubmitSurvey}
+                                                            />
+                                                }
+                                                
                                             </div>
                                 }
                                 

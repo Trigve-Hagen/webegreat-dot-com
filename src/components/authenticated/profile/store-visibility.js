@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import config from '../../../../../config/config';
+import config from '../../../config/config';
 
 class StoreVisibility extends React.Component {
     constructor(props) {
@@ -43,7 +43,6 @@ class StoreVisibility extends React.Component {
     }
 
 	onSubmit(e) {
-        console.log(this.state.visibility);
         e.preventDefault();
 
         const data = new FormData();

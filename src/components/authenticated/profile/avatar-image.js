@@ -1,10 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import config from '../../../config/config';
-
-function uniqueId(id) {
-    return parseInt(id) - 50 * 2;
-}
+import { uniqueId } from '../../utils/helpers';
 
 class AvatarImage extends React.Component {
     constructor(props) {

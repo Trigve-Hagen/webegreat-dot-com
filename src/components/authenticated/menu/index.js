@@ -16,6 +16,24 @@ class MenuMaker extends React.Component {
         super(props);
         this.state = {
             loadMenuError: '',
+            menuUploadError: '',
+            menuUploadId: '',
+            menuUploadName: '',
+            menuUploadLevel: '',
+            menuUploadParent: '',
+            menuUploadIfProduct: '',
+            menuUploadDescription: '',
+            menuUploadIfActive: '',
+            menuUploadIfDropdown: '',
+            menuUpdateError: '',
+            menuUpdateId: '',
+            menuUpdateName: '',
+            menuUpdateLevel: '',
+            menuUpdateParent: '',
+            menuUpdateIfProduct: '',
+            menuUpdateDescription: '',
+            menuUpdateIfActive: '',
+            menuUpdateIfDropdown: '',
             perPage: config.per_page,
             currentPage: 1,
             loadMenuItem: [],
@@ -25,8 +43,105 @@ class MenuMaker extends React.Component {
         }
         this.onView = this.onView.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onMenuChange = this.onMenuChange.bind(this);
+        this.onUpdateMenuSubmit = this.onUpdateMenuSubmit.bind(this);
+        this.onUploadMenuSubmit = this.onUploadMenuSubmit.bind(this);
         this.onChangePagination = this.onChangePagination.bind(this);
     }
+
+    onMenuChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    onUploadMenuSubmit(e) {
+		e.preventDefault();
+		fetch(config.site_url + '/api/menu/upload', {
+            method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: this.state.menuUploadName,
+                parent: this.state.menuUploadParent,
+                level: this.state.menuUploadLevel == '' ? 0 : this.state.menuUploadLevel,
+                ifproduct: this.state.menuUploadIfProduct == '' ? 0 : this.state.menuUploadIfProduct,
+                description: this.state.menuUploadDescription,
+                ifactive: this.state.menuUploadIfActive == '' ? 0 : this.state.menuUploadIfActive,
+                ifdropdown: this.state.menuUploadIfDropdown == '' ? 0 : this.state.menuUploadIfDropdown,
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+					console.log("Product upload successfull.");
+					this.props.updateMenu({
+                        id: json.id,
+                        name: json.name,
+                        parent: json.parent,
+                        level: json.level,
+                        description: json.description,
+                        ifproduct: json.ifproduct,
+                        ifactive: json.ifactive,
+                        ifdropdown: json.ifdropdown
+                    });
+					this.setState({
+                        menuUploadError: json.message
+                    });
+                    this.fetchPages();
+                    this.fetchMenu();
+                    this.fetchMenuAll();
+				} else {
+                    this.setState({
+						menuUploadError: json.message
+					});
+                }
+			});
+	}
+
+    onUpdateMenuSubmit(e) {
+		e.preventDefault();
+
+		fetch(config.site_url + '/api/menu/update', {
+            method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: this.state.menuUpdateName,
+                parent: this.state.menuUpdateParent,
+                level: this.state.menuUpdateLevel == '' ? 0 : this.state.menuUpdateLevel,
+                ifproduct: this.state.menuUpdateIfProduct == '' ? 0 : this.state.menuUpdateIfProduct,
+                description: this.state.menuUpdateDescription,
+                ifactive: this.state.menuUpdateIfActive == '' ? 0 : this.state.menuUpdateIfActive,
+                ifdropdown: this.state.menuUpdateIfDropdown == '' ? 0 : this.state.menuUpdateIfDropdown,
+                id: this.state.menuUpdateId,
+                token: this.props.authentication[0].token
+			})
+		}).then(res => res.json())
+			.then(json => {
+				if(json.success) {
+                    console.log("Successfull Menu Update.");
+					this.setState({
+                        menuUpdateError: json.message,
+                        menuId: json.id,
+                        menuName: json.name,
+                        menuLevel: json.level,
+                        menuParent: json.parent,
+                        menuIfProduct: json.ifproduct,
+                        menuIfActive: json.ifactive,
+                        menuIfDropdown: json.ifdropdown,
+                        menuDescription: json.description,
+                    });
+                    this.fetchPages();
+                    this.fetchMenu();
+                    this.fetchMenuAll();
+				} else {
+                    this.setState({
+						menuUpdateError: json.message
+					});
+                }
+			});
+	}
 
     fetchMenuAll() {
         fetch(config.site_url + '/api/menu/front', {
@@ -103,7 +218,15 @@ class MenuMaker extends React.Component {
                         this.setState({
                             loadMenuError: json.message,
                             loadMenuItem: arrayArgs[0],
-                            loadMenuItems: arrayArgs
+                            loadMenuItems: arrayArgs,
+                            menuUpdateId: arrayArgs[0].id,
+                            menuUpdateName: arrayArgs[0].name,
+                            menuUpdateLevel: arrayArgs[0].level,
+                            menuUpdateParent: arrayArgs[0].parent,
+                            menuUpdateIfProduct: arrayArgs[0].ifproduct,
+                            menuUpdateDescription: arrayArgs[0].description,
+                            menuUpdateIfActive: arrayArgs[0].ifactive,
+                            menuUpdateIfDropdown: arrayArgs[0].ifdropdown,
                         });
                     } else {
                         this.setState({
@@ -186,10 +309,18 @@ class MenuMaker extends React.Component {
     }
 
     onView(e) {
-        this.setState({ loadMenuItem: this.getMenuObject(e.target.dataset.menuid) });
-        /*this.fetchPages();
-        this.fetchMenu();
-        this.fetchMenuAll();*/
+        let menuObj = this.getMenuObject(e.target.dataset.menuid);
+        this.setState({
+            loadMenuItem: menuObj,
+            menuUpdateId: menuObj.id,
+            menuUpdateName: menuObj.name,
+            menuUpdateLevel: menuObj.level,
+            menuUpdateParent: menuObj.parent,
+            menuUpdateIfProduct: menuObj.ifproduct,
+            menuUpdateDescription: menuObj.description,
+            menuUpdateIfActive: menuObj.ifactive,
+            menuUpdateIfDropdown: menuObj.ifdropdown,
+        });
     }
 
     onDelete(e) {
@@ -271,7 +402,20 @@ class MenuMaker extends React.Component {
                                     currentPage={this.state.currentPage}
                                     onChangePagination={this.onChangePagination}
                                 />
-                                <UploadMenu menuItems={this.state.loadMenuItems}/>
+                                <UploadMenu
+                                    menuItems={this.state.loadMenuItems}
+                                    error={this.state.menuUploadError}
+                                    id={this.state.menuUploadId}
+                                    name={this.state.menuUploadName}
+                                    level={this.state.menuUploadLevel}
+                                    parent={this.state.menuUploadParent}
+                                    ifproduct={this.state.menuUploadIfProduct}
+                                    desc={this.state.menuUploadDescription}
+                                    ifactive={this.state.menuUploadIfActive}
+                                    ifdropdown={this.state.menuUploadIfDropdown}
+                                    onChangeMenu={this.onMenuChange}
+                                    onSubmitMenu={this.onUploadMenuSubmit}
+                                />
                             </div>
                             <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 {
@@ -287,6 +431,17 @@ class MenuMaker extends React.Component {
                                                 <UpdateMenu
                                                     menuItems={this.state.loadMenuItems}
                                                     menu={this.state.loadMenuItem}
+                                                    error={this.state.menuUpdateError}
+                                                    id={this.state.menuUpdateId}
+                                                    name={this.state.menuUpdateName}
+                                                    level={this.state.menuUpdateLevel}
+                                                    parent={this.state.menuUpdateParent}
+                                                    ifproduct={this.state.menuUpdateIfProduct}
+                                                    desc={this.state.menuUpdateDescription}
+                                                    ifactive={this.state.menuUpdateIfActive}
+                                                    ifdropdown={this.state.menuUpdateIfDropdown}
+                                                    onChangeMenu={this.onMenuChange}
+                                                    onSubmitMenu={this.onUpdateMenuSubmit}
                                                 />
                                             </div>
                                 }
@@ -303,8 +458,20 @@ class MenuMaker extends React.Component {
 
 function mapStateToProps(state) {
     return {
+        menu: state.menu,
         authentication: state.authentication
     }
 }
 
-export default connect(mapStateToProps)(MenuMaker)
+function mapDispatchToProps(dispatch) {
+    return {
+        updateMenu: (value) => {
+            dispatch({ type: 'UPDATE_MENU', payload: value})
+        },
+        resetMenu: (value) => {
+            dispatch({ type: 'RESET_MENU', payload: value})
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MenuMaker)
